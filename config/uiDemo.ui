@@ -1,0 +1,1885 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Demo</class>
+ <widget class="QDialog" name="Demo">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>549</width>
+    <height>583</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Bespin UiDemo</string>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="demo">
+      <attribute name="title">
+       <string>Demo</string>
+      </attribute>
+      <layout class="QGridLayout" columnstretch="8,3">
+       <item row="0" column="0" colspan="2">
+        <widget class="QMenuBar" name="menuBar">
+         <widget class="QMenu" name="menuUiDemo">
+          <property name="title">
+           <string>UiDemo</string>
+          </property>
+          <addaction name="actionDon_t_open"/>
+          <addaction name="actionDon_t_save"/>
+          <addaction name="actionDon_t_exit"/>
+         </widget>
+         <widget class="QMenu" name="menuEdit">
+          <property name="title">
+           <string>Edit</string>
+          </property>
+          <addaction name="actionDon_t"/>
+          <addaction name="actionJust_don_t"/>
+          <addaction name="actionDo_anything"/>
+          <addaction name="actionHere"/>
+         </widget>
+         <widget class="QMenu" name="menuAppereance">
+          <property name="title">
+           <string>Appereance</string>
+          </property>
+          <addaction name="actionIs_fixed"/>
+          <addaction name="actionSo_you_can_t_do_anything"/>
+          <addaction name="action_at_least_not_here"/>
+          <addaction name="action"/>
+          <addaction name="action_no_really"/>
+          <addaction name="actionNOOOO"/>
+         </widget>
+         <widget class="QMenu" name="menu">
+          <property name="title">
+           <string>:-)</string>
+          </property>
+          <addaction name="action_2"/>
+          <addaction name="action_P"/>
+          <addaction name="action_3"/>
+          <addaction name="action_4"/>
+          <addaction name="action8"/>
+         </widget>
+         <addaction name="menuUiDemo"/>
+         <addaction name="menuEdit"/>
+         <addaction name="menuAppereance"/>
+         <addaction name="menu"/>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLineEdit" name="demoLineEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="pushButton_3">
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" rowspan="3">
+        <widget class="QTextBrowser" name="demoBrowser">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="html">
+          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Droid Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Luxi Sans';&quot;&gt;Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Luxi Sans';&quot;&gt;--&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Luxi Sans';&quot;&gt;Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Luxi Sans';&quot;&gt;Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Luxi Sans';&quot;&gt;Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Luxi Sans';&quot;&gt;Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Luxi Sans';&quot;&gt;At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, At accusam aliquyam diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+labore et dolore magna aliquyam erat.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Luxi Sans';&quot;&gt;Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus
+est Lorem ipsum dolor sit amet.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="comboBox_3">
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QGroupBox" name="groupBox_6">
+         <property name="title">
+          <string>GroupBox</string>
+         </property>
+         <layout class="QGridLayout">
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="radioButton_3">
+            <property name="text">
+             <string>RadioButton</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="checkBox_5">
+            <property name="text">
+             <string>CheckBox</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <spacer>
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QTreeWidget" name="treeWidget_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <column>
+          <property name="text">
+           <string>1</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>2</string>
+          </property>
+         </column>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <item>
+           <property name="text">
+            <string>Neues untergeordnetes Element</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <item>
+            <property name="text">
+             <string>Neues untergeordnetes Element</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Neues Element</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Neues Element</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Neues Element</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Neues Element</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </item>
+          </item>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Buttons</string>
+      </attribute>
+      <layout class="QGridLayout">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="title">
+          <string>PushButtons</string>
+         </property>
+         <layout class="QGridLayout">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>Push Me!</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="pushButton_2">
+            <property name="text">
+             <string>Toggle Me!</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QPushButton" name="pushButton_4">
+            <property name="text">
+             <string>I'm a flatty</string>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="title">
+          <string>ToolButtons</string>
+         </property>
+         <layout class="QGridLayout">
+          <item row="0" column="0">
+           <widget class="QToolButton" name="toolButton_3">
+            <property name="text">
+             <string>Toggle</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QToolButton" name="toolButton">
+            <property name="toolTip">
+             <string>Text Only</string>
+            </property>
+            <property name="text">
+             <string>Text Only</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextOnly</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QToolButton" name="toolButton_5">
+            <property name="toolTip">
+             <string>Text Under</string>
+            </property>
+            <property name="text">
+             <string>Text Under</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>:/bespin.png</normaloff>:/bespin.png</iconset>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QToolButton" name="toolButton_4">
+            <property name="toolTip">
+             <string>Text Aside</string>
+            </property>
+            <property name="text">
+             <string>Text aside</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>:/bespin.png</normaloff>:/bespin.png</iconset>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Icon only -&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QToolButton" name="toolButton_2">
+            <property name="toolTip">
+             <string>Icon Only</string>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>:/bespin.png</normaloff>:/bespin.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Checkboxes</string>
+         </property>
+         <layout class="QGridLayout">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="checkBox_2">
+            <property name="text">
+             <string>On</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="checkBox_3">
+            <property name="text">
+             <string>Off</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="checkBox_4">
+            <property name="text">
+             <string>Unsure</string>
+            </property>
+            <property name="tristate">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>RadioButtons</string>
+         </property>
+         <layout class="QGridLayout">
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="radioButton">
+            <property name="text">
+             <string>On</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="radioButton_2">
+            <property name="text">
+             <string>Off</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Input</string>
+      </attribute>
+      <layout class="QGridLayout">
+       <item row="0" column="0">
+        <widget class="QTextEdit" name="textEdit">
+         <property name="html">
+          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Droid Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; font-weight:600;&quot;&gt;This is a textedit&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed';&quot;&gt;try typing something...&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="3">
+        <widget class="QTextBrowser" name="textBrowser">
+         <property name="html">
+          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Droid Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; font-weight:600; text-decoration: underline;&quot;&gt;This is a TextBrowser&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; font-style:italic;&quot;&gt;You cannot type anthing here&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'DejaVu Sans Condensed';&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed';&quot;&gt;So:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; font-weight:600; &quot;&gt;Detailed Description&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;The QTextBrowser class provides a rich text browser with hypertext navigation.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;This class extends &lt;/span&gt;&lt;a href=&quot;qtextedit.html&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;QTextEdit&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt; (in read-only mode), adding some navigation functionality so that users can follow links in hypertext documents.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;If you want to provide your users with an editable rich text editor, use &lt;/span&gt;&lt;a href=&quot;qtextedit.html&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;QTextEdit&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;. If you want a text browser without hypertext navigation use &lt;/span&gt;&lt;a href=&quot;qtextedit.html&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;QTextEdit&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;, and use &lt;/span&gt;&lt;a href=&quot;qtextedit.html#readOnly-prop&quot;&gt;&lt;span style=&quot; font-
+family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;QTextEdit::setReadOnly&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;() to disable editing. If you just need to display a small piece of rich text use &lt;/span&gt;&lt;a href=&quot;qlabel.html&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;QLabel&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;.&lt;/span&gt;&lt;a name=&quot;document-source-and-contents&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:14px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; font-weight:600; &quot;&gt;Document Source and Contents&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;The contents of &lt;/span&gt;&lt;a href=&quot;qtextedit.html&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;QTextEdit&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt; are set with &lt;/span&gt;&lt;a href=&quot;qtextedit.html#html-prop&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;setHtml&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;() or &lt;/span&gt;&lt;a href=&quot;qtextedit.html#plainText-prop&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;setPlainText&lt;/
+span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;(), but QTextBrowser also implements the &lt;/span&gt;&lt;a href=&quot;qtextbrowser.html#source-prop&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;setSource&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;() function, making it possible to use a named document as the source text. The name is looked up in a list of search paths and in the directory of the current document factory.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;If a document name ends with an anchor (for example, &amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New,courier'; &quot;&gt;#anchor&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;), the text browser automatically scrolls to that position (using &lt;/span&gt;&lt;a href=&quot;qtextedit.html#scrollToAnchor&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;scrollToAnchor&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;()). When the user clicks on a hyperlink, the browser will call &lt;/span&gt;&lt;a href=&quot;qtextbrowser.html#source-prop&quot;&gt;&lt;span style=&quot; font-family:'
+DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;setSource&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;() itself with the link's &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New,courier'; &quot;&gt;href&lt;/span&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt; value as argument. You can track the current source by connecting to the &lt;/span&gt;&lt;a href=&quot;qtextbrowser.html#sourceChanged&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;sourceChanged&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;() signal.&lt;/span&gt;&lt;a name=&quot;navigation&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:14px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; font-weight:600; &quot;&gt;Navigation&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;QTextBrowser provides &lt;/span&gt;&lt;a href=&quot;qtextbrowser.html#backward&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;backward&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;() and &lt;/span&gt;&lt;a href=&quot;qtextbrowser.html#forward&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;forward&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;() slots which you can use to implement Back and Forward buttons. The &lt;/span&gt;&lt;a href=&quot;qtextbrowser.html#home&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed';
+text-decoration: underline; color:#004faf;&quot;&gt;home&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;() slot sets the text to the very first document displayed. The &lt;/span&gt;&lt;a href=&quot;qtextbrowser.html#anchorClicked&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;anchorClicked&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;() signal is emitted when the user clicks an anchor. To override the default navigation behavior of the browser, call the &lt;/span&gt;&lt;a href=&quot;qtextbrowser.html#source-prop&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;setSource&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;() function to supply new document text in a slot connected to this signal.&lt;/
+span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;If you want to load documents stored in the Qt resource system use &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New,courier'; &quot;&gt;qrc&lt;/span&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt; as the scheme in the URL to load. For example, for the document resource path &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New,courier'; &quot;&gt;:/docs/index.html&lt;/span&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt; use &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New,courier'; &quot;&gt;qrc:/docs/index.html&lt;/span&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt; as the URL with &lt;/span&gt;&lt;a href=&quot;qtextbrowser.html#source-prop&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;setSource&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;().&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt;See also &lt;/span&gt;&lt;a href=&quot;qtextedit.html&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;QTextEdit&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; &quot;&gt; and &lt;/span&gt;&lt;a href=&quot;qtextdocument.html&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Condensed'; text-decoration: underline; color:#004faf;&quot;&gt;QTextDocument&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QComboBox" name="comboBox">
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+         <item>
+          <property name="text">
+           <string>Combobox (editable)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="1" colspan="3">
+        <widget class="QComboBox" name="comboBox_2">
+         <item>
+          <property name="text">
+           <string>Combobox</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QLineEdit" name="lineEdit">
+         <property name="text">
+          <string>Lineedit</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QSpinBox" name="spinBox"/>
+       </item>
+       <item row="2" column="3">
+        <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="Seite">
+      <attribute name="title">
+       <string>Views</string>
+      </attribute>
+      <layout class="QGridLayout">
+       <item row="0" column="0" colspan="2">
+        <widget class="QTableWidget" name="tableWidget">
+         <row>
+          <property name="text">
+           <string>Neue Zeile</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Neue Zeile</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Neue Zeile</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Neue Zeile</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Neue Zeile</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Neue Zeile</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Neue Zeile</string>
+          </property>
+         </row>
+         <column>
+          <property name="text">
+           <string>Neue Spalte</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Neue Spalte</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Neue Spalte</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Neue Spalte</string>
+          </property>
+         </column>
+         <item row="0" column="0">
+          <property name="text">
+           <string>1</string>
+          </property>
+         </item>
+         <item row="0" column="1">
+          <property name="text">
+           <string>14</string>
+          </property>
+         </item>
+         <item row="0" column="2">
+          <property name="text">
+           <string>15</string>
+          </property>
+         </item>
+         <item row="0" column="3">
+          <property name="text">
+           <string>28</string>
+          </property>
+         </item>
+         <item row="1" column="0">
+          <property name="text">
+           <string>2</string>
+          </property>
+         </item>
+         <item row="1" column="1">
+          <property name="text">
+           <string>13</string>
+          </property>
+         </item>
+         <item row="1" column="2">
+          <property name="text">
+           <string>16</string>
+          </property>
+         </item>
+         <item row="1" column="3">
+          <property name="text">
+           <string>27</string>
+          </property>
+         </item>
+         <item row="2" column="0">
+          <property name="text">
+           <string>3</string>
+          </property>
+         </item>
+         <item row="2" column="1">
+          <property name="text">
+           <string>12</string>
+          </property>
+         </item>
+         <item row="2" column="2">
+          <property name="text">
+           <string>17</string>
+          </property>
+         </item>
+         <item row="2" column="3">
+          <property name="text">
+           <string>26</string>
+          </property>
+         </item>
+         <item row="3" column="0">
+          <property name="text">
+           <string>4</string>
+          </property>
+         </item>
+         <item row="3" column="1">
+          <property name="text">
+           <string>11</string>
+          </property>
+         </item>
+         <item row="3" column="2">
+          <property name="text">
+           <string>18</string>
+          </property>
+         </item>
+         <item row="3" column="3">
+          <property name="text">
+           <string>25</string>
+          </property>
+         </item>
+         <item row="4" column="0">
+          <property name="text">
+           <string>5</string>
+          </property>
+         </item>
+         <item row="4" column="1">
+          <property name="text">
+           <string>10</string>
+          </property>
+         </item>
+         <item row="4" column="2">
+          <property name="text">
+           <string>19</string>
+          </property>
+         </item>
+         <item row="4" column="3">
+          <property name="text">
+           <string>24</string>
+          </property>
+         </item>
+         <item row="5" column="0">
+          <property name="text">
+           <string>6</string>
+          </property>
+         </item>
+         <item row="5" column="1">
+          <property name="text">
+           <string>9</string>
+          </property>
+         </item>
+         <item row="5" column="2">
+          <property name="text">
+           <string>20</string>
+          </property>
+         </item>
+         <item row="5" column="3">
+          <property name="text">
+           <string>23</string>
+          </property>
+         </item>
+         <item row="6" column="0">
+          <property name="text">
+           <string>7</string>
+          </property>
+         </item>
+         <item row="6" column="1">
+          <property name="text">
+           <string>8</string>
+          </property>
+         </item>
+         <item row="6" column="2">
+          <property name="text">
+           <string>21</string>
+          </property>
+         </item>
+         <item row="6" column="3">
+          <property name="text">
+           <string>22</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QTreeWidget" name="treeWidget">
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="verticalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
+         <property name="rootIsDecorated">
+          <bool>true</bool>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <property name="animated">
+          <bool>true</bool>
+         </property>
+         <property name="allColumnsShowFocus">
+          <bool>false</bool>
+         </property>
+         <column>
+          <property name="text">
+           <string>Column</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Column too</string>
+          </property>
+         </column>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+          <property name="text">
+           <string>Value</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>Neues untergeordnetes Element</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <item>
+            <property name="text">
+             <string>Neues untergeordnetes Element</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Neues Element</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Neues Element</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Neues Element</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Neues Element</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <item>
+             <property name="text">
+              <string>Neues untergeordnetes Element</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <item>
+              <property name="text">
+               <string>Neues untergeordnetes Element</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <item>
+               <property name="text">
+                <string>Neues untergeordnetes Element</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Neues Element</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Neues Element</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Neues Element</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Neues Element</string>
+               </property>
+               <property name="text">
+                <string>Value</string>
+               </property>
+              </item>
+             </item>
+            </item>
+           </item>
+          </item>
+         </item>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+          <property name="text">
+           <string>Some Value</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+          <property name="text">
+           <string>Boooring</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Neues Element</string>
+          </property>
+          <property name="text">
+           <string>I'm here</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="Seite_3">
+      <attribute name="title">
+       <string>Container</string>
+      </attribute>
+      <layout class="QGridLayout">
+       <item row="0" column="0">
+        <widget class="QTabWidget" name="tabWidget_2">
+         <property name="tabPosition">
+          <enum>QTabWidget::South</enum>
+         </property>
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="tab_3">
+          <attribute name="title">
+           <string>Frames</string>
+          </attribute>
+          <layout class="QGridLayout">
+           <item row="0" column="0">
+            <widget class="QGroupBox" name="groupBox">
+             <property name="title">
+              <string>GroupBox</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="Line" name="line_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QFrame" name="frame">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
+             <layout class="QGridLayout">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>Plain</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="3">
+            <widget class="Line" name="line">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QFrame" name="frame_2">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QGridLayout">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>Raised</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="Line" name="line_3">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QFrame" name="frame_3">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <layout class="QGridLayout">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_3">
+                <property name="text">
+                 <string>Sunken</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tab_4">
+          <attribute name="title">
+           <string>Tabs</string>
+          </attribute>
+          <layout class="QGridLayout">
+           <item row="0" column="0">
+            <widget class="QTabWidget" name="tabWidget_3">
+             <property name="tabPosition">
+              <enum>QTabWidget::West</enum>
+             </property>
+             <property name="currentIndex">
+              <number>0</number>
+             </property>
+             <widget class="QWidget" name="tab_5">
+              <attribute name="title">
+               <string>Tab 1</string>
+              </attribute>
+             </widget>
+             <widget class="QWidget" name="tab_6">
+              <attribute name="title">
+               <string>Tab 2</string>
+              </attribute>
+             </widget>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QToolBox" name="toolBox_2">
+             <property name="currentIndex">
+              <number>0</number>
+             </property>
+             <widget class="QWidget" name="page_3">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>247</width>
+                <height>144</height>
+               </rect>
+              </property>
+              <attribute name="label">
+               <string>Page 1</string>
+              </attribute>
+             </widget>
+             <widget class="QWidget" name="Seite_7">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>100</width>
+                <height>30</height>
+               </rect>
+              </property>
+              <attribute name="label">
+               <string>Seite</string>
+              </attribute>
+             </widget>
+             <widget class="QWidget" name="Seite_8">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>100</width>
+                <height>30</height>
+               </rect>
+              </property>
+              <attribute name="label">
+               <string>Seite</string>
+              </attribute>
+             </widget>
+             <widget class="QWidget" name="page_4">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>100</width>
+                <height>30</height>
+               </rect>
+              </property>
+              <attribute name="label">
+               <string>Page 2</string>
+              </attribute>
+             </widget>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QToolBox" name="toolBox">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="currentIndex">
+              <number>3</number>
+             </property>
+             <widget class="QWidget" name="page">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>100</width>
+                <height>30</height>
+               </rect>
+              </property>
+              <attribute name="label">
+               <string>Page 1</string>
+              </attribute>
+              <layout class="QGridLayout">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_4">
+                 <property name="text">
+                  <string>Sunken</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="page_2">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>100</width>
+                <height>30</height>
+               </rect>
+              </property>
+              <attribute name="label">
+               <string>Page 2</string>
+              </attribute>
+             </widget>
+             <widget class="QWidget" name="Seite_5">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>100</width>
+                <height>30</height>
+               </rect>
+              </property>
+              <attribute name="label">
+               <string>Seite</string>
+              </attribute>
+             </widget>
+             <widget class="QWidget" name="Seite_6">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>247</width>
+                <height>144</height>
+               </rect>
+              </property>
+              <attribute name="label">
+               <string>Seite</string>
+              </attribute>
+             </widget>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QTabWidget" name="tabWidget_4">
+             <property name="tabPosition">
+              <enum>QTabWidget::East</enum>
+             </property>
+             <widget class="QWidget" name="tab_7">
+              <attribute name="title">
+               <string>Tab 1</string>
+              </attribute>
+             </widget>
+             <widget class="QWidget" name="tab_8">
+              <attribute name="title">
+               <string>Tab 2</string>
+              </attribute>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="Seite_2">
+      <attribute name="title">
+       <string>Slider</string>
+      </attribute>
+      <layout class="QGridLayout">
+       <item row="0" column="0" rowspan="8">
+        <widget class="QSlider" name="verticalSlider">
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>50</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="7">
+        <widget class="QSlider" name="horizontalSlider">
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>50</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="8" rowspan="8">
+        <widget class="QScrollBar" name="verticalScrollBar">
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>50</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="7" rowspan="6">
+        <widget class="QProgressBar" name="progressBar_2">
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>50</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" rowspan="2">
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="2">
+        <widget class="QSpinBox" name="spinBox_2">
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>50</number>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3" rowspan="2">
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="5" rowspan="2">
+        <widget class="QDial" name="dial">
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>50</number>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="6" rowspan="2">
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="4" column="3" colspan="2">
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>75</width>
+           <height>31</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="5" column="1" colspan="6">
+        <widget class="QProgressBar" name="progressBar_4">
+         <property name="value">
+          <number>50</number>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1" colspan="6">
+        <widget class="QProgressBar" name="progressBar_3">
+         <property name="value">
+          <number>50</number>
+         </property>
+         <property name="invertedAppearance">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1" colspan="6">
+        <widget class="QProgressBar" name="progressBar">
+         <property name="maximum">
+          <number>0</number>
+         </property>
+         <property name="value">
+          <number>0</number>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="8">
+        <widget class="QScrollBar" name="horizontalScrollBar">
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>50</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="Seite_4">
+      <attribute name="title">
+       <string>Calendar</string>
+      </attribute>
+      <layout class="QGridLayout">
+       <item row="0" column="0">
+        <widget class="QCalendarWidget" name="calendarWidget"/>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QWidget" name="bottomBar" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="margin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QCheckBox" name="checkBox">
+        <property name="text">
+         <string>Enabled</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="rtl">
+        <property name="text">
+         <string>right2left</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>187</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QDialogButtonBox" name="buttonBox">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="standardButtons">
+         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+     <zorder>checkBox</zorder>
+     <zorder>rtl</zorder>
+     <zorder>buttonBox</zorder>
+    </widget>
+   </item>
+  </layout>
+  <action name="actionDon_t_open">
+   <property name="text">
+    <string>Don't open</string>
+   </property>
+  </action>
+  <action name="actionDon_t_save">
+   <property name="text">
+    <string>Don't save</string>
+   </property>
+  </action>
+  <action name="actionDon_t_exit">
+   <property name="text">
+    <string>Don't exit</string>
+   </property>
+  </action>
+  <action name="actionDon_t">
+   <property name="text">
+    <string>Don't</string>
+   </property>
+  </action>
+  <action name="actionJust_don_t">
+   <property name="text">
+    <string>Just don't</string>
+   </property>
+  </action>
+  <action name="actionDo_anything">
+   <property name="text">
+    <string>Do anything</string>
+   </property>
+  </action>
+  <action name="actionHere">
+   <property name="text">
+    <string>Here!</string>
+   </property>
+  </action>
+  <action name="actionIs_fixed">
+   <property name="text">
+    <string>Is fixed!</string>
+   </property>
+  </action>
+  <action name="actionSo_you_can_t_do_anything">
+   <property name="text">
+    <string>So you can't do anything</string>
+   </property>
+  </action>
+  <action name="action_at_least_not_here">
+   <property name="text">
+    <string>...at least not here.</string>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>...</string>
+   </property>
+  </action>
+  <action name="action_no_really">
+   <property name="text">
+    <string>... no really ...</string>
+   </property>
+  </action>
+  <action name="actionNOOOO">
+   <property name="text">
+    <string>NOOOO!</string>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="text">
+    <string>=)</string>
+   </property>
+  </action>
+  <action name="action_P">
+   <property name="text">
+    <string>;-P</string>
+   </property>
+  </action>
+  <action name="action_3">
+   <property name="text">
+    <string>;-)</string>
+   </property>
+  </action>
+  <action name="action_4">
+   <property name="text">
+    <string>:-(</string>
+   </property>
+  </action>
+  <action name="action8">
+   <property name="text">
+    <string>8-)</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="config.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>Demo</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>458</x>
+     <y>459</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>Demo</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>458</x>
+     <y>459</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>tabWidget</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>64</x>
+     <y>457</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>31</x>
+     <y>426</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>dial</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>151</x>
+     <y>162</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>338</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>verticalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>dial</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>39</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>338</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>dial</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>327</x>
+     <y>65</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>338</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalScrollBar</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>dial</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>348</x>
+     <y>411</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>338</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>verticalScrollBar</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>dial</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>442</x>
+     <y>387</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>338</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dial</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>338</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>151</x>
+     <y>162</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dial</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>verticalSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>338</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>41</x>
+     <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dial</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>horizontalSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>338</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>287</x>
+     <y>70</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dial</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>progressBar_2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>338</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>419</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dial</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>verticalScrollBar</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>338</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>442</x>
+     <y>284</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dial</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>horizontalScrollBar</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>338</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>273</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dial</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>progressBar_4</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>338</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>386</x>
+     <y>321</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dial</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>progressBar_3</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>338</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>386</x>
+     <y>354</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

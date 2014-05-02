@@ -1,0 +1,7 @@
+[Misc]
+Name=Virtuality
+Name[x-test]=xxVirtualityxx
+ConfigPage=kstyle_virtuality_config
+Comment=There is no spoon
+[KDE]
+WidgetStyle=Virtuality

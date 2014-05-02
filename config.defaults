@@ -1,0 +1,79 @@
+/* Bespin widget style for Qt4
+   Copyright (C) 2007 Thomas Luebking <thomas.luebking@web.de>
+
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public
+   License version 2 as published by the Free Software Foundation.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with this library; see the file COPYING.LIB.  If not, write to
+   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+   Boston, MA 02110-1301, USA.
+ */
+
+#ifndef BESPIN_CONFIG_DEFAULTS
+#define BESPIN_CONFIG_DEFAULTS
+
+#define DEF_SCALE "Scale", 1.0
+#define LEFTHANDED "LeftHanded", false
+#define MACSTYLE "MacStyle", true
+#define FADE_INACTIVE "FadeInactive", true
+
+#define BG_MODAL_OPACITY "Bg.Modal.Opacity", 255
+#define BG_RING_OVERLAY "Bg.RingOverlay", false
+#define BG_STRUCTURE "Bg.Structure", 0
+
+#define BTN_DISABLED_TOOLS "Btn.DisabledToolStyle", 0
+#define BTN_MIN_HEIGHT "Btn.MinHeight", 0
+
+#define DIALOG_BTN_LAYOUT "DialogButtonLayout", 2
+
+#define HACK_DOCK_LOCKING "Hack.DockLocking", false
+
+// yes - "true" by default. This Gwenview attitude sucks incredibly!
+#define HACK_FIX_GWENVIEW "Hack.FixGwenview", true
+// yes - "true" by default since a terminal w/o scanlines is no terminal at all ;-)
+#define HACK_KRUNNER "Hack.KRunner", false
+#define HACK_PANNING "Hack.Panning", false
+#define HACK_SUSPEND_FULLSCREEN_PLAYERS "Hack.SuspendFSPlayers", false
+// yes - "true" by default since they're dead ugly
+#define HACK_TITLE_WIDGET "Hack.TitleWidget", true
+#define HACK_TOOLBAR_LOCKING "Hack.ToolBarLocking", false
+#define HACK_WINDOWMOVE "Hack.WindowMovement", false
+// yes - "true" by default since this is the most stupid shit ever.
+#define HACK_BRIGHTNESS_OSD "Hack.BrightnessOSD", true
+
+#define INPUT_PWECHOCHAR "Input.PwEchoChar", 0x26AB
+
+#define INVERT_DOCKS "Invert.Docks", false
+#define INVERT_MENUBARS "Invert.Menubars", true
+#define INVERT_MENUS "Invert.Menus", true
+#define INVERT_MODALS "Invert.Modals", true
+#define INVERT_TITLEBARS "Invert.Titlebars", true
+#define INVERT_TOOLBARS "Invert.Toolbars", true
+
+#define ROUNDNESS "Frame.Roundness", 6
+
+#define MENU_DELAY "Menu.Delay", 96
+#define MENU_SHOWICONS "Menu.ShowIcons", false
+#define MENU_SHADOW "Menu.Shadow", false
+
+#define SHADOW_COLOR "ShadowColor", QColor(0,0,0,255)
+#define HALO_COLOR "HaloColor", QColor(255,255,255,255)
+#define SHADOW_IS_HALO "ShadowIsHalo", false
+#define SHADOW_SIZE_INACTIVE "InactiveShadowSize", 12
+#define SHADOW_SIZE_ACTIVE "ActiveShadowSize", 48
+#define SHOW_MNEMONIC "ShowMnemonic", false
+
+#define SLIDER_BUTTONS "Slider.Buttons", false
+#define SLIDER_THICKNESS "Slider.Thickness", 11
+
+#define TAB_DURATION "Tab.Duration", 350
+#define TAB_TRANSITION "Tab.Transition", 10
+
+#endif // BESPIN_CONFIG_DEFAULTS
