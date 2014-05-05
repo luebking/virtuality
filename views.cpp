@@ -53,11 +53,17 @@ Style::drawHeaderSection(const QStyleOption *option, QPainter *painter, const QW
     SAVE_PAINTER(Pen|Brush|Alias);
     const QStyleOptionHeader *header = qstyleoption_cast<const QStyleOptionHeader *>(option);
     const bool sorting = header && (header->sortIndicator != QStyleOptionHeader::None);
-    const bool beginning = header && (header->position == QStyleOptionHeader::Beginning ||
-                                      header->position == QStyleOptionHeader::OnlyOneSection);
-    const bool ending = header && (header->position == QStyleOptionHeader::End ||
-                                   header->position == QStyleOptionHeader::OnlyOneSection);
-
+    char corners = 0;
+    if (header) {
+        if (header->position == QStyleOptionHeader::Beginning || header->position == QStyleOptionHeader::OnlyOneSection)
+            corners |= (option->direction == Qt::LeftToRight ? Corner::TopLeft : Corner::TopRight);
+        if (header->position == QStyleOptionHeader::End || header->position == QStyleOptionHeader::OnlyOneSection) {
+            if (header->orientation == Qt::Horizontal)
+                corners |= (option->direction == Qt::LeftToRight ? Corner::TopRight : Corner::TopLeft);
+            else
+                corners |= (option->direction == Qt::LeftToRight ? Corner::BottomLeft : Corner::BottomRight);
+        }
+    }
 
     if (appType == GTK)
         sunken = option->state & State_HasFocus;
@@ -79,22 +85,28 @@ Style::drawHeaderSection(const QStyleOption *option, QPainter *painter, const QW
     const int rnd(config.frame.roundness);
     const int rnd_2 = 2*rnd;
     const QRect r(RECT.adjusted(0,0,1,1));
-    path.moveTo(r.bottomRight());
-    if (ending && header->orientation == Qt::Vertical) {
+    if (corners & Corner::BottomRight) {
+        painter->setRenderHint(QPainter::Antialiasing, true);
+        path.moveTo(r.right(), r.bottom() - rnd_2);
+        path.arcTo(r.right() - rnd_2, r.bottom() - rnd_2, rnd_2, rnd_2, 0, -90);
+    } else {
+        path.moveTo(r.bottomRight());
+    }
+    if (corners & Corner::BottomLeft) {
         painter->setRenderHint(QPainter::Antialiasing, true);
         path.lineTo(r.x() + rnd, r.bottom());
         path.arcTo(r.x(), r.bottom() - rnd_2, rnd_2, rnd_2, -90, -90);
     } else {
         path.lineTo(r.bottomLeft());
     }
-    if (beginning) {
+    if (corners & Corner::TopLeft) {
         painter->setRenderHint(QPainter::Antialiasing, true);
         path.lineTo(r.x(), r.y() + rnd);
         path.arcTo(r.x(), r.y(), rnd_2, rnd_2, 180, -90);
     } else {
         path.lineTo(r.topLeft());
     }
-    if (ending && header->orientation == Qt::Horizontal) {
+    if (corners & Corner::TopRight) {
         painter->setRenderHint(QPainter::Antialiasing, true);
         path.lineTo(r.right() - rnd, r.y());
         path.arcTo(r.right() - rnd_2, r.y(), rnd_2, rnd_2, 90, -90);
@@ -109,8 +121,10 @@ Style::drawHeaderSection(const QStyleOption *option, QPainter *painter, const QW
         painter->setPen(FX::blend(c, FCOLOR(Base), 6, 1));
         if (header && header->orientation == Qt::Vertical)
             painter->drawLine(RECT.bottomLeft(), RECT.bottomRight());
-        else
+        else if (option->direction == Qt::LeftToRight)
             painter->drawLine(RECT.topRight(), RECT.bottomRight());
+        else
+            painter->drawLine(RECT.topLeft(), RECT.bottomLeft());
     }
     RESTORE_PAINTER
 }
