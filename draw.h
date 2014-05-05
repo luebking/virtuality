@@ -37,8 +37,9 @@ using namespace BE;
 
 #define BESPIN_MNEMONIC config.mnemonic
 
-#define FOCUS_FRAME_PEN QPen(FX::blend(FCOLOR(Window), FCOLOR(Highlight), 1, 2), F(2) & ~1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin)
-#define FRAME_PEN QPen(FX::blend(FCOLOR(Window), FCOLOR(WindowText), 8, 1), F(2) & ~1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin)
+#define FRAME_STROKE F(2) & ~1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin
+#define FOCUS_FRAME_PEN QPen(FX::blend(FCOLOR(Window), FCOLOR(Highlight), 1, 2), FRAME_STROKE)
+#define FRAME_PEN QPen(FX::blend(FCOLOR(Window), FCOLOR(WindowText), 8, 1), FRAME_STROKE)
 
 #define THERMOMETER_COLOR FX::blend(FCOLOR(Window), FCOLOR(WindowText), 1, 4)
 #define GROOVE_COLOR FX::blend(FCOLOR(Window), FCOLOR(WindowText), 8, 1)
