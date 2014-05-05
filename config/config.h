@@ -33,6 +33,7 @@ public:
     static QStringList colors(const QPalette &pal, QPalette::ColorGroup group);
     static void updatePalette(QPalette &pal, QPalette::ColorGroup group, const QStringList &list);
     static void savePalette(const QPalette &pal);
+    void setLogo(const QPixmap &pix);
 protected:
     void changeEvent(QEvent *event);
     bool eventFilter( QObject *o, QEvent *e );

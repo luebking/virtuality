@@ -21,6 +21,7 @@
 #include "dialog.h"
 #include <QDir>
 #include <QFile>
+#include <QPainter>
 #include <QProcess>
 #include <QSettings>
 #include <QStyleFactory>
@@ -78,6 +79,28 @@ enum Mode
 
 extern const QString virtuality_revision();
 
+static QPixmap logo(int s, QColor c)
+{
+    QPixmap logoPix(s*4,s*4);
+    QPainterPath path;
+    path.moveTo(logoPix.rect().center());
+    path.arcTo(logoPix.rect(), 90, 270);
+    path.lineTo(logoPix.rect().right(), logoPix.rect().y()+4*s/3);
+    path.lineTo(logoPix.rect().right()-s, logoPix.rect().y()+4*s/3);
+    path.lineTo(logoPix.rect().center().x() + s/2, logoPix.rect().center().y());
+    path.lineTo(logoPix.rect().center());
+    path.closeSubpath();
+    path.addEllipse(logoPix.rect().right()-3*s/2, logoPix.rect().y(), s, s);
+    logoPix.fill(Qt::transparent);
+    QPainter p(&logoPix);
+    p.setRenderHint(QPainter::Antialiasing);
+    p.setBrush(c);
+    p.setPen(Qt::NoPen);
+    p.drawPath(path);
+    p.end();
+    return logoPix;
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -114,6 +137,8 @@ main(int argc, char *argv[])
         Config *config = new Config;
         BConfigDialog *window = new BConfigDialog(config, BConfigDialog::All &
                                                                   ~(BConfigDialog::Demo | BConfigDialog::Import | BConfigDialog::Export));
+        QColor c(window->palette().color(QPalette::Active, QPalette::WindowText));
+        config->setLogo(logo(32, c));
         window->show();
         RETURN_APP_ERROR;
     }
@@ -137,7 +162,6 @@ main(int argc, char *argv[])
         if (title.isEmpty())
             title = "Virtuality Demo";
 
-        char *preset = 0;
         if (mode == Demo && argc > 2) {   // allow setting another style
             if (!app) app = new QApplication(argc, argv);
             app->setStyle(argv[2]);
@@ -149,6 +173,12 @@ main(int argc, char *argv[])
         Dialog *window = new Dialog;
         Ui::Demo ui;
         ui.setupUi(window);
+        QIcon icn(logo(8, ui.toolButton->palette().color(QPalette::Active, ui.toolButton->foregroundRole())));
+        ui.toolButton->setIcon(icn);
+        ui.toolButton_2->setIcon(icn);
+        ui.toolButton_3->setIcon(icn);
+        ui.toolButton_4->setIcon(icn);
+        ui.toolButton_5->setIcon(icn);
         ui.tabWidget->setCurrentIndex(0);
         QObject::connect (ui.rtl, SIGNAL(toggled(bool)), window, SLOT(setLayoutDirection(bool)));
         window->setWindowTitle ( title );

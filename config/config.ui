@@ -709,7 +709,21 @@
     </widget>
    </item>
    <item>
-    <widget class="QTextBrowser" name="info"/>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="logo">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTextBrowser" name="info"/>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

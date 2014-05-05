@@ -592,6 +592,11 @@ Config::savePalette(const QPalette &pal)
 
 }
 
+void Config::setLogo(const QPixmap &pix)
+{
+    ui.logo->setPixmap(pix);
+}
+
 void
 Config::learnPwChar()
 {
