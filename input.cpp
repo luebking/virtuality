@@ -163,6 +163,7 @@ Style::drawSpinBox(const QStyleOptionComplex *option, QPainter *painter, const Q
 
 static int animStep = -1;
 
+#define DRAW_SEGMENT(_R_, _START_, _SPAN_) (hasFocus || qAbs(_SPAN_) > 5759) ? painter->drawEllipse(_R_) : painter->drawArc(_R_, _START_, _SPAN_)
 void
 Style::drawComboBox(const QStyleOptionComplex *option, QPainter *painter, const QWidget *widget) const
 {
@@ -181,11 +182,15 @@ Style::drawComboBox(const QStyleOptionComplex *option, QPainter *painter, const 
     const QComboBox *combo = widget ? qobject_cast<const QComboBox*>(widget) : NULL;
     if ((cmb->subControls & SC_ComboBoxArrow) && (!combo || combo->count() > 0)) {   // do we have an arrow?
         ar = subControlRect(CC_ComboBox, cmb, SC_ComboBoxArrow, widget);
+        const int dx = (F(2) & ~1) / 2;
+        ar.translate(cmb->direction == Qt::LeftToRight ? -dx : dx, 0);
     }
 
     const bool listShown = combo && combo->view() && ((QWidget*)(combo->view()))->isVisible();
-    if (listShown) // this messes up hover
+    if (listShown) { // this messes up hover
         hover = hover || QRect(widget->mapToGlobal(RECT.topLeft()), RECT.size()).contains(QCursor::pos()); // TODO Qt5, avoid asking for the cursor pos
+        animStep = MAX_STEPS;
+    }
 
     QColor c = hasFocus ? FCOLOR(Highlight) : (cmb->editable ? FCOLOR(Text) : FCOLOR(WindowText));
     if (cmb->editable) {
@@ -203,18 +208,19 @@ Style::drawComboBox(const QStyleOptionComplex *option, QPainter *painter, const 
             text = ar.left() - (F(16) + RECT.x());
 
         painter->setRenderHint(QPainter::Antialiasing, true);
-        painter->setPen(QPen(hasFocus ? FCOLOR(Highlight) : FX::blend(FCOLOR(Window), c, 4, 1), F(2)));
+        painter->setPen(QPen(hasFocus ? FCOLOR(Highlight) : FX::blend(FCOLOR(Window), c, 4, 1), FRAME_STROKE));
         painter->setBrush(Qt::NoBrush);
+
         const int y = ar.y() + ar.height()/2;
+        const int da = animStep * 168 / MAX_STEPS;
         if (option->direction == Qt::LeftToRight) {
-            painter->drawArc(ar, 16*120, 16*192);
+            DRAW_SEGMENT(ar, 16*(120 - da/2), 16*(192+da));
             painter->drawLine(RECT.x() + icon + text + F(6), y, ar.left()-F(2), y);
         } else {
-            painter->drawArc(ar, 16*30, -16*192);
+            DRAW_SEGMENT(ar, 16*(30 + da/2), -16*(192+da));
             painter->drawLine(RECT.right() - (icon + text + F(6)), y, ar.right()+F(2), y);
         }
-        painter->setRenderHint(QPainter::Antialiasing, false);
-        c = FX::blend(FCOLOR(Window), c, MAX_STEPS, 1 + 2*animStep);
+        c = FX::blend(FCOLOR(Window), FCOLOR(WindowText), MAX_STEPS - animStep, 1 + animStep);
     }
 
     if (!isEnabled) {
@@ -225,7 +231,7 @@ Style::drawComboBox(const QStyleOptionComplex *option, QPainter *painter, const 
     painter->setPen(Qt::NoPen);
     painter->setBrush(c);
 
-    // the arrow
+    // the arrow -------------------------------------------------------------------
     Navi::Direction dir = Navi::S;
     bool upDown = false;
     if (listShown)
@@ -262,6 +268,7 @@ Style::drawComboBox(const QStyleOptionComplex *option, QPainter *painter, const 
             ar.translate(dx, cmb->editable ? -F(2) : -F(1));
         drawArrow(dir, ar, painter);
     }
+    // --------------------------------------------------------------------------------
     RESTORE_PAINTER
 }
 
