@@ -29,6 +29,74 @@
 
 #include <QtDebug>
 
+namespace Corner {
+    enum Corners { TopLeft = 1<<0, TopRight = 1<<1, BottomLeft = 1<<2, BottomRight = 1<<3 };
+}
+
+QPainterPath framePath(const QRect &r, char corners, int rnd, bool hasFocus = false)
+{
+    const int dx = hasFocus ? qMin(qMax(r.width()/4, F(32)), r.width()/2) : qMin(r.width()/4,F(32));
+    const int dy = hasFocus ? qMin(qMax(r.height()/4, F(32)), r.height()/2) : qMin(r.height()/4,F(32));
+    const int rnd_2 = 2*rnd;
+
+    QPainterPath path;
+
+    if (corners & Corner::TopLeft) {
+        if (dy > rnd) {
+            path.moveTo(r.x(), r.y() + dy);
+            path.lineTo(r.x(), r.y() + rnd);
+        } else {
+            path.moveTo(r.x(), r.y() + rnd);
+        }
+        path.arcTo(r.x(), r.y(), rnd_2, rnd_2, 180, -90);
+        if (dx > rnd) {
+            path.lineTo(r.x() + dx, r.y());
+        }
+    }
+
+    if (corners & Corner::TopRight) {
+        if (dy > rnd) {
+            path.moveTo(r.right(), r.y() + dy);
+            path.lineTo(r.right(), r.y() + rnd);
+        } else {
+            path.moveTo(r.right(), r.y() + rnd);
+        }
+        path.arcTo(r.right() - rnd_2, r.y(), rnd_2, rnd_2, 0, 90);
+        if (dx > rnd) {
+            path.lineTo(r.right() - dx, r.y());
+        }
+    }
+
+    if (corners & Corner::BottomRight) {
+        if (dy > rnd) {
+            path.moveTo(r.right(), r.bottom() - dy);
+            path.lineTo(r.right(), r.bottom() - rnd);
+        } else {
+            path.moveTo(r.right(), r.bottom() - rnd);
+        }
+        path.arcTo(r.right() - rnd_2, r.bottom() - rnd_2, rnd_2, rnd_2, 0, -90);
+        if (dx > rnd) {
+            path.lineTo(r.right() - dx, r.bottom());
+        }
+    }
+
+    if (corners & Corner::BottomLeft) {
+        if (dy > rnd) {
+            path.moveTo(r.x(), r.bottom() - dy);
+            path.lineTo(r.x(), r.bottom() - rnd);
+        } else {
+            path.moveTo(r.x(), r.bottom() - rnd);
+        }
+        path.arcTo(r.x(), r.bottom() - rnd_2, rnd_2, rnd_2, 180, 90);
+        if (dx > rnd) {
+            path.lineTo(r.x() + dx, r.bottom());
+        }
+    }
+
+    return path;
+}
+
+
 void
 Style::drawFocusFrame(const QStyleOption *option, QPainter *painter, const QWidget *w) const
 {
@@ -79,11 +147,6 @@ Style::drawFrame(const QStyleOption *option, QPainter *painter, const QWidget *w
 
     painter->setRenderHint(QPainter::Antialiasing, true);
 
-    const int rnd(config.frame.roundness);
-    const int rnd_2 = 2*rnd;
-    const int d = (F(2) & ~1)/2;
-    const QRect r(RECT.adjusted(d,d,1-d,1-d));
-
     if (widget) {
         QWidget *parent = widget->parentWidget();
         bool fill = widget->autoFillBackground() && parent &&
@@ -120,7 +183,7 @@ Style::drawFrame(const QStyleOption *option, QPainter *painter, const QWidget *w
             painter->setPen(Qt::NoPen);
             painter->drawRect(RECT);
             painter->setBrush(autoFill);
-            painter->drawRoundedRect(RECT.adjusted(1,1,-1,-1), rnd, rnd);
+            painter->drawRoundedRect(RECT.adjusted(1,1,-1,-1), config.frame.roundness, config.frame.roundness);
             if (!hasFocus) {
                 RESTORE_PAINTER
                 return;
@@ -130,33 +193,13 @@ Style::drawFrame(const QStyleOption *option, QPainter *painter, const QWidget *w
         }
     }
 
-    const int dx = hasFocus ? qMin(qMax(r.width()/4, F(32)), r.width()/2) : qMin(r.width()/4,F(32));
-    const int dy = hasFocus ? qMin(qMax(r.height()/4, F(32)), r.height()/2) : qMin(r.height()/4,F(32));
-    QPainterPath path;
+    char corners = option->direction == Qt::LeftToRight ? Corner::BottomRight : Corner::BottomLeft;
     const QTreeView *view = qobject_cast<const QTreeView*>(widget);
     if (!view || view->isHeaderHidden()) {
-        if (dy > rnd) {
-            path.moveTo(r.x(), r.y() + dy);
-            path.lineTo(r.x(), r.y() + rnd);
-        } else {
-            path.moveTo(r.x(), r.y() + rnd);
-        }
-        path.arcTo(r.x(), r.y(), rnd_2, rnd_2, 180, -90);
-        if (dx > rnd) {
-            path.lineTo(r.x() + dx, r.y());
-        }
+        corners |= (option->direction == Qt::LeftToRight ? Corner::TopLeft : Corner::TopRight);
     }
-    if (dy > rnd) {
-        path.moveTo(r.right(), r.bottom() - dy);
-        path.lineTo(r.right(), r.bottom() - rnd);
-    } else {
-        path.moveTo(r.right(), r.bottom() - rnd);
-    }
-    path.arcTo(r.right() - rnd_2, r.bottom() - rnd_2, rnd_2, rnd_2, 0, -90);
-    if (dx > rnd) {
-        path.lineTo(r.right() - dx, r.bottom());
-    }
-    painter->drawPath(path);
+    const int d = (F(2) & ~1)/2;
+    painter->drawPath(framePath(RECT.adjusted(d,d,1-d,1-d), corners, config.frame.roundness, hasFocus));
     RESTORE_PAINTER
 }
 
@@ -228,32 +271,9 @@ Style::drawGroupBoxFrame(const QStyleOption *option, QPainter *painter, const QW
     painter->setBrush(Qt::NoBrush);
     painter->setRenderHint(QPainter::Antialiasing, true);
 
-    QRect r(RECT.adjusted(1,1,0,0));
-    const int dx = qMin(qMax(RECT.width()/4, F(32)), RECT.width()/2);
-    const int dy = qMin(RECT.height()/4,F(32));
-    const int rnd(config.frame.roundness);
-    const int rnd_2 = 2*rnd;
-    QPainterPath path;
-    if (dy > rnd) {
-        path.moveTo(r.x(), r.bottom() - dy);
-        path.lineTo(r.x(), r.bottom() - rnd);
-    } else {
-        path.moveTo(r.x(), r.bottom() - rnd);
-    }
-    path.arcTo(r.x(), r.bottom() - rnd_2, rnd_2, rnd_2, 180, 90);
-    if (dx > rnd) {
-        path.lineTo(r.x() + dx, r.bottom());
-    }
-    if (dy > rnd) {
-        path.moveTo(r.right(), r.y() + dy);
-        path.lineTo(r.right(), r.y() + rnd);
-    } else {
-        path.moveTo(r.right(), r.y() + rnd);
-    }
-    path.arcTo(r.right() - rnd_2, r.y(), rnd_2, rnd_2, 0, 90);
-    if (dx > rnd) {
-        path.lineTo(r.right() - dx, r.y());
-    }
-    painter->drawPath(path);
+    const int d = (F(2) & ~1)/2;
+    const char corners = option->direction == Qt::LeftToRight ? Corner::TopRight|Corner::BottomLeft :
+                                                                Corner::TopLeft|Corner::BottomRight;
+    painter->drawPath(framePath(RECT.adjusted(d,d,1-d,1-d), corners, config.frame.roundness));
     RESTORE_PAINTER
 }
