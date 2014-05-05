@@ -181,16 +181,26 @@ Style::drawButtonFrame(const QStyleOption *option, QPainter *painter, const QWid
         painter->setRenderHint(QPainter::Antialiasing, true);
         const int radius = r.height()/2;
         painter->drawRoundedRect(r, radius, radius);
-//         if (!(hasFocus || sunken) && RECT.width() > RECT.height() + F(8)) {
-//             QRect r(RECT);
-//             r.setWidth(r.height() + (MAX_STEPS-anim.step)*(r.width()-r.height())/MAX_STEPS);
-//             r.adjust(padding + F(4)*sunken, padding, -(padding + F(4)*sunken), -padding);
-//             r.moveCenter(RECT.center());
-//             QColor c(oc);
-//             c.setAlpha(c.alpha()*(MAX_STEPS - anim.step)/(8*MAX_STEPS));
-//             painter->setPen(QPen(c, F(2)));
-//             painter->drawRoundedRect(r, radius, radius);
-//         }
+#if false // rails
+        if (!(sunken || hasFocus) && anim.step < MAX_STEPS) {
+            const int x = RECT.x() + RECT.width() / 2;
+            const int w = RECT.width()/6 + anim.step*RECT.width()/(3*MAX_STEPS);
+            painter->drawLine(RECT.x() + w, r.y(), x, r.y());
+            painter->drawLine(x, r.bottom() + F(1), RECT.right() - w, r.bottom() + F(1));
+        }
+#endif
+#if false // swapping outer bound
+        if (!(hasFocus || sunken) && RECT.width() > RECT.height() + F(8)) {
+            QRect r(RECT);
+            r.setWidth(r.height() + (MAX_STEPS-anim.step)*(r.width()-r.height())/MAX_STEPS);
+            r.adjust(padding + F(4)*sunken, padding, -(padding + F(4)*sunken), -padding);
+            r.moveCenter(RECT.center());
+            QColor c(oc);
+            c.setAlpha(c.alpha()*(MAX_STEPS - anim.step)/(8*MAX_STEPS));
+            painter->setPen(QPen(c, F(2)));
+            painter->drawRoundedRect(r, radius, radius);
+        }
+#endif
         RESTORE_PAINTER
     }
 
@@ -252,6 +262,7 @@ Style::drawPushButtonLabel(const QStyleOption *option, QPainter *painter, const 
         { anim.widget = 0; anim.step = 0; }
 }
 
+#if 0
 #define DRAW_SEGMENT(_R_, _START_, _SPAN_) qAbs(_SPAN_) > 5759 ? painter->drawEllipse(_R_) : (hasFocus ? painter->drawPie(_R_, _START_, _SPAN_) : painter->drawArc(_R_, _START_, _SPAN_))
 
 void
@@ -279,11 +290,15 @@ Style::drawRadioOrCheckBox(const QStyleOption *option, QPainter *painter, const 
 
     int animStep = (isRadio && isOn) || option->state & QStyle::State_Item ? 0 : HOVER_STEP;
     const int a = animStep*168/(2*MAX_STEPS);
-    painter->setPen(QPen(FX::blend(FCOLOR(Window), FCOLOR(WindowText)), F(2)));
+//     if (hasFocus)
+//         painter->setPen(QPen(FCOLOR(Highlight), F(2) & ~1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+//     else
+//         painter->setPen(QPen(FX::blend(FCOLOR(Window), FCOLOR(WindowText)), F(2) & ~1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     if (hasFocus)
         painter->setBrush(FCOLOR(Highlight));
     else
         painter->setBrush(Qt::NoBrush);
+    painter->setPen(QPen(FX::blend(FCOLOR(Window), FCOLOR(WindowText)), F(2) & ~1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     if (isRadio) {
         if (option->direction == Qt::LeftToRight)
             DRAW_SEGMENT(r, -16*(96+a), 16*(192+2*a));
@@ -305,6 +320,71 @@ Style::drawRadioOrCheckBox(const QStyleOption *option, QPainter *painter, const 
             painter->setBrush(FCOLOR(WindowText));
         }
         if (!isRadio && !(option->state & State_On))
+            painter->drawChord(r, -180*16, 180*16);
+        else
+            painter->drawEllipse(r);
+    }
+    RESTORE_PAINTER
+}
+#endif
+
+#define DRAW_SEGMENT(_R_, _START_, _SPAN_) (hasFocus || qAbs(_SPAN_) > 5759) ? painter->drawEllipse(_R_) : painter->drawArc(_R_, _START_, _SPAN_)
+
+void
+Style::drawRadioOrCheckBox(const QStyleOption *option, QPainter *painter, const QWidget *widget, bool isRadio) const
+{
+    OPT_HOVER OPT_SUNKEN OPT_FOCUS
+
+    if ( widget && widget->inherits("QWebView") )
+        widget = 0;
+
+    char state = (option->state & State_On) ? 2 : 0;
+    if (!isRadio && !(option->state & (State_On|State_Off))) // tristate
+        state = 1;
+    if (sunken)
+        state = state ? (state + 1) % 3 : 2;
+
+    const int s = (qMin(RECT.width(), RECT.height()) & ~1);
+    QRect r(0, RECT.y()+F(1), s-F(2), s-F(2));
+    if (option->direction == Qt::LeftToRight)
+        r.moveLeft(RECT.left() + F(1));
+    else
+        r.moveRight(RECT.right() - F(1));
+
+    SAVE_PAINTER(Pen|Brush|Alias);
+
+    painter->setRenderHint(QPainter::Antialiasing, true);
+
+    int animStep = (isRadio && state) || option->state & QStyle::State_Item ? 0 : HOVER_STEP;
+    const int a = animStep*168/(2*MAX_STEPS);
+    if (sunken) {
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(FCOLOR(WindowText));
+    } else {
+        const QColor c(FX::blend(FCOLOR(Window), FCOLOR(WindowText)));
+        painter->setPen(QPen(hasFocus ? FX::blend(FCOLOR(Highlight), c, MAX_STEPS-animStep, animStep) : c, FRAME_STROKE));
+        painter->setBrush(Qt::NoBrush);
+    }
+    if (isRadio) {
+        if (option->direction == Qt::LeftToRight)
+            DRAW_SEGMENT(r, -16*(96+a), 16*(192+2*a));
+        else
+            DRAW_SEGMENT(r, 16*(84-a), 16*(192+2*a));
+    } else
+        DRAW_SEGMENT(r, 16*(6+a), -16*(192+2*a));
+
+    if (state) { // the drop
+        painter->setPen(Qt::NoPen);
+        const int d = qMin(F(4), r.height()/3);
+        r.adjust(d, d, -d, -d);
+        if (sunken) {
+            painter->setBrush(FCOLOR(Window));
+        } else if (hasFocus) {
+            painter->setBrush(FX::blend(FCOLOR(WindowText), FCOLOR(Highlight), MAX_STEPS - animStep, animStep));
+        } else {
+            painter->setBrush(FCOLOR(WindowText));
+        }
+        if (state == 1) // tri-state
             painter->drawChord(r, -180*16, 180*16);
         else
             painter->drawEllipse(r);
