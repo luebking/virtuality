@@ -29,10 +29,6 @@
 
 #include <QtDebug>
 
-namespace Corner {
-    enum Corners { TopLeft = 1<<0, TopRight = 1<<1, BottomLeft = 1<<2, BottomRight = 1<<3 };
-}
-
 QPainterPath framePath(const QRect &r, char corners, int rnd, bool hasFocus = false)
 {
     const int dx = hasFocus ? qMin(qMax(r.width()/4, F(32)), r.width()/2) : qMin(r.width()/4,F(32));

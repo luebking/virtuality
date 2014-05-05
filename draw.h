@@ -28,6 +28,10 @@
 
 using namespace BE;
 
+namespace Corner {
+    enum Corners { TopLeft = 1<<0, TopRight = 1<<1, BottomLeft = 1<<2, BottomRight = 1<<3 };
+}
+
 #define OPT_SUNKEN bool sunken = option->state & State_Sunken;
 #define OPT_ENABLED bool isEnabled = option->state & State_Enabled;
 #define OPT_HOVER bool hover = (option->state & State_Enabled) && (option->state & State_MouseOver);
