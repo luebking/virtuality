@@ -871,7 +871,7 @@ Style::polish( QWidget * widget )
             widget->setAttribute(Qt::WA_Hover);
     }
 
-    if (config.invert.toolbars && (widget->inherits("QStatusBar") || widget->inherits("KStatusBar") ||
+    if (config.invert.toolbars && (widget->inherits("QStatusBar") || widget->inherits("KStatusBar") || widget->inherits("DolphinStatusBar") ||
                                    widget->inherits("KonqFrameStatusBar") || widget->inherits("KonqStatusBarMessageLabel"))) {
         widget->setAutoFillBackground(true);
         widget->setPalette(invertedPalette);
