@@ -20,8 +20,10 @@
 
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QMainWindow>
 #include <QDockWidget>
+#include <QMainWindow>
+#include <QMetaObject>
+#include <QSplitter>
 #include <QtDebug>
 #include "draw.h"
 
@@ -112,6 +114,30 @@ Style::resetRingPix()
     delete rings; rings = 0L;
 }
 
+static inline
+QWidget *widgetOfClass(const char *className, QObject *o)
+{
+    if (o->isWidgetType() && !qstrcmp(o->metaObject()->className(), className))
+        return static_cast<QWidget*>(o);
+    return NULL;
+}
+
+static inline
+QWidget *dolphinViewContainer(bool search, const QWidget *from) {
+    if (!search)
+        return NULL;
+    foreach (QObject *runner, from->children()) {
+        if (qobject_cast<QSplitter*>(runner)) {
+            from = static_cast<QWidget*>(runner);
+            foreach (runner, from->children()) {
+                if (QWidget *dvc = widgetOfClass("DolphinViewContainer", runner))
+                    return dvc;
+            }
+        }
+    }
+    return NULL;
+}
+
 void
 Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget *widget) const
 {
@@ -134,10 +160,13 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
             p.end();
         }
 
-        const bool invertTitle = widget->window()->property("Virtuality.invertTitlebar").toBool();
-        const QRect windowRect(widget->parentWidget()->rect());
+        QWidget *window = widget->window();
+        const bool invertTitle = window->property("Virtuality.invertTitlebar").toBool();
+        const QRect parentRect(widget->parentWidget()->rect());
+        const QRect windowRect(window->rect());
         const QRect geo(widget->geometry());
-        const QRect r(widget->rect());
+        QRect r(widget->rect());
+        const QRect winGeo = (window == widget->parentWidget()) ? geo : r.translated(widget->mapTo(window, r.topLeft()));
 
         Qt::DockWidgetAreas areas;
         if (QMainWindow *mw = qobject_cast<QMainWindow*>(widget->parentWidget())) {
@@ -147,15 +176,17 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
             }
         }
 
-        bool il(false), ir(false), it(false), ib(false);
-        if (geo.x() > windowRect.x()) {
+        bool il(r.x() == winGeo.x()), ir(r.right() == winGeo.right()),
+             it(invertTitle && r.y() == winGeo.y()), ib(r.bottom() == winGeo.bottom());
+
+        if (!il && geo.x() > parentRect.x()) {
             il = (areas & Qt::LeftDockWidgetArea);
             if (!il) {
                 QWidget *sibling = widget->parentWidget()->childAt(geo.x()-1, geo.y());
                 il = sibling && sibling->property("Virtuality.inverted").toBool();
             }
         }
-        if (geo.right() < windowRect.right()) {
+        if (!ir && geo.right() < parentRect.right()) {
             ir = (areas & Qt::RightDockWidgetArea);
             if (!ir) {
                 QWidget *sibling = widget->parentWidget()->childAt(geo.right()+1, geo.y());
@@ -163,16 +194,21 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
             }
         }
         if (il || ir) {
-            if (geo.y() > windowRect.y()) {
+            if (!it && geo.y() > parentRect.y()) {
                 it = (areas & Qt::TopDockWidgetArea);
                 if (!it) {
                     QWidget *sibling = widget->parentWidget()->childAt(geo.x(), geo.y()-1);
                     it = sibling && sibling->property("Virtuality.inverted").toBool();
                 }
-            } else {
-                it = invertTitle;
             }
-            if (geo.bottom() < windowRect.bottom()) {
+            if (QWidget *dvc = dolphinViewContainer(appType == Dolphin, widget)) {
+                ib = config.invert.toolbars;
+                foreach (QObject *o, dvc->children()) {
+                    if (QWidget *dsb = widgetOfClass("DolphinStatusBar", o)) {
+                        r.adjust(0,0,0, -dsb->height());
+                    }
+                }
+            } else if (!ib && geo.bottom() < parentRect.bottom()) {
                 ib = (areas & Qt::BottomDockWidgetArea);
                 if (!ib) {
                     QWidget *sibling = widget->parentWidget()->childAt(geo.x(), geo.bottom()+1);
