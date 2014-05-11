@@ -744,6 +744,7 @@ Style::polish( QWidget * widget )
         if (config.invert.docks && dock->style() == this && (dock->window()->windowFlags() & Qt::Dialog) != Qt::Dialog) {
             if (QWidget *window = widget->window())
                 window->setProperty("Virtuality.invertTitlebar", true);
+            dock->setProperty("Virtuality.inverted", true);
             dock->setPalette(invertedPalette);
             dock->setAutoFillBackground(true);
         }
@@ -761,6 +762,7 @@ Style::polish( QWidget * widget )
         if (config.invert.menubars && qobject_cast<QMainWindow*>(mbar->parentWidget())) {
             if (QWidget *window = widget->window())
                 window->setProperty("Virtuality.invertTitlebar", true);
+            mbar->setProperty("Virtuality.inverted", true);
             mbar->setPalette(invertedPalette);
             mbar->setAutoFillBackground(true);
         }
@@ -831,6 +833,7 @@ Style::polish( QWidget * widget )
     if (isTopContainer && config.invert.toolbars)
     if (QWidget *window = widget->window())
     if (qobject_cast<QMainWindow*>(window)) {
+        widget->setProperty("Virtuality.inverted", true);
         window->setProperty("Virtuality.invertTitlebar", true);
         widget->setAutoFillBackground(true);
         widget->setPalette(invertedPalette);
@@ -874,6 +877,7 @@ Style::polish( QWidget * widget )
     if (config.invert.toolbars && (widget->inherits("QStatusBar") || widget->inherits("KStatusBar") || widget->inherits("DolphinStatusBar") ||
                                    widget->inherits("KonqFrameStatusBar") || widget->inherits("KonqStatusBarMessageLabel"))) {
         widget->setAutoFillBackground(true);
+        widget->setProperty("Virtuality.inverted", true);
         widget->setPalette(invertedPalette);
     }
 

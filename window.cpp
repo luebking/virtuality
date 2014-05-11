@@ -20,6 +20,8 @@
 
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QMainWindow>
+#include <QDockWidget>
 #include <QtDebug>
 #include "draw.h"
 
@@ -136,20 +138,58 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
         const QRect windowRect(widget->parentWidget()->rect());
         const QRect geo(widget->geometry());
         const QRect r(widget->rect());
-        if (geo.x() > windowRect.x()) {
-            if (geo.y() > windowRect.y() || invertTitle) {
-                painter->drawPixmap(r.x(), r.y(), mask, 0, 0, rnd, rnd);
+
+        Qt::DockWidgetAreas areas;
+        if (QMainWindow *mw = qobject_cast<QMainWindow*>(widget->parentWidget())) {
+            foreach (QObject *o, mw->children()) {
+                if (QDockWidget *dock = qobject_cast<QDockWidget*>(o))
+                    areas |= mw->dockWidgetArea(dock);
             }
-            if (geo.bottom() < windowRect.bottom()) {
-                painter->drawPixmap(r.x(), r.bottom() - rnd + 1, mask, 0, rnd + 1, rnd, rnd);
+        }
+
+        bool il(false), ir(false), it(false), ib(false);
+        if (geo.x() > windowRect.x()) {
+            il = (areas & Qt::LeftDockWidgetArea);
+            if (!il) {
+                QWidget *sibling = widget->parentWidget()->childAt(geo.x()-1, geo.y());
+                il = sibling && sibling->property("Virtuality.inverted").toBool();
             }
         }
         if (geo.right() < windowRect.right()) {
-            if (geo.y() > windowRect.y() || invertTitle) {
-                painter->drawPixmap(r.right() - rnd + 1, r.y(), mask, rnd + 1, 0, rnd, rnd);
+            ir = (areas & Qt::RightDockWidgetArea);
+            if (!ir) {
+                QWidget *sibling = widget->parentWidget()->childAt(geo.right()+1, geo.y());
+                ir = sibling && sibling->property("Virtuality.inverted").toBool();
+            }
+        }
+        if (il || ir) {
+            if (geo.y() > windowRect.y()) {
+                it = (areas & Qt::TopDockWidgetArea);
+                if (!it) {
+                    QWidget *sibling = widget->parentWidget()->childAt(geo.x(), geo.y()-1);
+                    it = sibling && sibling->property("Virtuality.inverted").toBool();
+                }
+            } else {
+                it = invertTitle;
             }
             if (geo.bottom() < windowRect.bottom()) {
-                painter->drawPixmap(r.right() - rnd + 1, r.bottom() - rnd + 1, mask, rnd + 1, rnd + 1, rnd, rnd);
+                ib = (areas & Qt::BottomDockWidgetArea);
+                if (!ib) {
+                    QWidget *sibling = widget->parentWidget()->childAt(geo.x(), geo.bottom()+1);
+                    ib = sibling && sibling->property("Virtuality.inverted").toBool();
+                }
+            }
+            if (il) {
+                if (it)
+                    painter->drawPixmap(r.x(), r.y(), mask, 0, 0, rnd, rnd);
+                if (ib)
+                    painter->drawPixmap(r.x(), r.bottom() - rnd + 1, mask, 0, rnd + 1, rnd, rnd);
+            }
+            if (ir) {
+                if (it)
+                    painter->drawPixmap(r.right() - rnd + 1, r.y(), mask, rnd + 1, 0, rnd, rnd);
+                if (ib)
+                    painter->drawPixmap(r.right() - rnd + 1, r.bottom() - rnd + 1, mask, rnd + 1, rnd + 1, rnd, rnd);
             }
         }
         return;
