@@ -132,11 +132,12 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
             p.end();
         }
 
+        const bool invertTitle = widget->window()->property("Virtuality.invertTitlebar").toBool();
         const QRect windowRect(widget->parentWidget()->rect());
         const QRect geo(widget->geometry());
         const QRect r(widget->rect());
         if (geo.x() > windowRect.x()) {
-            if (geo.y() > windowRect.y()) {
+            if (geo.y() > windowRect.y() || invertTitle) {
                 painter->drawPixmap(r.x(), r.y(), mask, 0, 0, rnd, rnd);
             }
             if (geo.bottom() < windowRect.bottom()) {
@@ -144,7 +145,7 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
             }
         }
         if (geo.right() < windowRect.right()) {
-            if (geo.y() > windowRect.y()) {
+            if (geo.y() > windowRect.y() || invertTitle) {
                 painter->drawPixmap(r.right() - rnd + 1, r.y(), mask, rnd + 1, 0, rnd, rnd);
             }
             if (geo.bottom() < windowRect.bottom()) {
