@@ -42,9 +42,9 @@ Style::drawCapacityBar(const QStyleOption *option, QPainter *painter, const QWid
     QRect r(RECT.adjusted(F(1), F(1), -F(1), -F(1)));
     int radius = qMin(r.width(), r.height())/2;
     painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setPen(QPen(GROOVE_COLOR, F(2)));
+    painter->setPen(QPen(GROOVE_COLOR, F(2) & ~1));
     painter->setBrush(Qt::NoBrush);
-    painter->drawRoundedRect(RECT, radius, radius);
+    painter->drawRoundedRect(r, radius, radius);
 
     r.adjust(F(1), F(1), -F(1), -F(1));
     if (cb->direction == Qt::LeftToRight) r.setRight(x); else r.setLeft(x);
