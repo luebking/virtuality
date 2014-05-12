@@ -502,6 +502,9 @@ Style::polish( QWidget * widget )
 
         // scrollarea hovering
         if ( QAbstractScrollArea *area = qobject_cast<QAbstractScrollArea*>(frame) ) {
+            if (appType == Dolphin && (config.invert.docks || config.invert.toolbars) &&
+                area->parentWidget() && area->parentWidget()->inherits("DolphinView"))
+                area->parentWidget()->setContentsMargins(F(4),F(4),F(4),F(4));
             Animator::Hover::manage(frame);
             if (QAbstractItemView *itemView = qobject_cast<QAbstractItemView*>(frame) ) {
                 if (widget->inherits("KCompletionBox") && !(kStyleFeatureRequest & NoShadow))
