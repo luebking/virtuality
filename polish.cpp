@@ -1034,7 +1034,8 @@ Style::setupDecoFor(QWidget *widget, const QPalette &palette)
     }
 
     // this is important because KDE apps may alter the original palette any time
-    bool invert = config.invert.titlebars && widget->property("Virtuality.invertTitlebar").toBool();
+    bool invert = (config.invert.titlebars && widget->property("Virtuality.invertTitlebar").toBool()) ||
+                   widget->property("BE.swappedPalette").toBool();
     const QPalette &pal = invert ? invertedPalette : (originalPalette ? *originalPalette : palette);
 
     // the title region in the center
