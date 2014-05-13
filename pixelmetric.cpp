@@ -224,6 +224,8 @@ int Style::pixelMetric( PixelMetric pm, const QStyleOption *option, const QWidge
 //       return F(16);
     case PM_TabBarIconSize:
         return 16;
+    case PM_MessageBoxIconSize:
+        return 64;
     case PM_ToolTipLabelFrameWidth: //
         return F(4); // they're so tiny ;)
     default:
