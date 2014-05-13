@@ -877,8 +877,17 @@ Style::polish( QWidget * widget )
             widget->setAttribute(Qt::WA_Hover);
     }
 
-    if (config.invert.toolbars && (widget->inherits("QStatusBar") || widget->inherits("KStatusBar") || widget->inherits("DolphinStatusBar") ||
-                                   widget->inherits("KonqFrameStatusBar") || widget->inherits("KonqStatusBarMessageLabel"))) {
+    const bool isDolphinStatusBar = widget->inherits("DolphinStatusBar");
+    if (isDolphinStatusBar) {
+        int m[4];
+        widget->getContentsMargins(&m[0], &m[1], &m[2], &m[3]);
+        for (int i = 0; i < 4; ++i)
+            m[i] = qMax(m[i], F(2));
+        widget->setContentsMargins(m[0], m[1], m[2], m[3]);
+    }
+    if ((config.invert.toolbars||config.invert.titlebars) &&
+        (widget->inherits("QStatusBar") || widget->inherits("KStatusBar") || isDolphinStatusBar ||
+         widget->inherits("KonqFrameStatusBar") || widget->inherits("KonqStatusBarMessageLabel"))) {
         widget->setAutoFillBackground(true);
         widget->setProperty("Virtuality.inverted", true);
         widget->setPalette(invertedPalette);
