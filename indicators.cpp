@@ -18,92 +18,25 @@
 
 #include "draw.h"
 
-void
-Style::drawCheckMark(const QStyleOption *option, QPainter *painter, Check::Type type) const
-{
-    // the checkmark (using brush)
-    painter->setPen(Qt::NoPen);
-    painter->setRenderHint(QPainter::Antialiasing);
-    bool isOn = option->state & QStyle::State_On;
-    switch (type)
-    {
-    case Check::X:
-    {
-        const int   d = RECT.height()/8,
-                    c = RECT.height()/2,
-                    s = RECT.width(),
-                    x = RECT.x(), y = RECT.y();
-        if (isOn)
-        {
-            const QPoint points[8] =
-            {
-                QPoint(x+c,y+c-d), QPoint(x,y),
-                QPoint(x+c-d,y+c), QPoint(x,y+s),
-                QPoint(x+c,y+c+d), QPoint(x+s,y+s),
-                QPoint(x+c+d,y+c), QPoint(x+s,y)
-            };
-            painter->drawPolygon(points, 8);
-        }
-        else
-        {   // tristate
-            const QPoint points[5] =
-            {
-                QPoint(x+c,y+c-d), QPoint(x,y), QPoint(x+c-d,y+c),
-                QPoint(x+s,y+s), QPoint(x+c+d,y+c),
-            };
-            painter->drawPolygon(points, 5);
-        }
-        break;
-    }
-    default:
-    case Check::V:
-    {
-        if (isOn)
-        {
-            const QPoint points[4] =
-            {
-                QPoint(RECT.right(), RECT.top()),
-                QPoint(RECT.x()+RECT.width()/4, RECT.bottom()),
-                QPoint(RECT.x(), RECT.bottom()-RECT.height()/2),
-                QPoint(RECT.x()+RECT.width()/4, RECT.bottom()-RECT.height()/4)
-            };
-            painter->drawPolygon(points, 4);
-        }
-        else
-        {   // tristate
-            const int d = 2*RECT.height()/5;
-            QRect r = RECT.adjusted(F(2),d,-F(2),-d);
-            painter->drawRect(r);
-        }
-        break;
-    }
-    case Check::O:
-    {
-        const int d = RECT.height()/8;
-        QRect r = RECT.adjusted(d,d,-d,-d);
-        if (!isOn)
-            r.adjust(0,r.height()/4,0,-r.height()/4);
-        painter->drawRoundRect(r,70,70);
-    }
-    }
-}
+
+#define DRAW_SEGMENT(_R_, _START_, _SPAN_) sunken ? painter->drawEllipse(_R_) : painter->drawArc(_R_, _START_, _SPAN_)
 
 void
-Style::drawCheck(const QStyleOption *option, QPainter *painter, const QWidget*, bool itemview) const
+Style::drawCheck(const QStyleOption *option, QPainter *painter, const QWidget *widget, bool exclusive, bool itemview) const
 {
-    if (const QStyleOptionViewItemV2 *item = qstyleoption_cast<const QStyleOptionViewItemV2 *>(option))
-    if (!(item->features & QStyleOptionViewItemV2::HasCheckIndicator))
-        return;
+    Qt::CheckState state = (option->state & State_On) ? Qt::Checked : Qt::Unchecked;
+    if (itemview) {
+        if (const QStyleOptionViewItemV2 *item = qstyleoption_cast<const QStyleOptionViewItemV2*>(option)) {
+            if (!(item->features & QStyleOptionViewItemV2::HasCheckIndicator))
+                return;
+            if (const QStyleOptionViewItemV4 *item4 = qstyleoption_cast<const QStyleOptionViewItemV4*>(item))
+                state = item4->checkState;
+        }
+    }
 
-//       if (option->state & State_NoChange)
-//          break;
-    QStyleOption copy = *option;
+    OPT_SUNKEN OPT_HOVER
 
-    const int f2 = F(2);
-
-    // storage
     SAVE_PAINTER(Pen|Brush|Alias);
-    QBrush oldBrush = painter->brush();
     painter->setRenderHint(QPainter::Antialiasing);
 
     // rect -> square
@@ -112,62 +45,40 @@ Style::drawCheck(const QStyleOption *option, QPainter *painter, const QWidget*, 
         r.setWidth(r.height());
     else
         r.setHeight(r.width());
+    r.moveCenter(RECT.center());
+    r.adjust(F(2), F(2), -F(2), -F(2));
 
-    // box (requires set pen for PE_IndicatorMenuCheckMark)
-    painter->setBrush(Qt::NoBrush);
-    QPalette::ColorRole fg = QPalette::Text, bg = QPalette::Base;
-
-    if (itemview)
-    {   // itemViewCheck
-        r.adjust(f2, f2, -f2, -f2);
-        if (!(option->state & State_Off))
-            copy.state |= State_On;
+    if (itemview) { // itemViewCheck
         if (option->state & State_Selected)
-            { fg = QPalette::HighlightedText; bg = QPalette::Highlight; }
-        painter->setPen(FX::blend(COLOR(bg), COLOR(fg)));
+            painter->setPen(FCOLOR(HighlightedText));
+        else if (hover) // not necessarily selectable...
+            painter->setPen(FX::blend(FCOLOR(Highlight), FCOLOR(HighlightedText)));
+        else
+            painter->setPen(FX::blend(FCOLOR(Base), FCOLOR(Text)));
     }
 
-    if (appType != GTK)
-    {
-        if (painter->pen() != Qt::NoPen)
-            { r.adjust(f2, f2, -f2, -f2); painter->drawRoundRect(r); }
-
-        if (option->state & State_Off) // not checked, get out
-        { RESTORE_PAINTER; return; }
-    }
-    else
-    {
-        copy.rect.adjust(F(1), F(5), -F(6), -F(2));
-        oldBrush = painter->pen().brush();
-        copy.state |= State_On;
-    }
-
-    // checkmark
-    if (itemview)
-        painter->setBrush(COLOR(fg));
-    else
-    {
-        painter->setBrush(oldBrush);
-        painter->setBrushOrigin(r.topLeft());
-    }
-    copy.rect.adjust(F(3),0,0,-F(3));
-    drawCheckMark(&copy, painter, Check::V);
-    RESTORE_PAINTER
-}
-
-/**static!*/ void
-Style::drawExclusiveCheck(const QStyleOption *option, QPainter *painter, const QWidget *)
-{
-    SAVE_PAINTER(Brush|Alias);
+    painter->setPen(QPen(painter->pen().color(), FRAME_STROKE));
     painter->setBrush(Qt::NoBrush);
-    painter->setRenderHint ( QPainter::Antialiasing );
-    painter->drawEllipse ( RECT );
-    if (option->state & State_On)
-    {
-        painter->setBrush ( painter->pen().color() );
-        const int dx = 3*RECT.width()/8, dy = 3*RECT.height()/8;
-        painter->drawEllipse ( RECT.adjusted(dx, dy, -dx, -dy) );
+    if (exclusive) {
+        if (option->direction == Qt::LeftToRight)
+            DRAW_SEGMENT(r, -16*96, 16*192);
+        else
+            DRAW_SEGMENT(r, 16*84, 16*192);
+    } else {
+        DRAW_SEGMENT(r, 16*6, -16*192);
     }
+
+    if (state != Qt::Unchecked) { // the drop
+        painter->setBrush(painter->pen().color());
+        painter->setPen(Qt::NoPen);
+        const int d = qMin(F(4), r.height()/3);
+        r.adjust(d, d, -d, -d);
+        if (state == Qt::PartiallyChecked) // tri-state
+            painter->drawChord(r, -180*16, 180*16);
+        else
+            painter->drawEllipse(r);
+    }
+
     RESTORE_PAINTER
 }
 

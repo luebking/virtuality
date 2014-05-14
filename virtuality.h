@@ -130,7 +130,6 @@ public:
     bool eventFilter( QObject *object, QEvent *event );
 
     // STATICS
-    static void drawExclusiveCheck(const QStyleOption*, QPainter*, const QWidget*);
     static void drawArrow(Navi::Direction, const QRect&, QPainter*, const QWidget *w = 0);
     static void drawSolidArrow(Navi::Direction, const QRect&, QPainter*, const QWidget *w = 0);
 
@@ -214,8 +213,7 @@ protected:
     void drawScrollBarSlider(const QStyleOption*, QPainter*, const QWidget*) const;
 
     // shapes.cpp
-    void drawCheck(const QStyleOption*, QPainter*, const QWidget*, bool) const;
-    void drawCheckMark(const QStyleOption*, QPainter*, Check::Type = Check::V) const;
+    void drawCheck(const QStyleOption*, QPainter*, const QWidget*, bool exclusive, bool itemview) const;
 
 #define INDI_ARROW(_D_)\
     inline void\
@@ -227,17 +225,14 @@ protected:
     INDI_ARROW(N) INDI_ARROW(S) INDI_ARROW(E) INDI_ARROW(W)
 #undef INDI_ARROW
 
-    inline void
-    drawExclusiveCheck_p(const QStyleOption *o, QPainter *p, const QWidget *w) const
-    { drawExclusiveCheck(o,p,w); }
+    inline void drawExclusiveCheck(const QStyleOption *o, QPainter *p, const QWidget *w) const
+        { drawCheck(o, p, w, true, false); }
 
-    inline void
-    drawItemCheck(const QStyleOption * option, QPainter * painter, const QWidget * widget) const
-    { drawCheck(option, painter, widget, true); }
+    inline void drawItemCheck(const QStyleOption *o, QPainter *p, const QWidget *w) const
+        { drawCheck(o, p, w, false, true); }
 
-    inline void
-    drawMenuCheck(const QStyleOption * option, QPainter * painter, const QWidget * widget) const
-    { drawCheck(option, painter, widget, false); }
+    inline void drawMenuCheck(const QStyleOption *o, QPainter *p, const QWidget *w) const
+        { drawCheck(o, p, w, false, false); }
 
     // slider.cpp
     void drawSlider(const QStyleOptionComplex*, QPainter*, const QWidget*) const;
