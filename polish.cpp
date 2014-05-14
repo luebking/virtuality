@@ -885,8 +885,8 @@ Style::polish( QWidget * widget )
             m[i] = qMax(m[i], F(2));
         widget->setContentsMargins(m[0], m[1], m[2], m[3]);
     }
-    if ((config.invert.toolbars||config.invert.titlebars) &&
-        (widget->inherits("QStatusBar") || widget->inherits("KStatusBar") || isDolphinStatusBar ||
+    if ((config.invert.toolbars||config.invert.titlebars) && (!isDolphinStatusBar || config.invert.docks) &&
+        (isDolphinStatusBar || widget->inherits("QStatusBar") || widget->inherits("KStatusBar") ||
          widget->inherits("KonqFrameStatusBar") || widget->inherits("KonqStatusBarMessageLabel"))) {
         widget->setAutoFillBackground(true);
         widget->setProperty("Virtuality.inverted", true);

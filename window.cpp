@@ -171,6 +171,7 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
         Qt::DockWidgetAreas areas;
         if (QMainWindow *mw = qobject_cast<QMainWindow*>(widget->parentWidget())) {
             foreach (QObject *o, mw->children()) {
+                if (o->isWidgetType() && static_cast<QWidget*>(o)->isVisible())
                 if (QDockWidget *dock = qobject_cast<QDockWidget*>(o))
                     areas |= mw->dockWidgetArea(dock);
             }
@@ -193,6 +194,7 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
                 ir = sibling && sibling->property("Virtuality.inverted").toBool();
             }
         }
+
         if (il || ir) {
             if (!it && geo.y() > parentRect.y()) {
                 it = (areas & Qt::TopDockWidgetArea);
@@ -202,7 +204,7 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
                 }
             }
             if (QWidget *dvc = dolphinViewContainer(appType == Dolphin, widget)) {
-                ib = config.invert.toolbars;
+                ib = config.invert.toolbars || config.invert.docks;
                 foreach (QObject *o, dvc->children()) {
                     if (QWidget *dsb = widgetOfClass("DolphinStatusBar", o)) {
                         r.adjust(0,0,0, -dsb->height());
