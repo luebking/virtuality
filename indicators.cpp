@@ -98,32 +98,16 @@ Style::drawArrow(Navi::Direction dir, const QRect &rect, QPainter *painter, cons
     bool reset_pen = (painter->pen() == Qt::NoPen);
     if (reset_pen)
         painter->setPen(QPen(painter->brush(), 1));
-    switch (dir)
-    {
-    case Navi::N:
-        DRAW_ARROW(0);
-        break;
-    case Navi::E:
-        DRAW_ARROW(-90);
-        break;
-    case Navi::S:
-        DRAW_ARROW(-180);
-        break;
-    case Navi::W:
-        DRAW_ARROW(90);
-        break;
-    case Navi::NW:
-        DRAW_ARROW(45);
-        break;
-    case Navi::NE:
-        DRAW_ARROW(-45);
-        break;
-    case Navi::SE:
-        DRAW_ARROW(-135);
-        break;
-    case Navi::SW:
-        DRAW_ARROW(135);
-        break;
+
+    switch (dir) {
+        case Navi::N: DRAW_ARROW(0); break;
+        case Navi::E: DRAW_ARROW(-90); break;
+        case Navi::S: DRAW_ARROW(-180); break;
+        case Navi::W: DRAW_ARROW(90); break;
+        case Navi::NW: DRAW_ARROW(45); break;
+        case Navi::NE: DRAW_ARROW(-45); break;
+        case Navi::SE: DRAW_ARROW(-135); break;
+        case Navi::SW: DRAW_ARROW(135); break;
     }
 
     if (reset_pen)
@@ -135,14 +119,12 @@ extern bool isUrlNaviButtonArrow;
 /**static!*/ void
 Style::drawSolidArrow(Navi::Direction dir, const QRect &rect, QPainter *painter, const QWidget *w)
 {
-    if (isUrlNaviButtonArrow)
-    {
+    if (isUrlNaviButtonArrow) {
         if ( painter->brush() != Qt::NoBrush &&
              (!w || painter->brush().color().rgb() == w->palette().color(QPalette::HighlightedText).rgb()) &&
              painter->brush().color().alpha() < 255 )
             dir = (dir == Navi::W) ? Navi::SW : Navi::SE;
-        if (w)
-        {
+        if (w) {
             painter->setBrush(w->palette().color(w->foregroundRole()));
             painter->setPen(w->palette().color(w->foregroundRole()));
         }
