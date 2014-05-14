@@ -16,6 +16,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <QApplication>
 #include <QComboBox>
 #include <QEvent>
 #include <QFrame>
@@ -191,6 +192,10 @@ int Style::styleHint(StyleHint hint, const QStyleOption *option, const QWidget *
 #endif
     case SH_MessageBox_UseBorderForButtonSpacing:
         return false; // hähh?
+    case SH_MessageBox_CenterButtons:
+        return false;
+    case SH_MessageBox_TextInteractionFlags:
+        return true;
     case SH_TitleBar_AutoRaise:
         return true; // hover titlebar buttons in MDI
     case SH_ToolButton_PopupDelay:
@@ -211,8 +216,13 @@ int Style::styleHint(StyleHint hint, const QStyleOption *option, const QWidget *
         return Qt::AlignTrailing;
     case SH_ItemView_ShowDecorationSelected:
         return true; // full width selection
-    case SH_ItemView_ActivateItemOnSingleClick:
-        return config.macStyle;
+    case SH_ItemView_ActivateItemOnSingleClick: {
+        if (config.macStyle) {
+            QWidget *w = qApp->focusWidget();
+            return !(w && w->inherits("QCalendarView"));
+        }
+        return false;
+    }
     case SH_WizardStyle:
         return config.macStyle ? 2 : 1; // QWizard::MacStyle / QWizard::ModernStyle
 
