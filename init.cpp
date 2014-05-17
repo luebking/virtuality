@@ -190,7 +190,12 @@ Style::readSettings(const QSettings* settings, QString appName)
     config.invert.titlebars = readBool(INVERT_TITLEBARS);
     config.invert.toolbars = readBool(INVERT_TOOLBARS);
 
+    config.bg.opacity = readInt(BG_OPACITY);
     config.bg.modal.opacity = readInt(BG_MODAL_OPACITY);
+    if (config.bg.opacity || config.bg.modal.opacity)
+        config.bg.blur = readBool(BG_BLUR);
+    else
+        config.bg.blur = false;
 
     config.bg.ringOverlay = readBool(BG_RING_OVERLAY);
 

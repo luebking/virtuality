@@ -323,17 +323,20 @@ Style::polish( QWidget * widget )
             !(widget->inherits("QSplashScreen") || widget->inherits("KScreenSaver")
             || widget->objectName() == "decoration widget" /*|| widget->inherits("QGLWidget")*/ ) )
     {
-//         QPalette pal = widget->palette();
+
         /// this is dangerous! e.g. applying to QDesktopWidget leads to infinite recursion...
         /// also doesn't work bgs get transparent and applying this to everything causes funny sideeffects...
+
 //         qDebug() << widget << widget->windowType();
         if ( widget->windowType() == Qt::ToolTip)
         {
+            if (config.bg.modal.opacity < 0xff)
+                widget->setWindowOpacity(config.bg.modal.opacity/255.0);
             if (widget->inherits("BrightnessOSDWidget")) {
                 // ok. some moron thinks it's required to tell me that the screen brightness just changed. not like the entire screen wouldn't tell me
                 // then some other moron comes around and makes this stupid thing grab input focus (bypassing the wm)
                 // this does nicely breag drag and drop and interfers anytime you do actually something to *tell* you what you just saw. ***grrrr***
-                FILTER_EVENTS(widget); // so we supporess this bloody shit.
+                FILTER_EVENTS(widget); // so we suppress this bloody shit.
             }
             if (widget->inherits("QTipLabel") || widget->inherits("KToolTipWindow") || widget->inherits("FileMetaDataToolTip"))
             {
@@ -346,6 +349,8 @@ Style::polish( QWidget * widget )
         }
         else if (widget->windowType() == Qt::Popup)
         {
+            if (config.bg.modal.opacity < 0xff)
+                widget->setWindowOpacity(config.bg.modal.opacity/255.0);
             if (!widget->testAttribute(Qt::WA_TranslucentBackground) && widget->mask().isEmpty()) {
                 if (config.invert.menus && widget->inherits("QComboBoxPrivateContainer")) {
                     widget->setPalette(invertedPalette);
@@ -1017,7 +1022,7 @@ Style::unpolish( QWidget *widget )
 void
 Style::setupDecoFor(QWidget *widget, const QPalette &palette)
 {
-    #ifdef BE_WS_X11
+#ifdef BE_WS_X11
     if ((appType == KWin))
         return;
 

@@ -192,6 +192,12 @@ Config::Config(QWidget *parent) : BConfig(parent), loadedPal(0), infoIsManage(fa
     "3" is the default value for this entry*/
     handleSettings(ui.roundness, ROUNDNESS);
 
+    handleSettings(ui.windowOpacity, BG_OPACITY);
+    connect(ui.windowOpacity, SIGNAL(valueChanged(int)), SLOT(alignLabel()));
+    handleSettings(ui.modalOpacity, BG_MODAL_OPACITY);
+    connect(ui.modalOpacity, SIGNAL(valueChanged(int)), SLOT(alignLabel()));
+    handleSettings(ui.blurTranslucent, BG_BLUR);
+
     handleSettings(ui.btnMinHeight, BTN_MIN_HEIGHT);
 
     handleSettings(ui.pwEchoChar, INPUT_PWECHOCHAR);
@@ -608,5 +614,21 @@ Config::learnPwChar()
     QStringList list = settings.value ( "UserPwChars", QStringList() ).toStringList();
     list << QString::number( n, 16 );
     settings.setValue("UserPwChars", list);
+}
+
+inline static QString percent(int c)
+{
+    QString ret = (c == 0xff ? "" : " ");
+    ret += QString::number(c / 2.55, 'f', 2) + " %";
+    return ret;
+}
+
+void
+Config::alignLabel()
+{
+    if (sender() == ui.windowOpacity)
+        ui.windowOpacityLabel->setText(percent(ui.windowOpacity->value()));
+    else if (sender() == ui.modalOpacity)
+        ui.modalOpacityLabel->setText(percent(ui.modalOpacity->value()));
 }
 

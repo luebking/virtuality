@@ -24,7 +24,9 @@
 #define MACSTYLE "MacStyle", true
 #define FADE_INACTIVE "FadeInactive", true
 
+#define BG_OPACITY "Bg.Opacity", 255
 #define BG_MODAL_OPACITY "Bg.Modal.Opacity", 255
+#define BG_BLUR "Bg.Blur", false
 #define BG_RING_OVERLAY "Bg.RingOverlay", false
 #define BG_STRUCTURE "Bg.Structure", 0
 

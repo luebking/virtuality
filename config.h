@@ -34,7 +34,7 @@ typedef struct Config
         bool buttons;
         int thickness;
     } slider;
-    
+
     struct {
         int roundness;
     } frame;
@@ -46,6 +46,8 @@ typedef struct Config
         struct {
             int opacity;
         } modal;
+        int opacity;
+        bool blur;
     } bg;
 
     struct btn

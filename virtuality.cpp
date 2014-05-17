@@ -944,38 +944,49 @@ Style::eventFilter( QObject *object, QEvent *ev )
             return false;
 
         // talk to kwin about colors, gradients, etc.
-        if (widget->isWindow() && !(widget->windowFlags() & ignoreForDecoHints)) {
-            const bool swappedPal = widget->property("BE.swappedPalette").toBool();
-            // setup some special stuff for modal windows
-            if (config.invert.modals && widget->style() == this && widget->isModal() != swappedPal) { // swapping QStyleSheetStyle is one epic fail ..
-                widget->setProperty("BE.swappedPalette", widget->isModal());
-                swapPalette(widget, this, invertedPalette);
-            }
-            if (widget->isModal()) {
-                widget->setWindowOpacity( config.bg.modal.opacity/255.0 );
+        if (widget->isWindow()) {
+            if (!(widget->windowFlags() & ignoreForDecoHints)) {
+                const bool swappedPal = widget->property("BE.swappedPalette").toBool();
+                // setup some special stuff for modal windows
+                if (config.invert.modals && widget->style() == this && widget->isModal() != swappedPal) { // swapping QStyleSheetStyle is one epic fail ..
+                    widget->setProperty("BE.swappedPalette", widget->isModal());
+                    swapPalette(widget, this, invertedPalette);
+                }
+                if (widget->isModal()) {
+                    if (config.bg.modal.opacity < 0xff)
+                        widget->setWindowOpacity(config.bg.modal.opacity/255.0);
+                } else {
+                    if (config.bg.opacity < 0xff)
+                        widget->setWindowOpacity(config.bg.opacity/255.0);
+                }
+#ifdef BE_WS_X11
+                if (!(widget->windowFlags() & ignoreForDecoHints))
+                    setupDecoFor(widget, widget->palette());
+#endif
+            } else if (QMenu * menu = qobject_cast<QMenu*>(widget)) {
+                if (config.bg.modal.opacity < 0xff)
+                    widget->setWindowOpacity(config.bg.modal.opacity/255.0);
+                // seems to be necessary, somehow KToolBar context menus manages to take QPalette::Window...?!
+                // through title setting?!
+                if (menu->parentWidget() && menu->parentWidget()->inherits("QMdiSubWindow")) {
+                    QPoint pt = menu->parentWidget()->rect().topRight();
+                    pt += QPoint(-menu->width(), pixelMetric(PM_TitleBarHeight,0,0));
+                    pt = menu->parentWidget()->mapToGlobal(pt);
+                    menu->move(pt);
+                }
+                menu->move(menu->pos()-QPoint(0,F(2)));
+                if (config.frame.roundness > 2)
+                    shapeCorners( widget, false );
             }
 #ifdef BE_WS_X11
-            if (!(widget->windowFlags() & ignoreForDecoHints))
-                setupDecoFor(widget, widget->palette());
+            if (config.bg.blur && widget->windowOpacity() < 1.0 &&
+                widget->testAttribute(Qt::WA_WState_Created) << widget->internalWinId()) {
+                unsigned long zero(0);
+                XProperty::set<unsigned long>(widget->winId(), XProperty::blurRegion, &zero, XProperty::LONG, 1);
+            }
 #endif
             return false;
         }
-        else if (QMenu * menu = qobject_cast<QMenu*>(widget))
-        {
-            // seems to be necessary, somehow KToolBar context menus manages to take QPalette::Window...?!
-            // through title setting?!
-            if (menu->parentWidget() && menu->parentWidget()->inherits("QMdiSubWindow")) {
-                QPoint pt = menu->parentWidget()->rect().topRight();
-                pt += QPoint(-menu->width(), pixelMetric(PM_TitleBarHeight,0,0));
-                pt = menu->parentWidget()->mapToGlobal(pt);
-                menu->move(pt);
-            }
-            menu->move(menu->pos()-QPoint(0,F(2)));
-            if (config.frame.roundness > 2)
-                shapeCorners( widget, false );
-            return false;
-        }
-
         return false;
     }
 

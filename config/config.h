@@ -53,6 +53,7 @@ private:
 private slots:
     void initColors();
     void learnPwChar();
+    void alignLabel();
 };
 
 #endif
