@@ -63,7 +63,6 @@
 /**============ Internal Definitions ========================*/
 
 #define BESPIN_MOUSE_DEBUG 0
-static bool usingStandardPalette = false;
 
 /**=========================================================*/
 
@@ -75,7 +74,7 @@ QStringList VirtualityStylePlugin::keys() const {
 
 QStyle *VirtualityStylePlugin::create(const QString &key) {
     QString ikey = key.toLower();
-    if (ikey == "virtuality" || (usingStandardPalette = (ikey == "sienar")) || (usingStandardPalette = (ikey == "flynn")))
+    if (ikey == "virtuality" || ikey == "sienar" || ikey == "flynn")
         return new BE::Style(ikey);
     return 0;
 }
@@ -245,12 +244,13 @@ Style::registerRoutines()
 
 Style::Style(const QString &name) : QCommonStyle()
 {
+    m_usingStandardPalette = (name == "sienar" || name == "flynn");
     setObjectName(name);
 #ifdef BE_WS_X11
     BE::XProperty::init();
 #endif
     FX::init();
-    if (usingStandardPalette) {
+    if (m_usingStandardPalette) {
         originalPalette = new QPalette(standardPalette());
         polish(*originalPalette, true);
         QApplication::setPalette(*originalPalette);
@@ -264,14 +264,24 @@ Style::Style(const QString &name) : QCommonStyle()
 Style::~Style()
 {
     Shadows::cleanUp();
-    if (usingStandardPalette)
-    if (QStyle *newStyle = QApplication::style())
-    if (newStyle != this && qobject_cast<QStyle*>(newStyle)) {
-        // qobject_cast because this can be invoked from a dying proxystyle
-        QPalette pal = newStyle->standardPalette();
-        newStyle->polish(pal);
-        QApplication::setPalette(pal);
-    }
+    // reset palette
+    if (!m_usingStandardPalette)
+        return;
+    QStyle *newStyle = QApplication::style();
+    // qobject_cast because this can be invoked from a dying proxystyle
+    if (!newStyle || newStyle == this || qobject_cast<QStyle*>(newStyle))
+        return;
+    BE::Style *beStyle = qobject_cast<BE::Style*>(newStyle);
+    if (beStyle && beStyle->m_usingStandardPalette)
+        return; // can take care of itself and causes recursion
+
+    // harden a bit
+    qApp->removeEventFilter(this);
+    m_usingStandardPalette = false;
+    // set default palette of new style
+    QPalette pal = newStyle->standardPalette();
+    newStyle->polish(pal);
+    QApplication::setPalette(pal);
 }
 
 #include "makros.h"

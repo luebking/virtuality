@@ -300,6 +300,7 @@ private:
     static QPalette *originalPalette;
     static QPalette invertedPalette;
     static EventKiller eventKiller;
+    bool m_usingStandardPalette;
 public:
     static Config config;
 private slots:
