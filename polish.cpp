@@ -67,6 +67,7 @@
 #include "xproperty.h"
 #endif
 
+#include "splitterproxy.h"
 #include "hacks.h"
 #include "virtuality.h"
 
@@ -390,6 +391,7 @@ Style::polish( QWidget * widget )
                 }
                 widget->addAction( dockLocker );
             }
+			SplitterProxy::manage(widget);
         } else if ( QWizard *wiz = qobject_cast<QWizard*>(widget) ) {
             if (config.macStyle && wiz->pixmap(QWizard::BackgroundPixmap).isNull())
             {
@@ -792,6 +794,7 @@ Style::polish( QWidget * widget )
         widget->inherits("QWorkspaceTitleBar") ||
         widget->inherits("Q3DockWindowResizeHandle"))
     {
+		SplitterProxy::manage(widget);
         widget->setAttribute(Qt::WA_Hover);
         if (widget->inherits("QWebView"))
             FILTER_EVENTS(widget);
@@ -965,6 +968,7 @@ void
 Style::unpolish( QApplication *app )
 {
     app->removeEventFilter(this);
+    SplitterProxy::cleanUp();
     app->setPalette(QPalette());
     Hacks::releaseApp();
 }
