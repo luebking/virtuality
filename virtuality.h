@@ -318,7 +318,7 @@ class VirtualityStylePlugin : public QStylePlugin
 {
     Q_OBJECT
 #if QT_VERSION >= 0x050000
-    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QStyleFactoryInterface" FILE "virtuality.json")
+    Q_PLUGIN_METADATA(IID QStyleFactoryInterface_iid FILE "virtuality.json")
 #endif
 public:
     QStringList keys() const;
