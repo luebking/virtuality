@@ -852,8 +852,14 @@ Style::polish( QWidget * widget )
                 kid->setPalette(invertedPalette); // shitted widgets inherit the app wide palette ...
             }
             if (kid->testAttribute(Qt::WA_StyleSheet) && !kid->styleSheet().isEmpty()) {
-                QString shit(kid->styleSheet()); // the shit uses the app wide FG color, so we need to force the correct one
-                shit.append(";color:" + invertedPalette.color(QPalette::Active, QPalette::WindowText).name() + ";");
+                QString shit(kid->styleSheet());
+                // the shit uses the app wide FG color, so we need to force the correct one
+                // NOTICE: the leading ';' is for semi-broken styleshits that omit the trailing ';'
+                int idx = shit.lastIndexOf('}');
+                if (idx > -1)
+                    shit = shit.left(idx) + ";color:" + invertedPalette.color(QPalette::Active, QPalette::WindowText).name() + ";}";
+                else
+                    shit.append(";color:" + invertedPalette.color(QPalette::Active, QPalette::WindowText).name() + ";");
                 kid->setStyleSheet(shit);
             }
         }
