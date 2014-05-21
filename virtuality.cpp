@@ -952,12 +952,16 @@ Style::eventFilter( QObject *object, QEvent *ev )
                     widget->setProperty("BE.swappedPalette", widget->isModal());
                     swapPalette(widget, this, invertedPalette);
                 }
-                if (widget->isModal()) {
-                    if (config.bg.modal.opacity < 0xff)
-                        widget->setWindowOpacity(config.bg.modal.opacity/255.0);
-                } else {
-                    if (config.bg.opacity < 0xff)
-                        widget->setWindowOpacity(config.bg.opacity/255.0);
+                if (!(widget->testAttribute(Qt::WA_X11NetWmWindowTypeDesktop) ||
+                             widget->testAttribute(Qt::WA_TranslucentBackground))) {
+                    // adjust window opacity
+                    if (widget->isModal()) {
+                        if (config.bg.modal.opacity < 0xff)
+                            widget->setWindowOpacity(config.bg.modal.opacity/255.0);
+                    } else {
+                        if (config.bg.opacity < 0xff)
+                            widget->setWindowOpacity(config.bg.opacity/255.0);
+                    }
                 }
 #ifdef BE_WS_X11
                 if (!(widget->windowFlags() & ignoreForDecoHints))
