@@ -310,6 +310,8 @@ Style::init(const QSettings* settings)
             appType = KTorrent;
         else if (appName.startsWith("transmission"))
             appType = QTransmission;
+        else if (appName == "qbittorrent")
+            appType = QBittorrent;
         else if (appName == "Designer" || appName == "designer")
             appType = QtDesigner;
         else if (appName == "kdevelop")

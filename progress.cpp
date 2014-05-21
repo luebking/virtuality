@@ -80,7 +80,7 @@ void
 Style::drawSimpleProgress(const QStyleOptionProgressBar *option, QPainter *painter, const QWidget *widget, bool isListView) const
 {   // TODO: widget doesn't set a state - make bug report!
     OPT_ENABLED;
-    if (appType == KTorrent)
+    if (appType == KTorrent || appType == QTransmission)
         isEnabled = true; // ....
 
     const QStyleOptionProgressBarV2 *pb2 = qstyleoption_cast<const QStyleOptionProgressBarV2*>(option);
@@ -178,6 +178,13 @@ Style::drawProgressBarGC(const QStyleOption *option, QPainter *painter, const QW
         return; // looks really crap
 
     ASSURE_OPTION(pb, ProgressBar);
+
+    if (!widget && appType == QBittorrent) {
+        if (content)
+            drawSimpleProgress(pb, painter, widget, true);
+        return;
+    }
+
     const QStyleOptionProgressBarV2 *pb2 = qstyleoption_cast<const QStyleOptionProgressBarV2*>(pb);
 
     bool reverse = option->direction == Qt::RightToLeft;
