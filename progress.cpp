@@ -89,13 +89,11 @@ Style::drawSimpleProgress(const QStyleOptionProgressBar *option, QPainter *paint
         if (option->state & State_Selected)
             { fg = QPalette::HighlightedText; bg = QPalette::Highlight; }
         else
-            { fg = QPalette::Text; bg = QPalette::Base; }
-    } else {
-        if (widget)
-            { fg = widget->foregroundRole(); bg = widget->backgroundRole(); }
-        else
-            { fg = QPalette::WindowText; bg = QPalette::Window; }
-    }
+            { fg = QPalette::Highlight; bg = QPalette::Base; }
+    } else if (widget)
+        { fg = widget->foregroundRole(); bg = widget->backgroundRole(); }
+    else
+        { fg = QPalette::WindowText; bg = QPalette::Window; }
 
     bool reverse = option->direction == Qt::RightToLeft;
     if (pb2 && pb2->invertedAppearance)
@@ -103,37 +101,46 @@ Style::drawSimpleProgress(const QStyleOptionProgressBar *option, QPainter *paint
     const bool vertical = (pb2 && pb2->orientation == Qt::Vertical);
     double val = option->progress / double(option->maximum - option->minimum);
 
-    QString text = option->text.isEmpty() ? QString(" %1% ").arg((int)(val*100)) : " " + option->text + " ";
-    QRect r = painter->boundingRect(RECT, Qt::AlignLeft | Qt::AlignVCenter, text);
-
-    SAVE_PAINTER(Pen);
-    const int hght = isListView ? F(3) : RECT.height();
-    painter->setPen(QPen(FX::blend(COLOR(fg), COLOR(bg), 1, 3), hght));
-    if (vertical)
-    {
-        painter->drawLine(RECT.x(), RECT.top(), RECT.x(), RECT.bottom());
-        painter->setPen(QPen(COLOR(fg), F(3)));
-        r.moveBottom(RECT.bottom() - val*(RECT.height()-r.height()));
-        painter->drawLine(RECT.x(), RECT.bottom()-val*RECT.height(), RECT.x(), RECT.bottom());
+    SAVE_PAINTER(Pen|Brush|Alias|Font);
+    painter->setRenderHint(QPainter::Antialiasing);
+    const int hght = (isListView ? F(2) : RECT.height()) & ~1;
+    const QRect r(RECT.adjusted(hght/2, hght/2, -hght/2, -hght/2));
+    painter->setPen(QPen(FX::blend(COLOR(fg), COLOR(bg), 1, 3), hght, Qt::SolidLine, Qt::RoundCap));
+    if (vertical) {
+        painter->drawLine(r.x(), r.top(), r.x(), r.bottom());
+        painter->setPen(QPen(COLOR(fg), F(4) & ~1));
+//         r.moveBottom(r.bottom() - val*(r.height()-r2.height()));
+        painter->drawLine(r.x(), r.bottom()-val*r.height(), r.x(), r.bottom());
+    } else {
+        const int y = r.y() + r.height()/2;
+        painter->drawLine(r.left(), y, r.right(), y);
+        painter->setPen(QPen(COLOR(fg), hght, Qt::SolidLine, Qt::RoundCap));
+        if (reverse) {
+            painter->drawLine(r.right()-val*r.width(), y, r.right(), y);
+        } else {
+            painter->drawLine(r.left(), y, r.left()+val*r.width(), y);
+        }
     }
-    else
-    {
-        painter->drawLine(RECT.left(), RECT.bottom(), RECT.right(), RECT.bottom());
-        painter->setPen(QPen(COLOR(fg), hght));
-        const int d = val*(RECT.width()-r.width());
+    if (isListView && !vertical) {
+        const QString text = option->text.isEmpty() ? " " + QString::number(val*100.0, 'f', 1) + "% " : " " + option->text + " ";
+        QFont fnt = painter->font();
+        fnt.setBold(true);
+        painter->setFont(fnt);
+        QRect r2 = painter->boundingRect(RECT, Qt::AlignLeft | Qt::AlignVCenter, text);
+        const int d = val*(r.width()-r2.width());
         if (reverse)
-        {
-            r.moveRight(RECT.right() - d);
-            painter->drawLine(RECT.right()-val*RECT.width(), RECT.bottom(), RECT.right(), RECT.bottom());
-        }
+            r2.moveRight(r.right() - d);
         else
-        {
-            r.moveLeft(RECT.left() + d);
-            painter->drawLine(RECT.left(), RECT.bottom(), RECT.left()+val*RECT.width(), RECT.bottom());
-        }
+            r2.moveLeft(r.left() + d);
+        const QColor c = painter->pen().color();
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(COLOR(bg));
+        const int rnd = r2.height() / 4;
+        painter->drawRoundedRect(r2, rnd, rnd);
+        painter->setBrush(Qt::NoBrush);
+        painter->setPen(c);
+        drawItemText(painter, r2, Qt::AlignCenter, PAL, isEnabled, text);
     }
-    if (isListView)
-        drawItemText(painter, r, Qt::AlignHCenter|Qt::AlignTop, PAL, isEnabled, text);
     RESTORE_PAINTER
 }
 
@@ -143,7 +150,8 @@ Style::drawProgressBar(const QStyleOption *option, QPainter *painter, const QWid
     ASSURE_OPTION(pb, ProgressBar);
     OPT_HOVER
 
-    bool listView = (!widget && (appType == KGet || appType == KTorrent || appType == Apper)) || qobject_cast<const QAbstractItemView*>(widget);
+    bool listView = (!widget && (appType == KGet || appType == KTorrent || appType == Apper || appType == QTransmission)) ||
+                    qobject_cast<const QAbstractItemView*>(widget);
     if (listView || RECT.height() < F(9)) // if things get tiny, text will not work, neither will the dots be really visible
     {   // kinda inline progress in itemview (but unfortunately kget doesn't send a widget)
         drawSimpleProgress(pb, painter, widget, listView);
