@@ -195,7 +195,10 @@ Style::drawComboBox(const QStyleOptionComplex *option, QPainter *painter, const 
 
     QColor c = hasFocus ? FCOLOR(Highlight) : (cmb->editable ? FCOLOR(Text) : FCOLOR(WindowText));
     if (cmb->editable) {
-        drawLineEditFrame(option, painter, widget);
+        if (appType == Plasma && widget && widget->testAttribute(Qt::WA_SetPalette))
+            drawLineEdit(option, painter, widget);
+        else
+            drawLineEditFrame(option, painter, widget);
         c = FX::blend(FCOLOR(Base), c, MAX_STEPS, 1 + 2*animStep);
     } else {
         const int icon = cmb->currentIcon.isNull() ? 0 : cmb->iconSize.width() + F(4);
