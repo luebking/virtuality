@@ -79,15 +79,16 @@ Style::drawLineEdit(const QStyleOption *option, QPainter *painter, const QWidget
         return;
     }
 
-//     OPT_FOCUS
-//     if (hasFocus) {
-//         SAVE_PAINTER(Pen|Alias|Brush);
-//         painter->setPen(Qt::NoPen);
-//         painter->setBrush(FX::blend(FCOLOR(Base), FCOLOR(Highlight), 30, 1));
-//         painter->setRenderHint(QPainter::Antialiasing, true);
-//         painter->drawRoundedRect(RECT, config.frame.roundness, config.frame.roundness);
-//         RESTORE_PAINTER
-//     }
+    if (appType == Plasma && widget && widget->testAttribute(Qt::WA_SetPalette)) {
+        // plasma doesn't expose the theme colors anywhere - we MUST add an opaque background :-(
+        SAVE_PAINTER(Pen|Alias|Brush);
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(FCOLOR(Base));
+        painter->setRenderHint(QPainter::Antialiasing, true);
+        const int d = (F(2) & ~1)/2;
+        painter->drawRoundedRect(RECT.adjusted(d,d,-d,-d), config.frame.roundness, config.frame.roundness);
+        RESTORE_PAINTER
+    }
     drawLineEditFrame(option, painter, widget);
 }
 
