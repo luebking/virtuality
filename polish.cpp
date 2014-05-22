@@ -535,8 +535,10 @@ Style::polish( QWidget * widget )
             }
             // just use <strike>broadsword</strike> <strike>gladius</strike> foil here
             // the stupid viewport should use the mouse...
-            else  if (area->viewport() && !qobject_cast<QAbstractScrollArea*>(area->parent()))
+            else  if (area->viewport() && !qobject_cast<QAbstractScrollArea*>(area->parent()) &&
+                                            !qobject_cast<QGraphicsView*>(area->viewport())) {
                 area->viewport()->setAttribute(Qt::WA_NoMousePropagation);
+            }
             // Dolphin Information panel still (again?) does this
             // *sigh* - this cannot be true. this CANNOT be true. this CAN NOT BE TRUE!
             if (area->viewport() && area->viewport()->autoFillBackground() && !area->viewport()->palette().color(area->viewport()->backgroundRole()).alpha() )
