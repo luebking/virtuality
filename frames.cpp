@@ -16,7 +16,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <QLayoutItem>
 #include <QListView>
+#include <QFormLayout>
 #include <QTableView>
 #include <QTreeView>
 #include <QTextEdit>
@@ -125,6 +127,17 @@ Style::drawFrame(const QStyleOption *option, QPainter *painter, const QWidget *w
         painter->setRenderHint(QPainter::Antialiasing, false);
         if (v3frame->frameShape == QFrame::VLine || v3frame->frameShape == QFrame::HLine) {
             QPoint p1 = RECT.center();
+            if (v3frame->frameShape == QFrame::HLine && widget && widget->parentWidget())
+            if (QFormLayout *fl = qobject_cast<QFormLayout*>(widget->parentWidget()->layout())) {
+                for (int i = 0; i < fl->rowCount(); ++i) {
+                    if (QLayoutItem *li = fl->itemAt(i, QFormLayout::FieldRole)) {
+                        if (li == fl->itemAt(i, QFormLayout::SpanningRole))
+                            continue;
+                        p1.setX(li->geometry().x() - fl->spacing()/2);
+                        break;
+                    }
+                }
+            }
             QPoint p2 = p1;
             if (v3frame->frameShape == QFrame::VLine) {
                 const int d = RECT.height()/8;
