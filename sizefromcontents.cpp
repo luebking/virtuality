@@ -67,13 +67,14 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
 
             int hgt = contentsSize.height();
             int d = F(8);
-            if ( cb->frame ) {
-                hgt += F(4) - config.fontExtent;
-                d = F(16);
-            }
+            if (cb->frame) {
+                hgt = qMax(config.btn.minHeight, hgt + F(4) - config.fontExtent);
+                d += F(16);
+            } else
+                hgt = qMax(config.btn.minHeight, hgt);
 //             if ( !cb->currentIcon.isNull()) // leads to inequal heights + pot. height changes on item change
 //                 hgt += F(2);
-            return QSize(contentsSize.width() + d + ( int)(hgt/1.1), qMax(config.btn.minHeight, hgt));
+            return QSize(contentsSize.width() + d + hgt, hgt);
         }
 //    case CT_DialogButtons: //
 //       return QSize((contentsSize.width()+16 < 80) ? 80 : contentsSize.width()+16, contentsSize.height()+10);
