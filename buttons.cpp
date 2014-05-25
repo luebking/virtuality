@@ -19,6 +19,7 @@
 #include <QApplication>
 #include <QAbstractButton>
 #include <QAbstractItemView>
+#include <QLinearGradient>
 #include <QStyleOptionButton>
 #include <QStyleOptionMenuItem>
 
@@ -175,18 +176,29 @@ Style::drawButtonFrame(const QStyleOption *option, QPainter *painter, const QWid
             painter->setPen(Qt::NoPen);
             painter->setBrush(c);
         } else {
-            painter->setPen(QPen(c, F(2)));
+            painter->setPen(QPen(c, FRAME_STROKE));
             painter->setBrush(Qt::NoBrush);
         }
         painter->setRenderHint(QPainter::Antialiasing, true);
         const int radius = r.height()/2;
+#if true // gradient ... ;-) for unhovered button outline
+        if (!(sunken || hasFocus || anim.step)) {
+            QLinearGradient lg(r.x(), r.y(), r.x(), r.bottom());
+            const QColor c1(FX::blend(FCOLOR(Window), oc, MAX_STEPS, 1 + MAX_STEPS/2));
+            lg.setColorAt(0.0, c1);
+            lg.setColorAt(0.25, c);
+            lg.setColorAt(0.75, c);
+            lg.setColorAt(1.0, c1);
+            painter->setPen(QPen(lg, FRAME_STROKE));
+        }
+#endif
         painter->drawRoundedRect(r, radius, radius);
 #if false // rails
         if (!(sunken || hasFocus) && anim.step < MAX_STEPS) {
             const int x = RECT.x() + RECT.width() / 2;
             const int w = RECT.width()/6 + anim.step*RECT.width()/(3*MAX_STEPS);
-            painter->drawLine(RECT.x() + w, r.y(), x, r.y());
-            painter->drawLine(x, r.bottom() + F(1), RECT.right() - w, r.bottom() + F(1));
+            painter->drawLine(x, r.y(), RECT.right() - w, r.y());
+            painter->drawLine(RECT.x() + w, r.bottom() + F(1), x, r.bottom() + F(1));
         }
 #endif
 #if false // swapping outer bound
