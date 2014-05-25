@@ -69,12 +69,12 @@
 /**============= extern C stuff ==========================*/
 
 QStringList VirtualityStylePlugin::keys() const {
-    return QStringList() << "Virtuality" << "Sienar" << "Flynn";
+    return QStringList() << "Virtuality" << "Sienar" << "Flynn" << "VirtualBreeze";
 }
 
 QStyle *VirtualityStylePlugin::create(const QString &key) {
     QString ikey = key.toLower();
-    if (ikey == "virtuality" || ikey == "sienar" || ikey == "flynn")
+    if (ikey == "virtuality" || ikey == "sienar" || ikey == "flynn" || ikey == "virtualbreeze")
         return new BE::Style(ikey);
     return 0;
 }
@@ -244,7 +244,7 @@ Style::registerRoutines()
 
 Style::Style(const QString &name) : QCommonStyle()
 {
-    m_usingStandardPalette = (name == "sienar" || name == "flynn");
+    m_usingStandardPalette = (name == "sienar" || name == "flynn" || name == "virtualbreeze");
     setObjectName(name);
 #ifdef BE_WS_X11
     BE::XProperty::init();
@@ -1109,6 +1109,12 @@ Style::standardPalette() const
         hg.setRgb(120, 201, 230);
         hgt.setRgb(16, 28, 32);
         mid.setRgb(14, 67, 91);
+    } else if (objectName().toLower() == "virtualbreeze") {
+        bg.setRgb(239, 240, 241); // cardboard grey
+        fg.setRgb(49, 54, 59); // charcoal grey
+        hg.setRgb(61, 174, 233); // plasma blue
+        hgt.setRgb(252, 252, 252); // paper white
+        mid.setRgb(127, 127, 128);
     }
     QPalette pal(fg, bg, // windowText, button
                         bg, fg, mid, //light, dark, mid
