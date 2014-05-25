@@ -345,6 +345,42 @@ Style::init(const QSettings* settings)
 
     readSettings(settings, appName);
 
+    if (objectName() == "sienar") {
+        config.invert.docks = true;
+        config.invert.menubars = true;
+        config.invert.menus = true;
+        config.invert.modals = true;
+        config.invert.titlebars = true;
+        config.invert.toolbars = true;
+        config.bg.opacity = 0xff;
+        config.bg.modal.opacity = 230;
+        config.bg.blur = false;
+        config.frame.roundness = 6;
+    } else if (objectName() == "flynn") {
+        config.invert.docks = false;
+        config.invert.menubars = false;
+        config.invert.menus = false;
+        config.invert.modals = false;
+        config.invert.titlebars = false;
+        config.invert.toolbars = false;
+//         config.bg.opacity = readInt(BG_OPACITY);
+//         config.bg.modal.opacity = readInt(BG_MODAL_OPACITY);
+//         config.bg.blur = false;
+//         config.frame.roundness = SCALE(readInt(ROUNDNESS));
+    } else if (objectName() == "virtualbreeze") {
+        config.invert.docks = false;
+        config.invert.menubars = false;
+        config.invert.menus = true;
+        config.invert.modals = true;
+        config.invert.titlebars = false;
+        config.invert.toolbars = false;
+
+        config.bg.opacity = 0xff;
+        config.bg.modal.opacity = 230;
+        config.bg.blur = false;
+//         config.btn.tool.disabledStyle = readInt(BTN_DISABLED_TOOLS);
+        config.frame.roundness = 2;
+    }
     initMetrics();
     setProperty("VirtualityStyleRevision", virtuality_revision());
 }
