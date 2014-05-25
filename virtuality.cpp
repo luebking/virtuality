@@ -338,8 +338,10 @@ static struct PainterStore {
     QPen pen;
     QBrush brush;
     QFont font;
+    bool clipping;
+    QRegion clipRegion;
     int flags;
-} gs_painterStore = { false, QPen(), QBrush(), QFont(), 0 };
+} gs_painterStore = { false, QPen(), QBrush(), QFont(), false, QRegion(), 0 };
 
 #define X_KdeBase 0xff000000
 #define SH_KCustomStyleELement 0xff000001
@@ -1133,6 +1135,10 @@ Style::savePainter(QPainter *p, int flags)
         gs_painterStore.brush = p->brush();
     if (flags & Font)
         gs_painterStore.font = p->font();
+    if (flags & Clip) {
+        gs_painterStore.clipping = p->hasClipping();
+        gs_painterStore.clipRegion = p->clipRegion();
+    }
     return flags;
 }
 
@@ -1148,6 +1154,10 @@ Style::restorePainter(QPainter *p, int flags)
         p->setBrush(gs_painterStore.brush);
     if (flags & Font)
         p->setFont(gs_painterStore.font);
+    if (flags & Clip) {
+        p->setClipRegion(gs_painterStore.clipRegion);
+        p->setClipping(gs_painterStore.clipping);
+    }
     gs_painterStore.flags &= ~flags;
 }
 
