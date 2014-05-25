@@ -353,7 +353,7 @@ Style::init(const QSettings* settings)
         config.invert.titlebars = true;
         config.invert.toolbars = true;
         config.bg.opacity = 0xff;
-        config.bg.modal.opacity = 230;
+        config.bg.modal.opacity = 250;
         config.bg.blur = false;
         config.frame.roundness = 6;
     } else if (objectName() == "flynn") {
@@ -376,7 +376,7 @@ Style::init(const QSettings* settings)
         config.invert.toolbars = false;
 
         config.bg.opacity = 0xff;
-        config.bg.modal.opacity = 230;
+        config.bg.modal.opacity = 250;
         config.bg.blur = false;
 //         config.btn.tool.disabledStyle = readInt(BTN_DISABLED_TOOLS);
         config.frame.roundness = 2;
