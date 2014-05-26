@@ -57,7 +57,7 @@ Style::drawLineEditFrame(const QStyleOption *option, QPainter *painter, const QW
         else if (goodBad = (g > r+b && qAbs(r-b) < qMax(qMin(r,b)/10,1))) // that's green
             c = FX::blend(Qt::green, LEF_COLOR, 1, 16-15*hasFocus);
         if (goodBad)
-            painter->setPen(QPen(c, F(2) & ~1));
+            painter->setPen(QPen(c, FRAME_STROKE));
     }
     if (!goodBad)
         painter->setPen(hasFocus ? FOCUS_FRAME_PEN : FRAME_PEN);
