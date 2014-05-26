@@ -117,7 +117,7 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
             if (checkable)
                 w += 2*(h - F(4))/3 + F(7);
             w += (checkable + (maxpmw > 0))*F(2);
-            w += F(12);
+            w += F(16);
             if (menuItem->menuItemType == QStyleOptionMenuItem::SubMenu)
                 w += 2 * windowsArrowHMargin;
             if (menuItem->menuItemType == QStyleOptionMenuItem::DefaultItem)

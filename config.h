@@ -76,6 +76,7 @@ typedef struct Config
     {
         bool showIcons;
         int delay;
+        bool indent;
     } menu;
 
     int mnemonic;

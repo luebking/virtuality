@@ -110,8 +110,17 @@ Style::drawMenuItem(const QStyleOption *option, QPainter *painter, const QWidget
 
     SAVE_PAINTER(Pen|Brush);
 
-    QRect r = RECT.adjusted(0,0,-1,-1);
+    QRect r = RECT;
     bool selected = isEnabled && menuItem->state & State_Selected;
+    if (selected && config.menu.indent) {
+        SAVE_PAINTER(Alias);
+        painter->setRenderHint(QPainter::Antialiasing, false);
+        painter->setPen(QPen(FCOLOR(Highlight), F(2)));
+        int x = r.x() + F(1);
+        painter->drawLine(x, r.y() + F(2), x, r.bottom() - F(2));
+        r.setX(r.x() + F(2));
+        RESTORE_PAINTER
+    }
 
     const bool checkable = (menuItem->checkType != QStyleOptionMenuItem::NotCheckable);
     const bool checked = checkable && menuItem->checked;
@@ -158,7 +167,18 @@ Style::drawMenuItem(const QStyleOption *option, QPainter *painter, const QWidget
         xpos += cDim + F(4);
     }
 
-    painter->setPen(sunken ? FCOLOR(Highlight) : (selected ? FCOLOR(WindowText) : FX::blend(FCOLOR(Window), FCOLOR(WindowText))));
+//     painter->setPen(sunken ? FCOLOR(Highlight) : (selected ? FCOLOR(WindowText) : FX::blend(FCOLOR(Window), FCOLOR(WindowText))));
+    QColor c;
+    if (sunken)
+        c = FCOLOR(Highlight);
+    else if (selected)
+        c = FCOLOR(WindowText);
+    else if (config.menu.indent)
+        c = FX::blend(FCOLOR(Window), FCOLOR(WindowText), 1, 3);
+    else
+        c = FX::blend(FCOLOR(Window), FCOLOR(WindowText));
+
+    painter->setPen(c);
 
     QRect textRect(xpos, y + windowsItemVMargin,
                    w - (xm + checkable*(cDim+F(4)) + subMenu*windowsRightBorder + tab + windowsItemFrame + windowsItemHMargin),

@@ -63,7 +63,7 @@
 
 #define MENU_DELAY "Menu.Delay", 96
 #define MENU_SHOWICONS "Menu.ShowIcons", false
-#define MENU_SHADOW "Menu.Shadow", false
+#define MENU_INDENT "Menu.Indent", false
 
 #define SHADOW_COLOR "ShadowColor", QColor(0,0,0,255)
 #define HALO_COLOR "HaloColor", QColor(255,255,255,255)

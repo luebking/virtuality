@@ -174,6 +174,8 @@ Style::readSettings(const QSettings* settings, QString appName)
 
     config.menu.delay = readInt(MENU_DELAY);
     config.menu.showIcons = appType == Opera || readBool(MENU_SHOWICONS);
+//     config.menu.showIcons = !qApp->testAttribute(Qt::AA_DontShowIconsInMenus);
+    config.menu.indent = readBool(MENU_INDENT);
 
     config.winBtnStyle = 2; // this is a kwin deco setting, TODO: read from there?
 
