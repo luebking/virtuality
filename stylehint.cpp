@@ -227,11 +227,14 @@ int Style::styleHint(StyleHint hint, const QStyleOption *option, const QWidget *
         return config.macStyle ? 2 : 1; // QWizard::MacStyle / QWizard::ModernStyle
 
     case SH_FormLayoutWrapPolicy:
-        return 0; //  QFormLayout::RowWrapPolicy
+        return 0; //  QFormLayout::RowWrapPolicy - don't wrap
     case SH_FormLayoutFieldGrowthPolicy:
-        return config.macStyle ? 0 : 1; // QFormLayout::FieldsStayAtSizeHint / ExpandingFieldsGrow / AllNonFixedFieldsGrow
+        return 1; // WORKAROUND: KDE is often buggy w/ QFormLayout::FieldsStayAtSizeHint
+//         return config.macStyle ? 0 : 1; // QFormLayout::FieldsStayAtSizeHint / ExpandingFieldsGrow / AllNonFixedFieldsGrow
     case SH_FormLayoutFormAlignment:
-        return (Qt::AlignHCenter | Qt::AlignTop); // (Qt::AlignLeft | Qt::AlignTop)
+        // WORKAROUND: aligning center is pointless for growing items. centering only fixed sizers is inconsistent
+        return (Qt::AlignLeft | Qt::AlignTop);
+//         return (Qt::AlignHCenter | Qt::AlignTop);
     case SH_FormLayoutLabelAlignment:
         return Qt::AlignRight;
     case SH_ItemView_PaintAlternatingRowColorsForEmptyArea:
