@@ -279,7 +279,7 @@ Style::drawPushButtonLabel(const QStyleOption *option, QPainter *painter, const 
 void
 Style::drawRadioOrCheckBox(const QStyleOption *option, QPainter *painter, const QWidget *widget, bool isRadio) const
 {
-    OPT_HOVER OPT_SUNKEN OPT_FOCUS
+    OPT_ENABLED OPT_HOVER OPT_SUNKEN OPT_FOCUS
 
     if ( widget && widget->inherits("QWebView") )
         widget = 0;
@@ -303,7 +303,10 @@ Style::drawRadioOrCheckBox(const QStyleOption *option, QPainter *painter, const 
 
     int animStep = (isRadio && state) || option->state & QStyle::State_Item ? 0 : HOVER_STEP;
     const int a = animStep*168/(2*MAX_STEPS);
-    if (sunken) {
+    if (isEnabled && (option->state & State_Selected)) { // popup menu
+        painter->setPen(QPen(FCOLOR(Highlight), FRAME_STROKE));
+        painter->setBrush(Qt::NoBrush);
+    } else if (sunken) {
         painter->setPen(Qt::NoPen);
         painter->setBrush(FCOLOR(WindowText));
     } else {

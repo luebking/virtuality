@@ -117,7 +117,7 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
             if (checkable)
                 w += 2*(h - F(4))/3 + F(7);
             w += (checkable + (maxpmw > 0))*F(2);
-            w += F(16);
+            w += config.menu.indent ? F(20) : F(12);
             if (menuItem->menuItemType == QStyleOptionMenuItem::SubMenu)
                 w += 2 * windowsArrowHMargin;
             if (menuItem->menuItemType == QStyleOptionMenuItem::DefaultItem)
