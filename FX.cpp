@@ -406,8 +406,7 @@ FX::haveContrast(const QColor &a, const QColor &b)
     if (qAbs(diff) < 91001)
         return false;
 
-    diff = qMax(ar,br) + qMax(ag,bg) + qMax(ab,bb)
-        - (qMin(ar,br) + qMin(ag,bg) + qMin(ab,bb));
+    diff = (299*qAbs(ar - br) + 587*qAbs(ag - bg) + 114*qAbs(ab - bb)) / 300;
 
     return (diff > 300);
 }
