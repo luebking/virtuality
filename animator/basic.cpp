@@ -50,8 +50,7 @@ Basic::_manage(QWidget *w)
     w->removeEventFilter(this);
 
     connect(w, SIGNAL(destroyed(QObject*)), this, SLOT(release_s(QObject*)));
-    if (w->isVisible())
-    {
+    if (w->isVisible()) {
         QEvent ev(QEvent::Show);
         eventFilter(w, &ev);
     }
@@ -141,8 +140,7 @@ Basic::timerEvent(QTimerEvent * event)
     while (it != items.end())
     {
         w = it.key().data();
-        if (!w)
-        {
+        if (!w) {
             it = items.erase(it);
             continue;
         }
@@ -154,34 +152,29 @@ Basic::timerEvent(QTimerEvent * event)
     }
 }
 
-bool
-Basic::eventFilter( QObject* object, QEvent *e )
-{
-   QWidget* widget = qobject_cast<QWidget*>(object);
-   if (!(widget && widget->isVisible()))
-      return false;
+#define IF_WIDGET QWidget* widget = qobject_cast<QWidget*>(object); \
+                  if (widget && widget->isVisible() && widget->isEnabled())
 
+bool
+Basic::eventFilter(QObject* object, QEvent *e)
+{
    switch (e->type())
    {
-    case QEvent::MouseMove:
-    case QEvent::Timer:
-    case QEvent::Move:
-    case QEvent::Paint:
-        return false; // just for performance - they can occur really often
-
-    case QEvent::Show:
-        if (widget->isEnabled())
+    case QEvent::Show: {
+        IF_WIDGET
             play(widget);
         return false;
+    }
     case QEvent::Hide:
-        _release(widget);
+        _release(qobject_cast<QWidget*>(object));
         return false;
-    case QEvent::EnabledChange:
-        if (widget->isEnabled())
+    case QEvent::EnabledChange: {
+        IF_WIDGET
             play(widget);
         else
-            _release(widget);
+            _release(qobject_cast<QWidget*>(object));
         return false;
+    }
     default:
         return false;
    }

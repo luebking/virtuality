@@ -40,6 +40,7 @@ public:
 protected:
     friend class Basic;
     friend class Progress;
+    friend class Focus;
     friend class Hover;
     int _step; bool backwards;
     void init(int s = 0, bool bwd = false);

@@ -115,14 +115,7 @@ Hover::play(QWidget *widget, bool bwd)
         timer.start(timeStep, this);
 }
 
-// works, cpu load is ok, but REALLY annoying!
-#define WOBBLE_HOVER 0
-
-#if WOBBLE_HOVER
-#define HOVER_IN_STEP 1
-#else
 #define HOVER_IN_STEP 2
-#endif
 
 void
 Hover::_setFPS(uint fps)
@@ -165,34 +158,19 @@ Hover::timerEvent(QTimerEvent * event)
             continue;
         }
         step = &it.value()._step;
-        if (it.value().backwards)
-        {   // fade OUT
+        if (it.value().backwards) {   // fade OUT
             --(*step);
             widget->update();
-            if (*step < 1)
-            {
-#if WOBBLE_HOVER
-                if (widget->testAttribute(Qt::WA_UnderMouse))
-                    it.value().backwards = false;
-                else
-#endif
-                    it = items.erase(it);
+            if (*step < 1) {
+                it = items.erase(it);
             }
             else
                 ++it;
-        }
-        else
-        {   // fade IN
+        } else {   // fade IN
             *step += HOVER_IN_STEP;
             widget->update();
-            if ((uint)(*step) > _maxSteps-2)
-            {
-#if WOBBLE_HOVER
-                if (widget->testAttribute(Qt::WA_UnderMouse))
-                    it.value().backwards = true;
-                else
-#endif
-                    it = items.erase(it);
+            if ((uint)(*step) > _maxSteps-2) {
+                it = items.erase(it);
             }
             else
                 ++it;
@@ -213,39 +191,24 @@ if (area->verticalScrollBar()->isVisible())\
 if ((sb = qobject_cast<QScrollBar*>(kid)))
 
 
+#define IF_WIDGET QWidget* widget = qobject_cast<QWidget*>(object); \
+                  if (widget && widget->isVisible() && widget->isEnabled())
+
 bool
 Hover::eventFilter( QObject* object, QEvent *e )
 {
-    QWidget* widget = qobject_cast<QWidget*>(object);
-    if (!(widget && widget->isVisible() && widget->isEnabled()))
-        return false;
-
-    switch (e->type())
-    {
-    case QEvent::Timer:
-    case QEvent::Move:
-    case QEvent::Paint:
-    case QEvent::MouseMove:
-    case QEvent::UpdateRequest:
-    case QEvent::MouseButtonPress:
-    case QEvent::Wheel:
-        return false; // just for performance - they can occur really often
+    switch (e->type()) {
     case QEvent::WindowActivate:
-    case QEvent::Enter:
-    {
-        if (QAbstractScrollArea* area = qobject_cast<QAbstractScrollArea*>(object))
-        {
+    case QEvent::Enter: {
+        if (QAbstractScrollArea* area = qobject_cast<QAbstractScrollArea*>(object)) {
             if (!area->isEnabled())
                 return false;
             HANDLE_SCROLL_AREA_EVENT(false);
             return false;
-        }
-        else if (_scrollAreas.contains(object))
-        {
+        } else if (_scrollAreas.contains(object)) {
             QObjectList kids = object->children();
             QWidget *sb;
-            foreach (QObject *kid, kids)
-            {
+            foreach (QObject *kid, kids) {
                 if isAttachedScrollbar
                     play(sb);
             }
@@ -253,25 +216,21 @@ Hover::eventFilter( QObject* object, QEvent *e )
         }
         if (e->type() == QEvent::WindowActivate)
             return false;
-        play(widget);
+        IF_WIDGET
+            play(widget);
         return false;
     }
     case QEvent::WindowDeactivate:
-    case QEvent::Leave:
-    {
-        if (QAbstractScrollArea* area = qobject_cast<QAbstractScrollArea*>(object))
-        {
+    case QEvent::Leave: {
+        if (QAbstractScrollArea* area = qobject_cast<QAbstractScrollArea*>(object)) {
             if (!area->isEnabled())
                 return false;
             HANDLE_SCROLL_AREA_EVENT(true);
             return false;
-        }
-        else if (_scrollAreas.contains(object))
-        {
+        } else if (_scrollAreas.contains(object)) {
             QObjectList kids = object->children();
             QWidget *sb;
-            foreach (QObject *kid, kids)
-            {
+            foreach (QObject *kid, kids) {
                 if isAttachedScrollbar
                     play(sb, true);
             }
@@ -279,37 +238,11 @@ Hover::eventFilter( QObject* object, QEvent *e )
         }
         if (e->type() == QEvent::WindowDeactivate)
             return false;
-        play(widget, true);
+        IF_WIDGET
+            play(widget, true);
         return false;
     }
 #undef HANDLE_SCROLL_AREA_EVENT
-
-#if 0
-    case QEvent::FocusIn:
-        if (qobject_cast<QPushButton*>(object) || qobject_cast<QComboBox*>(object)) {
-            QWidget *widget = (QWidget*)object;
-            if (!widget->isEnabled())
-                return false;
-            if (widget->testAttribute(Qt::WA_UnderMouse))
-                widget->update();
-            else
-                play(widget);
-            return false;
-        }
-        return false;
-    case QEvent::FocusOut:
-        if (qobject_cast<QPushButton*>(object) || qobject_cast<QComboBox*>(object)) {
-            QWidget *widget = (QWidget*)object;
-            if (!widget->isEnabled())
-                return false;
-            if (widget->testAttribute(Qt::WA_UnderMouse))
-                widget->update();
-            else
-                play(widget, true);
-            return false;
-        }
-        return false;
-#endif
     default:
         return false;
     }
