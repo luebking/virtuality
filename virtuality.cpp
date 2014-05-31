@@ -555,13 +555,9 @@ static const
 QPalette::ColorGroup groups[3] = { QPalette::Active, QPalette::Inactive, QPalette::Disabled };
 
 
-static void
-swapPalette(QWidget *widget, Style *style)
+void
+Style::swapPalette(QWidget *widget)
 {
-    // protect our KDE palette fix - in case
-//     QPalette *savedPal = originalPalette;
-//     originalPalette = 0;
-
     // looks complex? IS!
     // reason nr. 1: stylesheets. they're nasty and qt operates on the app palette here
     // reason nr. 2: some idiot must have spread the idea that pal.setColor(backgroundRole(), Qt::transparent)
@@ -602,7 +598,7 @@ swapPalette(QWidget *widget, Style *style)
                 FX::swap(pal, group, QPalette::Highlight, QPalette::HighlightedText, kid);
                 FX::swap(pal, group, QPalette::Base, QPalette::Text, kid);
             }
-            style->polish(pal, false);
+            polish(pal, false);
             kid->setPalette(pal);
         }
         QTextDocument *document(NULL);
@@ -623,6 +619,9 @@ swapPalette(QWidget *widget, Style *style)
     // so to apply them with the proper color, we need to change the apps palette to the swapped one,...
     if (!shits.isEmpty()) {
         QPalette appPal = QApplication::palette();
+        // protect our KDE palette fix - in case
+        QPalette *savedPal = originalPalette;
+        originalPalette = 0;
         // ... reapply the shits...
         QMap<QWidget*, QString>::const_iterator shit = shits.constBegin();
         while (shit != shits.constEnd()) {
@@ -634,9 +633,8 @@ swapPalette(QWidget *widget, Style *style)
         }
         // ... and reset the apps palette
         QApplication::setPalette(appPal);
+        originalPalette = savedPal;
     }
-
-//     originalPalette = savedPal;
 }
 
 bool isUrlNaviButtonArrow = false;
@@ -950,7 +948,7 @@ Style::eventFilter( QObject *object, QEvent *ev )
                 // setup some special stuff for modal windows
                 if (config.invert.modals && widget->style() == this && widget->isModal() != swappedPal) { // swapping QStyleSheetStyle is one epic fail ..
                     widget->setProperty("BE.swappedPalette", widget->isModal());
-                    swapPalette(widget, this);
+                    swapPalette(widget);
                 }
                 if (!(widget->testAttribute(Qt::WA_X11NetWmWindowTypeDesktop) ||
                              widget->testAttribute(Qt::WA_TranslucentBackground))) {

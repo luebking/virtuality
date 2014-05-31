@@ -288,6 +288,7 @@ private:
     void setupDecoFor(QWidget *w, const QPalette &pal);
     enum PainterStorage { Pen = 1<<0, Brush = 1<<1, Alias = 1<<2, Font = 1<<3, Clip = 1<<4 };
     static int savePainter(QPainter*, int);
+    void swapPalette(QWidget *widget);
     static void restorePainter(QPainter*, int);
     #define SAVE_PAINTER(_F_) int storedPainterFlags = savePainter(painter, _F_)
     #define RESTORE_PAINTER restorePainter(painter, storedPainterFlags);
