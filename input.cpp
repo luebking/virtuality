@@ -22,6 +22,7 @@
 #include <QToolBar>
 #include "draw.h"
 #include "hacks.h"
+#include "animator/focus.h"
 #include "animator/hover.h"
 
 #include <QtDebug>
@@ -46,7 +47,11 @@ Style::drawLineEditFrame(const QStyleOption *option, QPainter *painter, const QW
     path.moveTo(r.x() + config.frame.roundness, r.bottom()); // + config.frame.roundness to match aligned fames
     path.lineTo(r2.bottomLeft());
     path.arcTo(r2, -90, 180);
-    path.lineTo(r.x() + 2*r.width()/3, r.y());
+    const int max = Animator::Focus::maxSteps();
+    int step = widget ? Animator::Focus::step(widget) : max;
+    if (!step && hasFocus)
+        step = max;
+    path.lineTo(r.x() + ((2*max - step)*r.width())/(3*max), r.y());
     QColor c;
     bool goodBad = false;
     if (widget && widget->testAttribute(Qt::WA_SetPalette)) {
@@ -59,8 +64,10 @@ Style::drawLineEditFrame(const QStyleOption *option, QPainter *painter, const QW
         if (goodBad)
             painter->setPen(QPen(c, FRAME_STROKE));
     }
-    if (!goodBad)
-        painter->setPen(hasFocus ? FOCUS_FRAME_PEN : FRAME_PEN);
+    if (!goodBad) {
+        painter->setPen(QPen(FX::blend(FX::blend(FCOLOR(Window), FCOLOR(WindowText), 8, 1),
+                             FX::blend(FCOLOR(Window), FCOLOR(Highlight), 1, 2), max - step, step), FRAME_STROKE));
+    }
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->drawPath(path);
     RESTORE_PAINTER

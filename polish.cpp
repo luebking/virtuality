@@ -70,6 +70,7 @@
 #include "hacks.h"
 #include "virtuality.h"
 
+#include "animator/focus.h"
 #include "animator/hover.h"
 #include "animator/aprogress.h"
 #include "animator/tab.h"
@@ -668,8 +669,11 @@ Style::polish( QWidget * widget )
 
         if (IS_HTML_WIDGET)
             widget->setAttribute(Qt::WA_Hover);
-        else
+        else {
             Animator::Hover::manage(widget);
+            if (cb->isEditable())
+                Animator::Focus::manage(widget);
+        }
     }
     //BEGIN SLIDERS / SCROLLBARS / SCROLLAREAS - hovering/animation                                -
     else if (qobject_cast<QAbstractSlider*>(widget))
@@ -726,6 +730,9 @@ Style::polish( QWidget * widget )
             }
         }
     }
+
+    else if (qobject_cast<QLineEdit*>(widget))
+        Animator::Focus::manage(widget);
 
     //BEGIN PROGRESSBARS - hover/animation and bold font                                           -
     else if (widget->inherits("QProgressBar"))
@@ -796,7 +803,9 @@ Style::polish( QWidget * widget )
     {
         widget->setAttribute(Qt::WA_Hover);
         if (widget->inherits("QWebView"))
-            FILTER_EVENTS(widget);
+            FILTER_EVENTS(widget)
+        else if (widget->inherits("QAbstractSpinBox"))
+            Animator::Focus::manage(widget);
     }
     // this is a WORKAROUND for amarok filebrowser, see above on itemviews...
     else if (widget->inherits("KDirOperator"))
