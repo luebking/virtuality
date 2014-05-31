@@ -450,23 +450,6 @@ Style::elementId(const QString &string) const
 /// ----------------------------------------------------------------------
 
 void
-Style::fillWithMask(QPainter *painter, const QPoint &xy,
-                          const QBrush &brush, const QPixmap &mask,
-                          QPoint offset) const
-{
-   QPixmap qPix(mask.size());
-   if (brush.texture().isNull())
-      qPix.fill(brush.color());
-   else {
-      QPainter p(&qPix);
-      p.drawTiledPixmap(mask.rect(),brush.texture(),offset);
-      p.end();
-   }
-   qPix = FX::applyAlpha(qPix, mask);
-   painter->drawPixmap(xy, qPix);
-}
-
-void
 Style::erase(const QStyleOption *option, QPainter *painter, const QWidget *widget, const QPoint *offset) const
 {
     const QWidget *grampa = widget;
