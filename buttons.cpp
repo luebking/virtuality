@@ -236,7 +236,9 @@ Style::drawPushButtonLabel(const QStyleOption *option, QPainter *painter, const 
             painter->setPen(FCOLOR(Button));
         else if (hasFocus)
             painter->setPen(FX::blend(FCOLOR(WindowText), FCOLOR(Highlight), MAX_STEPS-anim.step, anim.step));
-        else {
+        else if (btn->features & QStyleOptionButton::DefaultButton) {
+            painter->setPen(FX::blend(FCOLOR(WindowText), FCOLOR(Highlight),1,2));
+        } else {
 //             const int step = MAX_STEPS - qAbs(2 * (anim.step - MAX_STEPS/2));
             painter->setPen(FX::blend(FCOLOR(WindowText), FCOLOR(Highlight), MAX_STEPS-anim.step, anim.step));
 //             painter->setPen(FX::blend(FCOLOR(WindowText), FCOLOR(Window), MAX_STEPS-step, step));
