@@ -78,9 +78,9 @@ Style::drawCapacityBar(const QStyleOption *option, QPainter *painter, const QWid
 
 void
 Style::drawSimpleProgress(const QStyleOptionProgressBar *option, QPainter *painter, const QWidget *widget, bool isListView) const
-{   // TODO: widget doesn't set a state - make bug report!
+{
     OPT_ENABLED;
-    if (appType == KTorrent || appType == QTransmission)
+    if (isListView) // ktorrent/transmission-qt don't set the state
         isEnabled = true; // ....
 
     const QStyleOptionProgressBarV2 *pb2 = qstyleoption_cast<const QStyleOptionProgressBarV2*>(option);
@@ -150,10 +150,19 @@ Style::drawProgressBar(const QStyleOption *option, QPainter *painter, const QWid
     ASSURE_OPTION(pb, ProgressBar);
     OPT_HOVER
 
-    bool listView = (!widget && (appType == KGet || appType == KTorrent || appType == Apper || appType == QTransmission)) ||
-                    qobject_cast<const QAbstractItemView*>(widget);
-    if (listView || RECT.height() < F(9)) // if things get tiny, text will not work, neither will the dots be really visible
-    {   // kinda inline progress in itemview (but unfortunately kget doesn't send a widget)
+    bool listView = false;
+    if (!widget && painter->device()->devType() == QInternal::Widget) {
+        // kget, transmission-qt, ktorrent, apper and others use thi, but don't provide a widget pointer
+        // so we investigate the paintDevice
+        widget = static_cast<QWidget*>(painter->device());
+        listView = (widget->objectName() == QLatin1String("qt_scrollarea_viewport") &&
+                    qobject_cast<const QAbstractItemView*>(widget->parentWidget()));
+    }
+    if (!listView)
+        listView = qobject_cast<const QAbstractItemView*>(widget);
+
+    if (listView || RECT.height() < F(9)) { // if things get tiny, text won't work, nor will the dots be distinct
+        // -> kinda inline progress in itemview
         drawSimpleProgress(pb, painter, widget, listView);
         return;
     }

@@ -306,12 +306,6 @@ Style::init(const QSettings* settings)
             appType = BEshell;
         else if (appName == "plasma" || appName.startsWith("plasma-") || appName == "krunner")
             appType = Plasma;
-        else if (appName == "kget")
-            appType = KGet;
-        else if (appName == "ktorrent")
-            appType = KTorrent;
-        else if (appName.startsWith("transmission"))
-            appType = QTransmission;
         else if (appName == "qbittorrent")
             appType = QBittorrent;
         else if (appName == "Designer" || appName == "designer")
@@ -334,8 +328,6 @@ Style::init(const QSettings* settings)
             appType = Arora;
         else if ( appName == "konqueror")
             appType = Konqueror;
-        else if ( appName == "apper")
-            appType = Apper;
         else if ( appName == "Kde4ToolkitLibrary" )
         {
             appName = "opera";

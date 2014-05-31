@@ -1065,7 +1065,7 @@ Style::setupDecoFor(QWidget *widget, const QPalette &palette)
     }
 
     data.inactiveWindow = bg.rgba();
-    
+
     // COLORS =======================
     bg = pal.color(QPalette::Active, QPalette::Window);
 
