@@ -56,7 +56,7 @@ endif (KDE4_FOUND)
 
 add_definitions ( -DBLIB_EXPORT=Q_DECL_IMPORT )
 
-set (virtuality_SOURCES animator/basic.cpp animator/aprogress.cpp animator/hover.cpp
+set (virtuality_SOURCES animator/basic.cpp animator/aprogress.cpp animator/focus.cpp animator/hover.cpp
 animator/hoverindex.cpp animator/hovercomplex.cpp animator/tab.cpp
 FX.cpp dpi.cpp shapes.cpp shadows.cpp
 virtuality.cpp buttons.cpp docks.cpp frames.cpp hacks.cpp init.cpp
@@ -69,14 +69,14 @@ animator/hoverindex.h animator/tab.h config.h draw.h hacks.h splitterproxy.h vir
 
 
 file(GLOB virtuality_HDRS *.h)
-list(APPEND virtuality_HDRS animator/basic.h animator/aprogress.h animator/hover.h animator/hoverindex.h animator/hovercomplex.h animator/tab.h)
+list(APPEND virtuality_HDRS animator/basic.h animator/aprogress.h animator/focus.h animator/hover.h animator/hoverindex.h animator/hovercomplex.h animator/tab.h)
 
 if ( X11_FOUND )
     add_definitions (-DBE_WS_X11)
     set (virtuality_SOURCES ${virtuality_SOURCES} xproperty.cpp)
 endif ( X11_FOUND )
 
-set (virtuality_MOC_HDRS animator/basic.h animator/aprogress.h animator/hover.h
+set (virtuality_MOC_HDRS animator/basic.h animator/aprogress.h animator/focus.h animator/hover.h
 animator/hoverindex.h animator/tab.h virtuality.h hacks.h)
 
 if(QT_QTDBUS_FOUND)
