@@ -449,7 +449,7 @@ FX::swap(QPalette &pal, QPalette::ColorGroup group, QPalette::ColorRole r1, QPal
 {
     QColor c1 = pal.color(group, r1);
     if (w && c1 == Qt::transparent && r1 == w->backgroundRole()) {
-        qDebug() << "found an idiot abusing Qt::transparent" << w << w->parentWidget();
+        qDebug() << "Qt::transparent abused as ::setAutoFillBackground(false)" << w->parentWidget() << ">" << w;
         const QWidget *runner = w;
         while ((runner = runner->parentWidget())) {
             if (runner->autoFillBackground() || runner->testAttribute(Qt::WA_OpaquePaintEvent) || runner->isWindow()) {
