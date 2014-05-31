@@ -260,7 +260,7 @@ bar4popup(QMenu *menu)
 
 
 inline static void
-polishGTK(QWidget * widget, const Config &config)
+polishGTK(QWidget * widget)
 {
     enum MyRole{Bg = Style::Bg, Fg = Style::Fg};
     QColor c1, c2, c3, c4;
@@ -296,7 +296,7 @@ Style::polish( QWidget * widget )
     // GTK-Qt gets a special handling - see above
     if (appType == GTK)
     {
-        polishGTK(widget, config);
+        polishGTK(widget);
         return;
     }
 

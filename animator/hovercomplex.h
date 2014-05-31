@@ -44,11 +44,11 @@ class HoverComplex : public HoverIndex
         static void setDuration(uint ms);
         static void setFPS(uint fps);
     protected:
-        const ComplexInfo *_info(const QWidget *widget, QStyle::SubControls active) const;
         void timerEvent(QTimerEvent * event);
         typedef QMap<WidgetPtr, ComplexInfo> Items;
         Items items;
     private:
+        const ComplexInfo *_info(const QWidget *widget, QStyle::SubControls active) const;
         Q_DISABLE_COPY(HoverComplex)
         HoverComplex() {}
 };

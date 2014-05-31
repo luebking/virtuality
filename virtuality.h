@@ -136,7 +136,7 @@ public:
     static bool serverSupportsShadows();
 
 protected:
-    virtual void init(const QSettings *settings = 0L);
+    virtual void init();
 
     // element painting routines ===============
     void skip(const QStyleOption*, QPainter*, const QWidget*) const {}
@@ -209,7 +209,6 @@ protected:
     inline void
     drawScrollBarSubLine(const QStyleOption * option, QPainter * painter, const QWidget * widget) const
     { drawScrollBarButton(option, painter, widget, true); }
-    void drawScrollBarGroove(const QStyleOption*, QPainter*, const QWidget*) const;
     void drawScrollBarSlider(const QStyleOption*, QPainter*, const QWidget*) const;
 
     // shapes.cpp
@@ -281,11 +280,10 @@ private:
     void drawSliderHandle(const QRect &, const QStyleOption *, QPainter *, int step) const;
     int elementId(const QString &string) const;
     void erase(const QStyleOption*, QPainter*, const QWidget*, const QPoint *off = 0) const;
-    static void fixViewPalette(QAbstractItemView *itemView, int style, bool alternate, bool silent = false);
     static bool hasMenuIndicator(const QStyleOptionToolButton *tb);
     void initMetrics();
     QColor mapFadeColor(const QColor &color, int index) const;
-    void readSettings(const QSettings *settings = 0L, QString appName = QString());
+    void readSettings(QString appName = QString());
     void registerRoutines();
     void setupDecoFor(QWidget *w, const QPalette &pal);
     enum PainterStorage { Pen = 1<<0, Brush = 1<<1, Alias = 1<<2, Font = 1<<3, Clip = 1<<4 };

@@ -53,7 +53,6 @@ public:
 protected:
    HoverIndex();
    virtual ~HoverIndex(){}
-   virtual const IndexInfo *_info(const QWidget *widget, long int index) const;
    virtual void _setFPS(uint fps);
    virtual void timerEvent(QTimerEvent * event);
    QBasicTimer timer;
@@ -63,6 +62,7 @@ protected:
 protected slots:
    void release(QObject *o);
 private:
+    const IndexInfo *_info(const QWidget *widget, long int index) const;
     Q_DISABLE_COPY(HoverIndex)
 };
 

@@ -221,16 +221,6 @@ Style::drawScrollBar(const QStyleOptionComplex *option, QPainter *painter, const
     const Animator::ComplexInfo *info = isWebKit ? 0L : Animator::HoverComplex::info(widget, hoverControls);
     /// ================
 
-    QRect groove;
-    if (needsPaint)
-    {   // NOTICE the scrollbar bg is cached for sliding scrollers to gain speed
-        // the cache also includes the groove
-        PAINT_ELEMENT(Groove);
-        groove = optCopy.rect;
-    }
-    else
-        groove = subControlRect(CC_ScrollBar, &optCopy, SC_ScrollBarGroove, widget);
-
     if (cPainter != painter) // unwrap cache painter
         { cPainter->end(); delete cPainter; cPainter = painter; }
 
@@ -299,7 +289,7 @@ Style::drawScrollBarButton(const QStyleOption *option, QPainter *painter, const 
     if (!config.slider.buttons)
         return;
 
-    OPT_ENABLED OPT_SUNKEN  OPT_HOVER
+    OPT_ENABLED OPT_HOVER
     bool alive = isEnabled && // visually inactivate if an extreme position is reached
                 ((up && opt->sliderValue > opt->minimum) || (!up && opt->sliderValue < opt->maximum));
     hover = hover && alive;
@@ -310,11 +300,6 @@ Style::drawScrollBarButton(const QStyleOption *option, QPainter *painter, const 
     painter->setBrush(c);
     painter->drawEllipse(RECT.adjusted(F(1),F(1),-F(1),-F(1)));
     RESTORE_PAINTER
-}
-
-void
-Style::drawScrollBarGroove(const QStyleOption *option, QPainter *painter, const QWidget *) const
-{
 }
 
 void

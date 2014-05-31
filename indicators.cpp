@@ -22,7 +22,7 @@
 #define DRAW_SEGMENT(_R_, _START_, _SPAN_) sunken ? painter->drawEllipse(_R_) : painter->drawArc(_R_, _START_, _SPAN_)
 
 void
-Style::drawCheck(const QStyleOption *option, QPainter *painter, const QWidget *widget, bool exclusive, bool itemview) const
+Style::drawCheck(const QStyleOption *option, QPainter *painter, const QWidget *, bool exclusive, bool itemview) const
 {
     Qt::CheckState state = (option->state & State_On) ? Qt::Checked : Qt::Unchecked;
     if (itemview) {

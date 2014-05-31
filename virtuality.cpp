@@ -556,7 +556,7 @@ QPalette::ColorGroup groups[3] = { QPalette::Active, QPalette::Inactive, QPalett
 
 
 static void
-swapPalette(QWidget *widget, Style *style, QPalette &dstPal)
+swapPalette(QWidget *widget, Style *style)
 {
     // protect our KDE palette fix - in case
 //     QPalette *savedPal = originalPalette;
@@ -618,8 +618,6 @@ swapPalette(QWidget *widget, Style *style, QPalette &dstPal)
                 browser->reload();
         }
     }
-
-//     widget->setPalette(dstPal);
 
     // this is funny: style shits rely on QApplication::palette() (nice trick, TrottelTech... again)
     // so to apply them with the proper color, we need to change the apps palette to the swapped one,...
@@ -952,7 +950,7 @@ Style::eventFilter( QObject *object, QEvent *ev )
                 // setup some special stuff for modal windows
                 if (config.invert.modals && widget->style() == this && widget->isModal() != swappedPal) { // swapping QStyleSheetStyle is one epic fail ..
                     widget->setProperty("BE.swappedPalette", widget->isModal());
-                    swapPalette(widget, this, invertedPalette);
+                    swapPalette(widget, this);
                 }
                 if (!(widget->testAttribute(Qt::WA_X11NetWmWindowTypeDesktop) ||
                              widget->testAttribute(Qt::WA_TranslucentBackground))) {
@@ -1081,12 +1079,6 @@ Style::eventFilter( QObject *object, QEvent *ev )
     default:
         return false;
     }
-}
-
-void
-Style::fixViewPalette(QAbstractItemView *itemView, int style, bool alternate, bool silent)
-{
-
 }
 
 

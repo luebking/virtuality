@@ -282,7 +282,7 @@ Style::drawTab(const QStyleOption *option, QPainter *painter, const QWidget *wid
 }
 
 void
-Style::drawTabShape(const QStyleOption *option, QPainter *painter, const QWidget *widget) const
+Style::drawTabShape(const QStyleOption *option, QPainter *painter, const QWidget *) const
 {
     SAVE_PAINTER(Pen|Brush);
     painter->setPen(Qt::NoPen);
@@ -463,7 +463,7 @@ Style::drawToolboxTab(const QStyleOption *option, QPainter *painter, const QWidg
 }
 
 void
-Style::drawToolboxTabShape(const QStyleOption *option, QPainter *painter, const QWidget *widget) const
+Style::drawToolboxTabShape(const QStyleOption *option, QPainter *painter, const QWidget *) const
 {
     if (option->state & State_Selected)
         return; // plain selected items

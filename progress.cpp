@@ -25,7 +25,7 @@
 static int step = -1;
 
 void
-Style::drawCapacityBar(const QStyleOption *option, QPainter *painter, const QWidget *widget) const
+Style::drawCapacityBar(const QStyleOption *option, QPainter *painter, const QWidget *) const
 {
     ASSURE_OPTION(cb, ProgressBar);
     if (cb->maximum == cb->minimum)

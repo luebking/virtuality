@@ -55,7 +55,7 @@ Style::drawSlider(const QStyleOptionComplex *option, QPainter *painter, const QW
     ASSURE_OPTION(slider, Slider);
     SAVE_PAINTER(Pen|Brush|Alias);
 
-    OPT_SUNKEN OPT_ENABLED OPT_HOVER OPT_FOCUS
+    OPT_SUNKEN OPT_ENABLED OPT_HOVER
 
     QRect groove = subControlRect(CC_Slider, slider, SC_SliderGroove, widget);
     QRect handle = subControlRect(CC_Slider, slider, SC_SliderHandle, widget);

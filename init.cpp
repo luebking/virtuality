@@ -38,28 +38,9 @@ using namespace BE;
 
 #define SCALE(_N_) qRound((_N_)*config.scale)
 
-static void updatePalette(QPalette &pal, QPalette::ColorGroup group, const QStringList &list)
-{
-    int max = QPalette::NColorRoles;
-    if (max > list.count()) {
-        qWarning("The demanded palette seems to be incomplete!");
-        max = list.count();
-    }
-    for (int i = 0; i < max; i++)
-        pal.setColor(group, (QPalette::ColorRole) i, list.at(i));
-}
-
 static int clamp(int x, int l, int u)
 {
     return CLAMP(x,l,u);
-}
-
-static QStringList colors(const QPalette &pal, QPalette::ColorGroup group)
-{
-    QStringList list;
-    for (int i = 0; i < QPalette::NColorRoles; i++)
-        list << pal.color(group, (QPalette::ColorRole) i).name();
-    return list;
 }
 
 #if 1
@@ -132,7 +113,7 @@ Style::removeAppEventFilter()
 }
 
 void
-Style::readSettings(const QSettings* settings, QString appName)
+Style::readSettings(QString appName)
 {
     QSettings *iSettings = new QSettings("BE", "Style");
     iSettings->beginGroup("Current");
@@ -283,7 +264,7 @@ void Style::initMetrics()
 extern const QString virtuality_revision();
 
 void
-Style::init(const QSettings* settings)
+Style::init()
 {
     QTime time; time.start();
     // various workarounds... ==========================
@@ -337,7 +318,7 @@ Style::init(const QSettings* settings)
 
     // ==========================
 
-    readSettings(settings, appName);
+    readSettings(appName);
 
     if (objectName() == "sienar") {
         config.invert.docks = true;

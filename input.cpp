@@ -52,9 +52,9 @@ Style::drawLineEditFrame(const QStyleOption *option, QPainter *painter, const QW
     if (widget && widget->testAttribute(Qt::WA_SetPalette)) {
         int r,g,b;
         FCOLOR(Base).getRgb(&r,&g,&b);
-        if (goodBad = (r > g+b && qAbs(g-b) < qMax(qMin(g,b)/10,1))) // that's red
+        if ((goodBad = (r > g+b && qAbs(g-b) < qMax(qMin(g,b)/10,1)))) // that's red
             c = FX::blend(Qt::red, LEF_COLOR, 1, 16-15*hasFocus);
-        else if (goodBad = (g > r+b && qAbs(r-b) < qMax(qMin(r,b)/10,1))) // that's green
+        else if ((goodBad = (g > r+b && qAbs(r-b) < qMax(qMin(r,b)/10,1)))) // that's green
             c = FX::blend(Qt::green, LEF_COLOR, 1, 16-15*hasFocus);
         if (goodBad)
             painter->setPen(QPen(c, FRAME_STROKE));
