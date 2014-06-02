@@ -157,17 +157,12 @@ void Style::polish( QPalette &pal, bool onInit )
     // AlternateBase
     pal.setColor(QPalette::AlternateBase, FX::blend(pal.color(QPalette::Active, QPalette::Base),
                                                       pal.color(QPalette::Active, QPalette::Text), 100,3));
-    int h,s,v;
-    // highlight colors
-    h = qGray(pal.color(QPalette::Active, QPalette::Highlight).rgb());
-    pal.setColor(QPalette::Inactive, QPalette::Highlight, FX::blend(QColor(h,h,h), pal.color(QPalette::Active, QPalette::Highlight), 3, 1));
-//     pal.setColor(QPalette::Inactive, QPalette::Highlight, QColor(h,h,h));
-    pal.setColor(QPalette::Disabled, QPalette::Highlight, FX::blend(pal.color(QPalette::Inactive, QPalette::Highlight), pal.color(QPalette::Active, QPalette::HighlightedText), 3, 1));
 
     // Link colors can not be set through qtconfig - and the colors suck
     QColor link = pal.color(QPalette::Active, QPalette::Highlight);
     const int vwt = FX::value(pal.color(QPalette::Active, QPalette::Window));
     const int vt = FX::value(pal.color(QPalette::Active, QPalette::Base));
+    int h,s,v;
     link.getHsv(&h,&s,&v);
     if (s < 16) { // low saturated color - maybe we've more luck with the foreground
         QColor link2 = pal.color(QPalette::Active, QPalette::HighlightedText);
@@ -190,7 +185,7 @@ void Style::polish( QPalette &pal, bool onInit )
     link.setHsv(h, s, v);
     pal.setColor(QPalette::Link, link);
 
-    link = FX::blend(link, FX::blend(pal.color(QPalette::Active, QPalette::Text), 
+    link = FX::blend(link, FX::blend(pal.color(QPalette::Active, QPalette::Text),
                                                          pal.color(QPalette::Active, QPalette::WindowText)), 4, 1);
     pal.setColor(QPalette::LinkVisited, link);
 
@@ -216,6 +211,14 @@ void Style::polish( QPalette &pal, bool onInit )
     pal.setColor(QPalette::Disabled, QPalette::Text,
                  FX::blend(pal.color(QPalette::Active, QPalette::Base), pal.color(QPalette::Active, QPalette::Text)));
     pal.setColor(QPalette::Disabled, QPalette::AlternateBase, pal.color(QPalette::Disabled, QPalette::Base));
+
+    // highlight colors
+    h = qGray(pal.color(QPalette::Active, QPalette::Highlight).rgb());
+    QColor hgt(h,h,h);
+    pal.setColor(QPalette::Inactive, QPalette::Highlight, hgt);
+    pal.setColor(QPalette::Disabled, QPalette::Highlight, hgt);
+    hgt = FX::blend(hgt, pal.color(QPalette::Active, QPalette::HighlightedText));
+    pal.setColor(QPalette::Disabled, QPalette::HighlightedText, hgt);
 
     // more on tooltips... (we force some colors...)
     if (!onInit)
