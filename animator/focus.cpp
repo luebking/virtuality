@@ -82,6 +82,7 @@ Focus::play(QWidget *widget, bool bwd)
 }
 
 #define FOCUS_IN_STEP 2
+#define FOCUS_OUT_STEP 2
 
 void
 Focus::_setFPS(uint fps)
@@ -123,7 +124,7 @@ Focus::timerEvent(QTimerEvent * event)
         }
         step = &it.value()._step;
         if (it.value().backwards) {   // fade OUT
-            --(*step);
+            *step -= FOCUS_OUT_STEP;
             widget->update();
             if (*step < 1)
                 it = items.erase(it);
