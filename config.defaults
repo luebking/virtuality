@@ -53,6 +53,7 @@
 #define INPUT_PWECHOCHAR "Input.PwEchoChar", 0x26AB
 
 #define INVERT_DOCKS "Invert.Docks", false
+#define INVERT_HEADERS "Invert.Headers", true
 #define INVERT_MENUBARS "Invert.Menubars", true
 #define INVERT_MENUS "Invert.Menus", true
 #define INVERT_MODALS "Invert.Modals", true

@@ -782,6 +782,8 @@ Style::eventFilter( QObject *object, QEvent *ev )
             QStyleOptionTabBarBase opt;
             opt.initFrom(tabBar);
             opt.shape = tabBar->shape();
+            opt.selectedTabRect = tabBar->tabRect(tabBar->currentIndex());
+            opt.tabBarRect = opt.rect;
 //             if (QWidget *window = tabBar->window())
 //             {
 //                 opt.tabBarRect = window->rect();
@@ -792,31 +794,65 @@ Style::eventFilter( QObject *object, QEvent *ev )
             return false;
         } else if ( QTabWidget *tw = qobject_cast<QTabWidget*>( object ) ) {
             // those don't paint frames and rely on the tabbar, which we ruled and rule out (looks weird with e.g. cornerwidgets...)
-            if (tw->documentMode())
-            {
+            if (tw->documentMode()) {
                 QPainter p(tw);
                 QStyleOptionTabBarBaseV2 opt;
                 opt.initFrom(tw);
                 opt.documentMode = true;
-                const int thickness = pixelMetric( PM_TabBarBaseHeight, &opt, tw );
-                switch (tw->tabPosition())
-                {
+
+                QTabBar *bar = NULL;
+#if QT_VERSION < 0x050000
+                foreach (QObject *o, tw->children()) {
+                    if ((bar = qobject_cast<QTabBar*>(o)))
+                        break;
+                }
+#else
+                bar = tw->tabBar();
+#endif
+                if (bar) {
+                    opt.rect = bar->geometry();
+                    opt.selectedTabRect = bar->tabRect(bar->currentIndex()).translated(opt.rect.topLeft());
+                }
+
+                const int thickness = pixelMetric(PM_TabBarBaseHeight, &opt, tw);
+                switch (tw->tabPosition()) {
                     default:
                     case QTabWidget::North:
-                        opt.rect.setBottom(opt.rect.top() + thickness);
+                        if (bar) {
+                            opt.rect.setLeft(tw->rect().left());
+                            opt.rect.setRight(tw->rect().right());
+                        } else {
+                            opt.rect.setBottom(opt.rect.top() + thickness);
+                        }
                         opt.shape = QTabBar::RoundedNorth; break;
                     case QTabWidget::South:
-                        opt.rect.setTop(opt.rect.bottom() - thickness);
+                        if (bar) {
+                            opt.rect.setLeft(tw->rect().left());
+                            opt.rect.setRight(tw->rect().right());
+                        } else {
+                            opt.rect.setTop(opt.rect.bottom() - thickness);
+                        }
                         opt.shape = QTabBar::RoundedSouth; break;
                     case QTabWidget::West:
-                        opt.rect.setRight(opt.rect.left() + thickness);
+                        if (bar) {
+                            opt.rect.setTop(tw->rect().top());
+                            opt.rect.setBottom(tw->rect().bottom());
+                        } else {
+                            opt.rect.setRight(opt.rect.left() + thickness);
+                        }
                         opt.shape = QTabBar::RoundedWest; break;
                     case QTabWidget::East:
-                        opt.rect.setLeft(opt.rect.right() - thickness);
+                        if (bar) {
+                            opt.rect.setTop(tw->rect().top());
+                            opt.rect.setBottom(tw->rect().bottom());
+                        } else {
+                            opt.rect.setLeft(opt.rect.right() - thickness);
+                        }
                         opt.shape = QTabBar::RoundedEast; break;
                 }
 
-                opt.tabBarRect = tw->rect();
+                opt.tabBarRect = opt.rect;
+
                 drawTabBar(&opt, &p, NULL);
                 p.end();
                 return true; // don't let it paint weird stuff on the cornerwidgets etc.

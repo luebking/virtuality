@@ -527,8 +527,13 @@ Style::polish( QWidget * widget )
                 }
 
                 if (qobject_cast<QHeaderView*>(itemView)) {
-                    itemView->setBackgroundRole(QPalette::Text);
-                    itemView->setForegroundRole(QPalette::Base);
+                    if (config.invert.headers) {
+                        itemView->setBackgroundRole(QPalette::Text);
+                        itemView->setForegroundRole(QPalette::Base);
+                    } else {
+                        itemView->setBackgroundRole(QPalette::Base);
+                        itemView->setForegroundRole(QPalette::Text);
+                    }
                     widget->setAttribute(Qt::WA_Hover);
                 } else if (QWidget *vp = itemView->viewport()) {
                     vp->setAttribute(Qt::WA_Hover);
@@ -750,7 +755,7 @@ Style::polish( QWidget * widget )
     else if (QTabBar *bar = qobject_cast<QTabBar *>(widget))
     {
         widget->setAttribute(Qt::WA_Hover);
-        if (bar->drawBase()) {
+        if (bar->drawBase() && config.invert.headers) {
             widget->setBackgroundRole(QPalette::WindowText);
             widget->setForegroundRole(QPalette::Window);
         }

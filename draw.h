@@ -36,6 +36,7 @@ namespace Corner {
 #define OPT_ENABLED bool isEnabled = option->state & State_Enabled;
 #define OPT_HOVER bool hover = (option->state & State_Enabled) && (option->state & State_MouseOver);
 #define OPT_FOCUS bool hasFocus = option->state & State_HasFocus;
+#define OPT_SELECTED bool selected = option->state & State_Selected;
 
 #define B_STATES OPT_SUNKEN OPT_ENABLED OPT_HOVER OPT_FOCUS
 

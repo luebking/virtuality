@@ -27,7 +27,7 @@ namespace BE
 typedef struct Config
 {
     struct invert {
-        bool docks, menubars, menus, modals, titlebars, toolbars;
+        bool docks, headers, menubars, menus, modals, titlebars, toolbars;
     } invert;
 
     struct {

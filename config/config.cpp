@@ -219,6 +219,10 @@ Config::Config(QWidget *parent) : BConfig(parent), loadedPal(0), infoIsManage(fa
     setContextHelp(ui.invertDocks, "<b>Invert Docks</b><hr>\
     Invert colors of dock windows like eg. the dolphin side panels");
 
+    handleSettings(ui.invertHeaders, INVERT_HEADERS);
+    setContextHelp(ui.invertHeaders, "<b>Invert Headers</b><hr>\
+    Invert colors of tabbars and itemview headers");
+
     handleSettings(ui.invertPopups, INVERT_MENUS);
     handleSettings(ui.invertTitlebars, INVERT_TITLEBARS);
 

@@ -343,6 +343,13 @@
             </property>
            </widget>
           </item>
+          <item row="3" column="0">
+           <widget class="QCheckBox" name="invertHeaders">
+            <property name="text">
+             <string>Headers</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>

@@ -167,6 +167,7 @@ Style::readSettings(QString appName)
 
     // Background ===========================
     config.invert.docks = readBool(INVERT_DOCKS);
+    config.invert.headers = readBool(INVERT_HEADERS);
     config.invert.menubars = readBool(INVERT_MENUBARS);
     config.invert.menus = readBool(INVERT_MENUS);
     config.invert.modals = (appType != KDM) && readBool(INVERT_MODALS);
@@ -235,7 +236,8 @@ Style::readSettings(QString appName)
     if (appType == GTK || appType == OpenOffice)
     {
         config.bg.modal.opacity = 255;
-        config.invert.docks = config.invert.menubars = config.invert.menus = config.invert.modals = config.invert.toolbars = false;
+        config.invert.docks = config.invert.menubars = config.invert.menus = config.invert.modals =
+        config.invert.toolbars = config.invert.headers = false;
     }
 
     delete iSettings;

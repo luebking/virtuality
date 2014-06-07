@@ -42,6 +42,9 @@ Style::drawTabWidget(const QStyleOption *option, QPainter *painter, const QWidge
     else
         tbb.QStyleOption::operator=(*twf);
     tbb.shape = twf->shape; tbb.rect = twf->rect;
+    if HAVE_OPTION(twf2, TabWidgetFrameV2) {
+        tbb.selectedTabRect = twf2->selectedTabRect;
+    }
 
 #define SET_BASE_HEIGHT(_o_) \
 baseHeight = twf->tabBarSize._o_(); \
@@ -86,6 +89,33 @@ Style::drawTabBar(const QStyleOption *option, QPainter *painter, const QWidget *
 {
     ASSURE_OPTION(tbb, TabBarBase);
 
+    if (!config.invert.headers) {
+        if (tbb->selectedTabRect.isEmpty())
+            return; // only paint tab shapes
+        SAVE_PAINTER(Pen);
+        painter->setPen(FRAME_PEN);
+        switch (tbb->shape) {
+        case QTabBar::RoundedNorth: case QTabBar::TriangularNorth:
+            painter->drawLine(RECT.x(), RECT.bottom(), tbb->selectedTabRect.x() + tbb->selectedTabRect.width()/3, RECT.bottom());
+            painter->drawLine(tbb->selectedTabRect.right(), RECT.bottom(), RECT.right(), RECT.bottom());
+            break;
+        case QTabBar::RoundedSouth: case QTabBar::TriangularSouth:
+            painter->drawLine(RECT.x(), RECT.top(), tbb->selectedTabRect.x(), RECT.top());
+            painter->drawLine(tbb->selectedTabRect.right() - tbb->selectedTabRect.width()/3, RECT.top(), RECT.right(), RECT.top());
+            break;
+        case QTabBar::RoundedEast: case QTabBar::TriangularEast:
+            painter->drawLine(RECT.x(), RECT.y(), RECT.x(), tbb->selectedTabRect.y());
+            painter->drawLine(RECT.x(), tbb->selectedTabRect.bottom() - tbb->selectedTabRect.height()/3, RECT.x(), RECT.bottom());
+            break;
+        case QTabBar::RoundedWest: case QTabBar::TriangularWest:
+            painter->drawLine(RECT.right(), RECT.y(), RECT.right(), tbb->selectedTabRect.y() + tbb->selectedTabRect.height()/3);
+            painter->drawLine(RECT.right(), tbb->selectedTabRect.bottom(), RECT.right(), RECT.bottom());
+            break;
+        }
+        RESTORE_PAINTER
+        return;
+    }
+
     QWidget *win = 0;
 
     if (widget) {
@@ -120,23 +150,6 @@ Style::drawTabBar(const QStyleOption *option, QPainter *painter, const QWidget *
     SAVE_PAINTER(Pen|Brush|Alias);
     painter->setBrush(PAL.color(QPalette::Active, QPalette::WindowText));
     painter->setPen(Qt::NoPen);
-//     QRect r(RECT);
-//     switch (tbb->shape) {
-//     case QTabBar::RoundedNorth: case QTabBar::TriangularNorth:
-//         r.adjust(F(4), 0, -F(4), -F(4));
-//         break;
-//     case QTabBar::RoundedSouth: case QTabBar::TriangularSouth:
-//         r.adjust(F(4), F(4), -F(4), 0);
-//         break;
-//     case QTabBar::RoundedEast: case QTabBar::TriangularEast:
-//         r.adjust(F(4), F(4), 0, -F(4));
-//         break;
-//     case QTabBar::RoundedWest: case QTabBar::TriangularWest:
-//         r.adjust(0, F(4), -F(4), -F(4));
-//         break;
-//     }
-//     
-//     
 
     if (RECT.x() == winRect.x() || RECT.y() == winRect.y() || RECT.right() == winRect.right() || RECT.bottom() == winRect.bottom()) {
         painter->setRenderHint(QPainter::Antialiasing, false);
@@ -146,31 +159,6 @@ Style::drawTabBar(const QStyleOption *option, QPainter *painter, const QWidget *
         const int rnd = qMin(config.frame.roundness, verticalTabs(tbb->shape) ? RECT.width()/2 : RECT.height()/2);
         painter->drawRoundedRect(RECT, rnd, rnd);
     }
-//     const QRect r(RECT.adjusted(0,0,1,1));
-//     bool documentMode = false;
-//     if HAVE_OPTION(tbbV2, TabBarBaseV2) {
-//         documentMode = tbbV2->documentMode;
-//     }
-//     QPainterPath path;
-//     if (documentMode) {
-//         path.moveTo(r.topLeft());
-//         path.lineTo(r.topRight());
-//         path.lineTo(r.right(), r.bottom() - F(4));
-//         path.arcTo(r.right() - F(8), r.bottom() - F(8), F(8), F(8), 0, -90);
-//         path.lineTo(r.x() + F(4), r.bottom());
-//         path.arcTo(r.x(), r.bottom() - F(8), F(8), F(8), -90, -90);
-//         path.closeSubpath();
-//     } else {
-//         path.moveTo(r.bottomRight());
-//         path.lineTo(r.bottomLeft());
-//         path.lineTo(r.x(), r.y() + F(4));
-//         path.arcTo(r.x(), r.y(), F(8), F(8), 180, -90);
-//         path.lineTo(r.right() - F(4), r.y());
-//         path.arcTo(r.right() - F(8), r.y(), F(8), F(8), 90, -90);
-//         path.closeSubpath();
-//     }
-//     painter->setRenderHint(QPainter::Antialiasing, true);
-//     painter->drawPath(path);
     RESTORE_PAINTER
 }
 
@@ -261,7 +249,7 @@ Style::drawTab(const QStyleOption *option, QPainter *painter, const QWidget *wid
     if (widget)
         copy.palette = widget->palette();
 
-    if (appType == GTK) {
+    if (!config.invert.headers) {
         drawTabShape(&copy, painter, widget);
     }
     if HAVE_OPTION(tabV3, TabV3) {
@@ -284,25 +272,92 @@ Style::drawTab(const QStyleOption *option, QPainter *painter, const QWidget *wid
 void
 Style::drawTabShape(const QStyleOption *option, QPainter *painter, const QWidget *) const
 {
-    SAVE_PAINTER(Pen|Brush);
-    painter->setPen(Qt::NoPen);
-    painter->setBrush(FCOLOR(WindowText));
-    painter->drawRect(RECT);
-    RESTORE_PAINTER
+    if (config.invert.headers) {
+        SAVE_PAINTER(Pen|Brush);
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(FCOLOR(WindowText));
+        painter->drawRect(RECT);
+        RESTORE_PAINTER
+    } else {
+        ASSURE_OPTION(tab, Tab);
+        SAVE_PAINTER(Pen);
+        OPT_SELECTED
+        painter->setPen(FRAME_PEN);
+        if (selected) {
+            SAVE_PAINTER(Alias);
+            painter->setRenderHint(QPainter::Antialiasing);
+            bool docMode = false;
+            if HAVE_OPTION(tab3, TabV3) {
+                docMode = tab3->documentMode;
+            }
+            const int rnd = qMin(config.frame.roundness*2, RECT.height());
+            QRect r(0,0,rnd,rnd);
+            QPainterPath path;
+            const int halfStroke = F(2)/2;
+            switch (tab->shape) {
+            case QTabBar::RoundedNorth: case QTabBar::TriangularNorth:
+                r.moveTopRight(RECT.topRight() + QPoint(-halfStroke, halfStroke));
+                path.moveTo(RECT.right() - (docMode ? RECT.height()/2 : RECT.width()/3), r.y());
+                path.lineTo(r.x() + r.width()/2, r.y());
+                path.arcTo(r, 90, -90);
+                path.lineTo(r.right() + halfStroke, RECT.y() + RECT.height()/2);
+                break;
+            case QTabBar::RoundedSouth: case QTabBar::TriangularSouth:
+                r.moveBottomLeft(RECT.bottomLeft() + QPoint(halfStroke, -halfStroke));
+                path.moveTo(RECT.left() + (docMode ? RECT.height()/2 : RECT.width()/3), r.bottom() + 1);
+                path.lineTo(r.x() + r.width()/2, r.bottom() + 1);
+                path.arcTo(r, -90, -90);
+                path.lineTo(r.x(), RECT.y() + RECT.height()/2);
+                break;
+            case QTabBar::RoundedEast: case QTabBar::TriangularEast:
+                r.moveTopRight(RECT.topRight() + QPoint(-halfStroke, halfStroke));
+                path.moveTo(RECT.right() - RECT.width()/2, r.y());
+                path.lineTo(r.x() + r.width()/2, r.y());
+                path.arcTo(r, 90, -90);
+                path.lineTo(r.right() + halfStroke, RECT.y() + (docMode ? RECT.width()/2 : RECT.height()/3));
+                break;
+            case QTabBar::RoundedWest: case QTabBar::TriangularWest:
+                r.moveBottomLeft(RECT.bottomLeft() + QPoint(halfStroke, -halfStroke));
+                path.moveTo(RECT.left() + RECT.width()/2, r.bottom() + 1);
+                path.lineTo(r.x() + r.width()/2, r.bottom() + 1);
+                path.arcTo(r, -90, -90);
+                path.lineTo(r.x(), RECT.y() + (docMode ? RECT.width()/2 : RECT.height()/3));
+                break;
+            }
+            painter->drawPath(path);
+            RESTORE_PAINTER
+        } else {
+            switch (tab->shape) {
+            case QTabBar::RoundedNorth: case QTabBar::TriangularNorth:
+                painter->drawLine(RECT.bottomLeft(), RECT.bottomRight());
+                break;
+            case QTabBar::RoundedSouth: case QTabBar::TriangularSouth:
+                painter->drawLine(RECT.topLeft(), RECT.topRight());
+                break;
+            case QTabBar::RoundedEast: case QTabBar::TriangularEast:
+                painter->drawLine(RECT.topLeft(), RECT.bottomLeft());
+                break;
+            case QTabBar::RoundedWest: case QTabBar::TriangularWest:
+                painter->drawLine(RECT.topRight(), RECT.bottomRight());
+                break;
+            }
+        }
+        RESTORE_PAINTER
+    }
 }
 
 void
 Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget *widget) const
 {
     ASSURE_OPTION(tab, Tab);
-    OPT_SUNKEN OPT_ENABLED
+    OPT_SUNKEN OPT_ENABLED OPT_SELECTED OPT_FOCUS
 
     calcAnimStep( option, painter, widget );
 
     if (tab->position == QStyleOptionTab::OnlyOneTab)
         { sunken = false; /*hover = false;*/ }
     else
-        sunken = sunken || (option->state & State_Selected);
+        sunken = sunken || selected;
 //     if (sunken) hover = false;
 
     painter->save();
@@ -373,8 +428,17 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
 
     // color adjustment
     bool elide(false);
-    QColor cF = FCOLOR(Window), cB = FCOLOR(WindowText);
-    if (option->state & State_Selected) {
+    QColor cF, cB;
+    if (config.invert.headers) {
+        cF = hasFocus && selected &&
+             FX::haveContrast(FCOLOR(Highlight), FCOLOR(WindowText)) ? FCOLOR(Highlight) : FCOLOR(Window);
+        cB = FCOLOR(WindowText);
+    } else {
+        cF = hasFocus && selected &&
+             FX::haveContrast(FCOLOR(Highlight), FCOLOR(Window)) ? FCOLOR(Highlight) : FCOLOR(WindowText);
+        cB = FCOLOR(Window);
+    }
+    if (selected) {
         if (vertical) {
             setBold(painter, tab->text, tr.width());
         } else {
@@ -465,43 +529,62 @@ Style::drawToolboxTab(const QStyleOption *option, QPainter *painter, const QWidg
 void
 Style::drawToolboxTabShape(const QStyleOption *option, QPainter *painter, const QWidget *) const
 {
-    if (option->state & State_Selected)
-        return; // plain selected items
-    OPT_HOVER OPT_SUNKEN
-    SAVE_PAINTER(Pen|Brush);
-    painter->setPen(Qt::NoPen);
-    if (hover || sunken)
-        painter->setBrush(FX::blend(FCOLOR(WindowText), FCOLOR(Highlight), 2, hover + 4*sunken));
-    else
-        painter->setBrush(FCOLOR(WindowText));
-    painter->drawRect(RECT);
-    RESTORE_PAINTER
+    ASSURE_OPTION(tbt, ToolBox);
+    if (option->state & State_Selected) {
+        if (config.invert.headers) {
+            SAVE_PAINTER(Pen|Brush|Alias);
+            painter->setRenderHint(QPainter::Antialiasing, true);
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(FCOLOR(WindowText));
+            const int rnd = qMin(config.frame.roundness, RECT.height()/2);
+            painter->drawRoundedRect(RECT, rnd, rnd);
+            RESTORE_PAINTER
+        }
+    } else {
+        OPT_SUNKEN
+        SAVE_PAINTER(Pen);
+        painter->setPen(sunken ? FOCUS_FRAME_PEN : FRAME_PEN);
+        QRect r = painter->fontMetrics().boundingRect(RECT, BESPIN_MNEMONIC|Qt::AlignCenter, tbt->text);
+        const int y = r.y() + r.height()/2;
+        const int d = (RECT.width() - r.width())/6 + F(6);
+        painter->drawLine(r.x() - d, y, r.x() - (sunken ? F(12) : F(6)), y);
+        painter->drawLine(r.right() + (sunken ? F(12) : F(6)), y, r.right() + d, y);
+        RESTORE_PAINTER
+    }
 }
 
 void
 Style::drawToolboxTabLabel(const QStyleOption *option, QPainter *painter, const QWidget *) const
 {
     ASSURE_OPTION(tbt, ToolBox);
-    OPT_ENABLED OPT_SUNKEN
+    OPT_ENABLED OPT_SUNKEN OPT_HOVER OPT_SELECTED
+    SAVE_PAINTER(sunken||selected ? Font : 0);
     uint tf = BESPIN_MNEMONIC;
     QPalette::ColorRole role = QPalette::WindowText;
-    if (option->state & State_Selected) {
-        tf |= Qt::AlignBottom | Qt::AlignLeft;
+    if (selected) {
+        tf |= Qt::AlignBottom;
+        if (config.invert.headers) {
+            role = QPalette::Window;
+            tf |= Qt::AlignHCenter;
+        } else {
+            tf |= Qt::AlignLeft;
+        }
         QFont fnt(painter->font());
-        QFont oFnt(fnt);
         if (fnt.pointSize() > 0) {
-            fnt.setPointSize(16*fnt.pointSize()/10);
+            fnt.setPointSize(15*fnt.pointSize()/10);
             fnt.setBold(true);
         }
         painter->setFont(fnt);
-        drawItemText(painter, RECT, tf, PAL, isEnabled, tbt->text, role);
-        painter->setFont(oFnt);
     } else {
-        tf |= Qt::AlignHCenter | Qt::AlignRight;
-        if (sunken)
-            role = QPalette::HighlightedText;
-        else
-            role = QPalette::Window;
-        drawItemText(painter, RECT, tf, PAL, isEnabled, tbt->text, role);
+        if (hover || sunken)
+            role = QPalette::Highlight;
+        if (sunken) {
+            QFont fnt(painter->font());
+            fnt.setBold(true);
+            painter->setFont(fnt);
+        }
+        tf |= Qt::AlignCenter;
     }
+    drawItemText(painter, RECT, tf, PAL, isEnabled, tbt->text, role);
+    RESTORE_PAINTER
 }

@@ -54,71 +54,96 @@ Style::drawHeaderSection(const QStyleOption *option, QPainter *painter, const QW
     const QStyleOptionHeader *header = qstyleoption_cast<const QStyleOptionHeader *>(option);
     const bool sorting = header && (header->sortIndicator != QStyleOptionHeader::None);
     char corners = 0;
+    const bool l2r = option->direction == Qt::LeftToRight;
     if (header) {
         if (header->position == QStyleOptionHeader::Beginning || header->position == QStyleOptionHeader::OnlyOneSection)
-            corners |= (option->direction == Qt::LeftToRight ? Corner::TopLeft : Corner::TopRight);
+            corners |= (l2r ? Corner::TopLeft : Corner::TopRight);
         if (header->position == QStyleOptionHeader::End || header->position == QStyleOptionHeader::OnlyOneSection) {
             if (header->orientation == Qt::Horizontal)
-                corners |= (option->direction == Qt::LeftToRight ? Corner::TopRight : Corner::TopLeft);
+                corners |= (l2r ? Corner::TopRight : Corner::TopLeft);
             else
-                corners |= (option->direction == Qt::LeftToRight ? Corner::BottomLeft : Corner::BottomRight);
+                corners |= (l2r ? Corner::BottomLeft : Corner::BottomRight);
         }
     }
 
     if (appType == GTK)
         sunken = option->state & State_HasFocus;
 
-    QColor c =  widget ? PAL.color(widget->backgroundRole()) : FCOLOR(Text);
-    if (sorting || sunken) {
-        if ((option->state & State_On) || !FX::haveContrast(c, FCOLOR(Highlight)))
-            c = FCOLOR(Highlight);
-    }
-    if (!sunken && hover) {
-        c = FX::blend(c, sorting ? FCOLOR(HighlightedText) : FCOLOR(Highlight),8,1);
-    }
+    QColor c =  widget ? PAL.color(widget->backgroundRole()) : (config.invert.headers ? FCOLOR(Text) : FCOLOR(Base));
 
     painter->setRenderHint(QPainter::Antialiasing, false);
-    painter->setPen(Qt::NoPen);
-    painter->setBrush(c);
 
-    QPainterPath path;
-    const int rnd(config.frame.roundness);
-    const int rnd_2 = 2*rnd;
-    const QRect r(RECT.adjusted(0,0,1,1));
-    if (corners & Corner::BottomRight) {
-        painter->setRenderHint(QPainter::Antialiasing, true);
-        path.moveTo(r.right(), r.bottom() - rnd_2);
-        path.arcTo(r.right() - rnd_2, r.bottom() - rnd_2, rnd_2, rnd_2, 0, -90);
+    bool paintBg = config.invert.headers;
+    if (!config.invert.headers) {
+        if (sunken) {
+            paintBg = true;
+            c = FCOLOR(Highlight);
+        } else if (hover) {
+            paintBg = true;
+            c = FX::blend(FCOLOR(Base), FCOLOR(Highlight), 3, 1);
+        } else {
+            painter->setPen(FRAME_PEN);
+            if (header->orientation == Qt::Horizontal)
+                painter->drawLine(RECT.bottomLeft(), RECT.bottomRight());
+            else if (l2r)
+                painter->drawLine(RECT.topRight(), RECT.bottomRight());
+            else
+                painter->drawLine(RECT.topLeft(), RECT.bottomLeft());
+            RESTORE_PAINTER
+        }
     } else {
-        path.moveTo(r.bottomRight());
+        if (sorting || sunken) {
+            if ((option->state & State_On) || !FX::haveContrast(c, FCOLOR(Highlight)))
+                c = FCOLOR(Highlight);
+        }
+        if (!sunken && hover) {
+            c = FX::blend(c, sorting ? FCOLOR(HighlightedText) : FCOLOR(Highlight),8,1);
+        }
     }
-    if (corners & Corner::BottomLeft) {
-        painter->setRenderHint(QPainter::Antialiasing, true);
-        path.lineTo(r.x() + rnd, r.bottom());
-        path.arcTo(r.x(), r.bottom() - rnd_2, rnd_2, rnd_2, -90, -90);
-    } else {
-        path.lineTo(r.bottomLeft());
+
+    if (paintBg) {
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(c);
+
+        QPainterPath path;
+        const int rnd(config.frame.roundness);
+        const int rnd_2 = 2*rnd;
+        const QRect r(RECT.adjusted(0,0,1,1));
+        if (corners & Corner::BottomRight) {
+            painter->setRenderHint(QPainter::Antialiasing, true);
+            path.moveTo(r.right(), r.bottom() - rnd_2);
+            path.arcTo(r.right() - rnd_2, r.bottom() - rnd_2, rnd_2, rnd_2, 0, -90);
+        } else {
+            path.moveTo(r.bottomRight());
+        }
+        if (corners & Corner::BottomLeft) {
+            painter->setRenderHint(QPainter::Antialiasing, true);
+            path.lineTo(r.x() + rnd, r.bottom());
+            path.arcTo(r.x(), r.bottom() - rnd_2, rnd_2, rnd_2, -90, -90);
+        } else {
+            path.lineTo(r.bottomLeft());
+        }
+        if (corners & Corner::TopLeft) {
+            painter->setRenderHint(QPainter::Antialiasing, true);
+            path.lineTo(r.x(), r.y() + rnd);
+            path.arcTo(r.x(), r.y(), rnd_2, rnd_2, 180, -90);
+        } else {
+            path.lineTo(r.topLeft());
+        }
+        if (corners & Corner::TopRight) {
+            painter->setRenderHint(QPainter::Antialiasing, true);
+            path.lineTo(r.right() - rnd, r.y());
+            path.arcTo(r.right() - rnd_2, r.y(), rnd_2, rnd_2, 90, -90);
+        } else {
+            path.lineTo(r.topRight());
+        }
+        path.closeSubpath();
+        painter->drawPath(path);
     }
-    if (corners & Corner::TopLeft) {
-        painter->setRenderHint(QPainter::Antialiasing, true);
-        path.lineTo(r.x(), r.y() + rnd);
-        path.arcTo(r.x(), r.y(), rnd_2, rnd_2, 180, -90);
-    } else {
-        path.lineTo(r.topLeft());
-    }
-    if (corners & Corner::TopRight) {
-        painter->setRenderHint(QPainter::Antialiasing, true);
-        path.lineTo(r.right() - rnd, r.y());
-        path.arcTo(r.right() - rnd_2, r.y(), rnd_2, rnd_2, 90, -90);
-    } else {
-        path.lineTo(r.topRight());
-    }
-    path.closeSubpath();
-    painter->drawPath(path);
 
     if (!header || header->position < QStyleOptionHeader::End) {
         painter->setRenderHint(QPainter::Antialiasing, false);
-        painter->setPen(FX::blend(c, FCOLOR(Base), 6, 1));
+        painter->setPen(FX::blend(c, config.invert.headers ? FCOLOR(Base) : FCOLOR(Text), 6, 1));
         if (header && header->orientation == Qt::Vertical)
             painter->drawLine(RECT.bottomLeft(), RECT.bottomRight());
         else if (option->direction == Qt::LeftToRight)
@@ -152,21 +177,36 @@ Style::drawHeaderLabel(const QStyleOption * option, QPainter * painter, const QW
         return;
 
     // textos ;)
-    SAVE_PAINTER(Pen|Font);
+    SAVE_PAINTER(Pen|(header->sortIndicator == QStyleOptionHeader::None)?0:Font);
 
     // this works around a possible Qt bug?!?
     QColor fg;
-    const bool isOn(option->state & State_On);
-    if ((header->sortIndicator != QStyleOptionHeader::None) || sunken) {
-        fg = widget ? PAL.color(widget->backgroundRole()) : FCOLOR(Text);
-        fg = isOn || !FX::haveContrast(fg, FCOLOR(Highlight)) ? FCOLOR(HighlightedText) : FCOLOR(Highlight);
+    if (sunken && !config.invert.headers) {
+        fg = FCOLOR(HighlightedText);
+    } else if (option->state & State_On) {
+        fg = widget ? PAL.color(widget->backgroundRole()) : (config.invert.headers ? FCOLOR(Text) : FCOLOR(Base)); // abusing fg as bg cache
+        fg = sunken || !FX::haveContrast(fg, FCOLOR(Highlight)) ? FCOLOR(HighlightedText) : FCOLOR(Highlight);
     } else {
-        fg = isOn ? FCOLOR(Highlight) : (widget ? PAL.color(widget->foregroundRole()) : FCOLOR(Base));
+        fg = widget ? PAL.color(widget->foregroundRole()) : (config.invert.headers ? FCOLOR(Base) : FCOLOR(Text));
     }
 
     fg.setAlpha(255);
+
+    if (header->sortIndicator != QStyleOptionHeader::None) {
+        QFont fnt(painter->font());
+        fnt.setBold(true);
+        painter->setFont(fnt);
+    }
+
     painter->setPen(fg);
-    drawItemText ( painter, rect, Qt::AlignCenter, PAL, isEnabled, header->text);
+    Qt::Alignment align = Qt::AlignHCenter;
+    if (header->sortIndicator == QStyleOptionHeader::SortUp)
+        align |= Qt::AlignTop;
+    else if (header->sortIndicator == QStyleOptionHeader::SortDown)
+        align |= Qt::AlignBottom;
+    else
+        align |= Qt::AlignVCenter;
+    drawItemText(painter, rect, align, PAL, isEnabled, header->text);
     RESTORE_PAINTER
 }
 
