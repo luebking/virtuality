@@ -44,21 +44,22 @@ Style::subControlRect(ComplexControl control, const QStyleOptionComplex *option,
     case CC_SpinBox: {   // A spinbox, like QSpinBox
         ASSURE_OPTION(spinbox, SpinBox) ret;
 
-        int w = spinbox->rect.width(), h = spinbox->rect.height()/2;
-
-        w = spinbox->rect.height()/2 + F(3);
+        int h = spinbox->rect.height()/2;
+        int w = 2*h;
         int x = spinbox->rect.width() - w;
+        w -= FRAME_STROKE_WIDTH;
+
         switch (subControl) {
         case SC_SpinBoxUp:
-            ret = QRect(x, F(3), w, h-F(4));
+            ret = QRect(x, spinbox->rect.y(), w, h);
             break;
         case SC_SpinBoxDown:
-            ret = QRect(x, spinbox->rect.y()+h+F(1), w, h-F(4));
+            ret = QRect(x, spinbox->rect.y() + h + 1, w, h);
             break;
         case SC_SpinBoxEditField:
             w = h = 0; // becomes framesizes
             if (spinbox->frame)
-                { w = F(2); h = F(2); }
+                w = h = FRAME_STROKE_WIDTH;
             ret = QRect(w, h, x, spinbox->rect.height() - 2*h);
             break;
         case SC_SpinBoxFrame:
@@ -74,7 +75,7 @@ Style::subControlRect(ComplexControl control, const QStyleOptionComplex *option,
         ASSURE_OPTION(cb, ComboBox) ret;
         int x,y,wi,he;
         cb->rect.getRect(&x,&y,&wi,&he);
-        const int fh = (cb->fontMetrics.ascent() + F(2)) | 1;
+        const int fh = (cb->fontMetrics.ascent() + FRAME_STROKE_WIDTH) | 1;
         int margin = 0;
 
         switch (subControl)

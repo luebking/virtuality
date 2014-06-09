@@ -31,10 +31,11 @@
 
 #include <QtDebug>
 
-QPainterPath framePath(const QRect &r, char corners, int rnd, bool hasFocus = false)
+QPainterPath framePath(const QRect &rect, char corners, int rnd, bool hasFocus = false)
 {
-    const int dx = hasFocus ? qMin(qMax(r.width()/4, F(32)), r.width()/2) : qMin(r.width()/4,F(32));
-    const int dy = hasFocus ? qMin(qMax(r.height()/4, F(32)), r.height()/2) : qMin(r.height()/4,F(32));
+    STROKED_RECT(r, rect);
+    const int dx = hasFocus ? intMin(intMax(r.width()/4, F(32)), r.width()/2) : intMin(r.width()/4,F(32));
+    const int dy = hasFocus ? intMin(intMax(r.height()/4, F(32)), r.height()/2) : intMin(r.height()/4,F(32));
     const int rnd_2 = 2*rnd;
 
     QPainterPath path;
@@ -207,8 +208,7 @@ Style::drawFrame(const QStyleOption *option, QPainter *painter, const QWidget *w
     if (!view || view->isHeaderHidden()) {
         corners |= (option->direction == Qt::LeftToRight ? Corner::TopLeft : Corner::TopRight);
     }
-    const int d = (F(2) & ~1)/2;
-    painter->drawPath(framePath(RECT.adjusted(d,d,1-d,1-d), corners, config.frame.roundness, hasFocus));
+    painter->drawPath(framePath(RECT, corners, config.frame.roundness, hasFocus));
     RESTORE_PAINTER
 }
 
@@ -280,9 +280,8 @@ Style::drawGroupBoxFrame(const QStyleOption *option, QPainter *painter, const QW
     painter->setBrush(Qt::NoBrush);
     painter->setRenderHint(QPainter::Antialiasing, true);
 
-    const int d = (F(2) & ~1)/2;
     const char corners = option->direction == Qt::LeftToRight ? Corner::TopRight|Corner::BottomLeft :
                                                                 Corner::TopLeft|Corner::BottomRight;
-    painter->drawPath(framePath(RECT.adjusted(d,d,1-d,1-d), corners, config.frame.roundness));
+    painter->drawPath(framePath(RECT, corners, config.frame.roundness));
     RESTORE_PAINTER
 }

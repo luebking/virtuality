@@ -106,6 +106,7 @@ public:
 
 public:
     static Config config;
+    static float halfStroke;
 
 protected:
     virtual void init();

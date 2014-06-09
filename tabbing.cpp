@@ -92,8 +92,9 @@ Style::drawTabBar(const QStyleOption *option, QPainter *painter, const QWidget *
     if (!config.invert.headers) {
         if (tbb->selectedTabRect.isEmpty())
             return; // only paint tab shapes
-        SAVE_PAINTER(Pen);
-        painter->setPen(FRAME_PEN);
+        SAVE_PAINTER(Pen|Alias);
+        painter->setRenderHint(QPainter::Antialiasing, false);
+        painter->setPen(QPen(FRAME_COLOR, FRAME_STROKE_WIDTH));
         switch (tbb->shape) {
         case QTabBar::RoundedNorth: case QTabBar::TriangularNorth:
             painter->drawLine(RECT.x(), RECT.bottom(), tbb->selectedTabRect.x() + tbb->selectedTabRect.width()/3, RECT.bottom());
@@ -151,6 +152,7 @@ Style::drawTabBar(const QStyleOption *option, QPainter *painter, const QWidget *
     painter->setBrush(PAL.color(QPalette::Active, QPalette::WindowText));
     painter->setPen(Qt::NoPen);
 
+    // TODO: half rounded rect?
     if (RECT.x() == winRect.x() || RECT.y() == winRect.y() || RECT.right() == winRect.right() || RECT.bottom() == winRect.bottom()) {
         painter->setRenderHint(QPainter::Antialiasing, false);
         painter->drawRect(RECT);
@@ -282,8 +284,8 @@ Style::drawTabShape(const QStyleOption *option, QPainter *painter, const QWidget
         ASSURE_OPTION(tab, Tab);
         SAVE_PAINTER(Pen);
         OPT_SELECTED
-        painter->setPen(FRAME_PEN);
         if (selected) {
+            painter->setPen(FRAME_PEN);
             SAVE_PAINTER(Alias);
             painter->setRenderHint(QPainter::Antialiasing);
             bool docMode = false;
@@ -291,33 +293,32 @@ Style::drawTabShape(const QStyleOption *option, QPainter *painter, const QWidget
                 docMode = tab3->documentMode;
             }
             const int rnd = qMin(config.frame.roundness*2, RECT.height());
-            QRect r(0,0,rnd,rnd);
+            QRectF r(0,0,rnd,rnd);
             QPainterPath path;
-            const int halfStroke = F(2)/2;
             switch (tab->shape) {
             case QTabBar::RoundedNorth: case QTabBar::TriangularNorth:
-                r.moveTopRight(RECT.topRight() + QPoint(-halfStroke, halfStroke));
+                r.moveTopRight(RECT.topRight() + QPointF(-halfStroke, halfStroke));
                 path.moveTo(RECT.right() - (docMode ? RECT.height()/2 : RECT.width()/3), r.y());
                 path.lineTo(r.x() + r.width()/2, r.y());
                 path.arcTo(r, 90, -90);
-                path.lineTo(r.right() + halfStroke, RECT.y() + RECT.height()/2);
+                path.lineTo(r.right(), RECT.y() + RECT.height()/2);
                 break;
             case QTabBar::RoundedSouth: case QTabBar::TriangularSouth:
-                r.moveBottomLeft(RECT.bottomLeft() + QPoint(halfStroke, -halfStroke));
+                r.moveBottomLeft(RECT.bottomLeft() + QPointF(halfStroke, -halfStroke));
                 path.moveTo(RECT.left() + (docMode ? RECT.height()/2 : RECT.width()/3), r.bottom() + 1);
                 path.lineTo(r.x() + r.width()/2, r.bottom() + 1);
                 path.arcTo(r, -90, -90);
                 path.lineTo(r.x(), RECT.y() + RECT.height()/2);
                 break;
             case QTabBar::RoundedEast: case QTabBar::TriangularEast:
-                r.moveTopRight(RECT.topRight() + QPoint(-halfStroke, halfStroke));
+                r.moveTopRight(RECT.topRight() + QPointF(-halfStroke, halfStroke));
                 path.moveTo(RECT.right() - RECT.width()/2, r.y());
                 path.lineTo(r.x() + r.width()/2, r.y());
                 path.arcTo(r, 90, -90);
-                path.lineTo(r.right() + halfStroke, RECT.y() + (docMode ? RECT.width()/2 : RECT.height()/3));
+                path.lineTo(r.right(), RECT.y() + (docMode ? RECT.width()/2 : RECT.height()/3));
                 break;
             case QTabBar::RoundedWest: case QTabBar::TriangularWest:
-                r.moveBottomLeft(RECT.bottomLeft() + QPoint(halfStroke, -halfStroke));
+                r.moveBottomLeft(RECT.bottomLeft() + QPointF(halfStroke, -halfStroke));
                 path.moveTo(RECT.left() + RECT.width()/2, r.bottom() + 1);
                 path.lineTo(r.x() + r.width()/2, r.bottom() + 1);
                 path.arcTo(r, -90, -90);
@@ -327,6 +328,9 @@ Style::drawTabShape(const QStyleOption *option, QPainter *painter, const QWidget
             painter->drawPath(path);
             RESTORE_PAINTER
         } else {
+            painter->setPen(QPen(FRAME_COLOR, FRAME_STROKE_WIDTH));
+            SAVE_PAINTER(Alias);
+            painter->setRenderHint(QPainter::Antialiasing, false);
             switch (tab->shape) {
             case QTabBar::RoundedNorth: case QTabBar::TriangularNorth:
                 painter->drawLine(RECT.bottomLeft(), RECT.bottomRight());
@@ -341,6 +345,7 @@ Style::drawTabShape(const QStyleOption *option, QPainter *painter, const QWidget
                 painter->drawLine(RECT.topRight(), RECT.bottomRight());
                 break;
             }
+            RESTORE_PAINTER
         }
         RESTORE_PAINTER
     }

@@ -158,20 +158,18 @@ Style::drawButtonFrame(const QStyleOption *option, QPainter *painter, const QWid
             if (hasFocus)
                 c = FX::blend(FCOLOR(Highlight), c, MAX_STEPS-anim.step, anim.step);
         }
-        QRect r(RECT);
-        const int padding = F(1); // + F(1)*(MAX_STEPS-anim.step)/3;
+        STROKED_RECT(r, RECT);
         if (r.width() > r.height() + F(8)) {
             if (!hasFocus) {
 //                 r.setHeight(r.height() - F(1)*(MAX_STEPS-anim.step)/2);
                 r.setWidth(r.height() + anim.step*(r.width()-r.height())/MAX_STEPS);
             }
-            r.adjust(padding + F(4)*sunken, padding, -(padding + F(4)*sunken), -padding);
+            r.adjust(F(4)*sunken, 0, -F(4)*sunken, 0);
         } else {
             r.setHeight(r.width());
-            r.adjust(padding, padding, -padding, -padding);
         }
         SAVE_PAINTER(Pen|Brush|Alias);
-        r.moveCenter(RECT.center());
+        r.moveCenter(FLOAT_CENTER(RECT));
         if (sunken) {
             painter->setPen(Qt::NoPen);
             painter->setBrush(c);
@@ -293,11 +291,9 @@ Style::drawRadioOrCheckBox(const QStyleOption *option, QPainter *painter, const 
         state = state ? (state + 1) % 3 : 2;
 
     const int s = (qMin(RECT.width(), RECT.height()) & ~1);
-    QRect r(0, RECT.y()+F(1), s-F(2), s-F(2));
-    if (option->direction == Qt::LeftToRight)
-        r.moveLeft(RECT.left() + F(1));
-    else
-        r.moveRight(RECT.right() - F(1));
+    STROKED_RECT(r, QRect(RECT.topLeft(), QSize(s-FRAME_STROKE_WIDTH, s-FRAME_STROKE_WIDTH)));
+    if (option->direction == Qt::RightToLeft)
+        r.moveRight(RECT.right() + halfStroke);
 
     SAVE_PAINTER(Pen|Brush|Alias);
 
@@ -326,7 +322,7 @@ Style::drawRadioOrCheckBox(const QStyleOption *option, QPainter *painter, const 
 
     if (state) { // the drop
         painter->setPen(Qt::NoPen);
-        const int d = qMin(F(4), r.height()/3);
+        const int d = intMin(F(4), r.height()/3);
         r.adjust(d, d, -d, -d);
         if (sunken) {
             painter->setBrush(FCOLOR(Window));

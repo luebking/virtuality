@@ -82,13 +82,14 @@ Style::drawHeaderSection(const QStyleOption *option, QPainter *painter, const QW
             paintBg = true;
             c = FX::blend(FCOLOR(Base), FCOLOR(Highlight), 3, 1);
         } else {
-            painter->setPen(FRAME_PEN);
+            painter->setPen(QPen(FRAME_COLOR, FRAME_STROKE_WIDTH));
+            STROKED_RECT(r, RECT);
             if (header->orientation == Qt::Horizontal)
-                painter->drawLine(RECT.bottomLeft(), RECT.bottomRight());
+                painter->drawLine(r.bottomLeft(), r.bottomRight());
             else if (l2r)
-                painter->drawLine(RECT.topRight(), RECT.bottomRight());
+                painter->drawLine(r.topRight(), r.bottomRight());
             else
-                painter->drawLine(RECT.topLeft(), RECT.bottomLeft());
+                painter->drawLine(r.topLeft(), r.bottomLeft());
             RESTORE_PAINTER
         }
     } else {

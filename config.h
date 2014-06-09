@@ -80,10 +80,9 @@ typedef struct Config
     } menu;
 
     int mnemonic;
-
     int winBtnStyle;
-
     float scale;
+    int strokeWidth;
 
 } Config;
 

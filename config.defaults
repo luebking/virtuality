@@ -61,6 +61,7 @@
 #define INVERT_TOOLBARS "Invert.Toolbars", true
 
 #define ROUNDNESS "Frame.Roundness", 6
+#define STROKE_WIDTH "StrokeWidth", 2
 
 #define MENU_DELAY "Menu.Delay", 96
 #define MENU_SHOWICONS "Menu.ShowIcons", false

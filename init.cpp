@@ -227,7 +227,9 @@ Style::readSettings(QString appName)
     }
 
     config.frame.roundness = SCALE(readInt(ROUNDNESS));
-
+//     config.strokeWidth = qMin(config.frame.roundness, SCALE(readInt(STROKE_WIDTH)));
+    config.strokeWidth = SCALE(readInt(STROKE_WIDTH));
+    halfStroke = 0.5*config.strokeWidth;
 
     //NOTICE gtk-qt fails on several features
     // a key problem seems to be fixed text colors

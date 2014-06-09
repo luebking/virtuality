@@ -89,6 +89,7 @@ using namespace BE;
 
 AppType Style::appType;
 Config Style::config;
+float Style::halfStroke = 1;
 QPalette *Style::originalPalette = 0;
 QPalette Style::invertedPalette;
 EventKiller Style::eventKiller;

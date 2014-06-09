@@ -40,13 +40,12 @@ Style::drawCheck(const QStyleOption *option, QPainter *painter, const QWidget *,
     painter->setRenderHint(QPainter::Antialiasing);
 
     // rect -> square
-    QRect r = RECT;
+    QRectF r = RECT;
     if (r.width() > r.height())
         r.setWidth(r.height());
     else
         r.setHeight(r.width());
-    r.moveCenter(RECT.center());
-    r.adjust(F(2), F(2), -F(2), -F(2));
+    r.moveCenter(FLOAT_CENTER(RECT));
 
     if (itemview) { // itemViewCheck
         if (option->state & State_Selected)
@@ -71,7 +70,7 @@ Style::drawCheck(const QStyleOption *option, QPainter *painter, const QWidget *,
     if (state != Qt::Unchecked) { // the drop
         painter->setBrush(painter->pen().color());
         painter->setPen(Qt::NoPen);
-        const int d = qMin(F(4), r.height()/3);
+        const int d = intMin(F(4), r.height()/3);
         r.adjust(d, d, -d, -d);
         if (state == Qt::PartiallyChecked) // tri-state
             painter->drawChord(r, -180*16, 180*16);

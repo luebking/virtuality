@@ -42,12 +42,19 @@ namespace Corner {
 
 #define BESPIN_MNEMONIC config.mnemonic
 
-#define FRAME_STROKE F(2) & ~1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin
+#define FRAME_STROKE_WIDTH Style::config.strokeWidth
+#define STROKED_RECT(_RF_, _R_) QRectF _RF_(_R_); _RF_.adjust(Style::halfStroke, Style::halfStroke, -Style::halfStroke, -Style::halfStroke)
+#define FRAME_STROKE FRAME_STROKE_WIDTH, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin
+#define FRAME_COLOR FX::blend(FCOLOR(Window), FCOLOR(WindowText), 8, 1)
 #define FOCUS_FRAME_PEN QPen(FX::blend(FCOLOR(Window), FCOLOR(Highlight), 1, 2), FRAME_STROKE)
-#define FRAME_PEN QPen(FX::blend(FCOLOR(Window), FCOLOR(WindowText), 8, 1), FRAME_STROKE)
+#define FRAME_PEN QPen(FRAME_COLOR, FRAME_STROKE)
 
 #define THERMOMETER_COLOR FX::blend(FCOLOR(Window), FCOLOR(WindowText), 1, 4)
 #define GROOVE_COLOR FX::blend(FCOLOR(Window), FCOLOR(WindowText), 8, 1)
+
+#define intMax(_F1_, _F2_) qMax(int(_F1_), int(_F2_))
+#define intMin(_F1_, _F2_) qMin(int(_F1_), int(_F2_))
+#define FLOAT_CENTER(_R_) QPointF(_R_.x() + _R_.width()/2.0f, _R_.y() + _R_.height()/2.0f)
 
 static inline void
 setBold(QPainter *p, const QString &text = QString(), int w = -1)

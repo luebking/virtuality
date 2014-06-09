@@ -32,14 +32,13 @@
 void
 Style::drawLineEditFrame(const QStyleOption *option, QPainter *painter, const QWidget *widget) const
 {
-    if (RECT.height() > qMax(32, F(4) + 2*painter->fontMetrics().height())) { // abuse for mass text, eg. by webkit
+    if (RECT.height() > qMax(32, 2*(FRAME_STROKE_WIDTH + painter->fontMetrics().height()))) { // abuse for mass text, eg. by webkit
         drawFrame(option, painter, widget);
         return;
     }
     OPT_ENABLED OPT_FOCUS
     SAVE_PAINTER(Pen|Alias);
-    QRectF r(RECT);
-    r.adjust(F(1), F(1), -F(1), -F(1));
+    STROKED_RECT(r, RECT);
     QRectF r2(r);
     r2.setWidth(r2.height());
     r2.moveRight(r.right());
@@ -109,13 +108,13 @@ drawSBArrow(QStyle::SubControl sc, QPainter *painter, QStyleOptionSpinBox *optio
     RECT = style->subControlRect(QStyle::CC_SpinBox, option, sc, widget);
     Navi::Direction dir = Navi::N;
     QAbstractSpinBox::StepEnabledFlag sef = QAbstractSpinBox::StepUpEnabled;
-    const int dy = RECT.height()/2;
+    const int h = qRound(6*(RECT.height() - FRAME_STROKE_WIDTH)/16.0);
     if (sc == QStyle::SC_SpinBoxUp) {
-        RECT.adjust(F(2), dy + F(1), -F(2), dy - F(1));
+        RECT.adjust(0, RECT.height() - h, 0, h - F(1));
     }
     else {
         dir = Navi::S; sef = QAbstractSpinBox::StepDownEnabled;
-        RECT.adjust(F(2), F(1)-dy, -F(2), -(dy + F(1))) ;
+        RECT.adjust(0, F(1) - h, 0, -(RECT.height() - h));
     }
 
     bool isEnabled = option->stepEnabled & sef;
@@ -190,7 +189,7 @@ Style::drawComboBox(const QStyleOptionComplex *option, QPainter *painter, const 
     const QComboBox *combo = widget ? qobject_cast<const QComboBox*>(widget) : NULL;
     if ((cmb->subControls & SC_ComboBoxArrow) && (!combo || combo->count() > 0)) {   // do we have an arrow?
         ar = subControlRect(CC_ComboBox, cmb, SC_ComboBoxArrow, widget);
-        const int dx = (F(2) & ~1) / 2;
+        const int dx = (FRAME_STROKE_WIDTH + 1) / 2;
         ar.translate(cmb->direction == Qt::LeftToRight ? -dx : dx, 0);
     }
 
@@ -226,9 +225,11 @@ Style::drawComboBox(const QStyleOptionComplex *option, QPainter *painter, const 
         const int da = animStep * 168 / MAX_STEPS;
         if (option->direction == Qt::LeftToRight) {
             DRAW_SEGMENT(ar, 16*(120 - da/2), 16*(192+da));
+            painter->setRenderHint(QPainter::Antialiasing, false);
             painter->drawLine(RECT.x() + icon + text + F(6), y, ar.left()-F(2), y);
         } else {
             DRAW_SEGMENT(ar, 16*(30 + da/2), -16*(192+da));
+            painter->setRenderHint(QPainter::Antialiasing, false);
             painter->drawLine(RECT.right() - (icon + text + F(6)), y, ar.right()+F(2), y);
         }
         c = FX::blend(FCOLOR(Window), FCOLOR(WindowText), MAX_STEPS - animStep, 1 + animStep);
@@ -265,7 +266,7 @@ Style::drawComboBox(const QStyleOptionComplex *option, QPainter *painter, const 
         upDown = false; // shall never look like spinbox!
         hover = hover && (cmb->activeSubControls == SC_ComboBoxArrow);
     }
-    const int dy = qMax(F(1), upDown ? ar.height()/3 : 3*ar.height()/11);
+    const int dy = qMax(int(ceil(halfStroke)), upDown ? ar.height()/3 : 3*ar.height()/11);
     ar.adjust(0, dy, 0, -dy);
     if (upDown) {
         ar.translate(0, -F(1));

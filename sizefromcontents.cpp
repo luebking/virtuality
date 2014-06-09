@@ -21,8 +21,9 @@
 #include <QStyleOptionMenuItem>
 #include <QTabBar>
 #include <QToolBar>
-#include "virtuality.h"
+#include "draw.h"
 #include "makros.h"
+#include "virtuality.h"
 
 #include <QtDebug>
 
@@ -51,7 +52,7 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
             const int indicator = pixelMetric(PM_IndicatorHeight, btn, widget);
             int w, h;
             w = h = qMax( indicator, indicator );
-            h = qMax(h, contentsSize.height() + 4);
+            h = qMax(qMax(4*FRAME_STROKE_WIDTH, h), contentsSize.height() + 4);
 
             int margin = 0;
             // we add 4 pixels for label margins
@@ -63,12 +64,12 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
         if HAVE_OPTION(cb, ComboBox)
         {
             if (cb->editable)
-                return contentsSize + QSize(F(12) + (cb->fontMetrics.ascent() + F(2))*1.1, qMax(F(4) - config.fontExtent,0));
+                return contentsSize + QSize(F(12) + (cb->fontMetrics.ascent() + FRAME_STROKE_WIDTH)*1.1, qMax(2*FRAME_STROKE_WIDTH - config.fontExtent,0));
 
             int hgt = contentsSize.height();
             int d = F(8);
             if (cb->frame) {
-                hgt = qMax(config.btn.minHeight, hgt + F(4) - config.fontExtent);
+                hgt = qMax(config.btn.minHeight, hgt + 2*FRAME_STROKE_WIDTH - config.fontExtent);
                 d += F(16);
             } else
                 hgt = qMax(config.btn.minHeight, hgt);
@@ -83,15 +84,15 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
         if HAVE_OPTION(hdr, Header)
         {
             QSize sz;
-            int margin = F(2);
+            int margin = FRAME_STROKE_WIDTH;
             int iconSize = hdr->icon.isNull() ? 0 : pixelMetric(PM_SmallIconSize, hdr, widget);
             QSize txt = hdr->fontMetrics.size(0, hdr->text);
-            sz.setHeight(qMax(iconSize, txt.height()) + F(5) - config.fontExtent);
+            sz.setHeight(qMax(iconSize, txt.height()) + F(3) + FRAME_STROKE_WIDTH - config.fontExtent);
             sz.setWidth((iconSize?margin+iconSize:0) + (hdr->text.isNull()?0:margin+txt.width()) + margin);
             return sz;
         }
     case CT_LineEdit: // A line edit, like QLineEdit
-        return contentsSize + QSize(F(4), qMax(F(4) - config.fontExtent,0));
+        return contentsSize + QSize(2*FRAME_STROKE_WIDTH, qMax(2*FRAME_STROKE_WIDTH - config.fontExtent,0));
     case CT_MenuBarItem:
     {   // A menu bar item, like the buttons in a QMenuBar
         const int h = contentsSize.height() + F(8) - config.fontExtent;
@@ -145,10 +146,10 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
                 if (widget)
                 if (const QAbstractButton* abn = qobject_cast<const QAbstractButton*>(widget))
                 if (abn->isCheckable())
-                    w += contentsSize.height() + F(4);
+                    w += contentsSize.height() + 2*FRAME_STROKE_WIDTH;
 
             int h = contentsSize.height() - config.fontExtent;
-            h += F(4);
+            h += 2*FRAME_STROKE_WIDTH;
 
             if (btn->text.isEmpty()) {
                 w += 8;
@@ -171,7 +172,7 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
     case CT_ScrollBar: // A scroll bar, like QScrollBar
         return contentsSize;
     case CT_SpinBox: // A spin box, like QSpinBox
-        return contentsSize + QSize(contentsSize.height()/2  + F(3), 0);
+        return contentsSize + QSize(contentsSize.height()/2  + 2*FRAME_STROKE_WIDTH, 0);
 //    case CT_Splitter: // A splitter, like QSplitter
     case CT_TabBarTab: { // A tab on a tab bar, like QTabBar
         if HAVE_OPTION(tab, Tab) {
@@ -184,14 +185,14 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
                     QSize sz(QFontMetrics(fnt).boundingRect(tab->text).size());
                     sz.setWidth((sz.width() - osz.width() + 1) / 2 + contentsSize.width());
                     sz.setHeight(qMax(sz.height(), contentsSize.height()));
-                    return sz + QSize(F(2), F(2));
+                    return sz + (config.invert.headers ? QSize(F(2), F(2)) : QSize(FRAME_STROKE_WIDTH, FRAME_STROKE_WIDTH));
                 }
             }
 //             if ( appType == Dolphin && widget )
 //             if ( /*const QTabBar *bar =*/ qobject_cast<const QTabBar*>(widget) )
 //                 other = qMax( 0, 16+F(8)-contentsSize.height() ); // compensate the close buttons
         }
-        return contentsSize + QSize(F(2), F(2));
+        return contentsSize + (config.invert.headers ? QSize(F(2), F(2)) : QSize(FRAME_STROKE_WIDTH, FRAME_STROKE_WIDTH));
     }
     case CT_TabWidget: // A tab widget, like QTabWidget
         return contentsSize; // + QSize(F(8),F(6)); WARNING! this can causes recursive updates! (Qt 4.7 bug?)
