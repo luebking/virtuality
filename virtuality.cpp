@@ -269,7 +269,7 @@ Style::~Style()
         return;
     QStyle *newStyle = QApplication::style();
     // qobject_cast because this can be invoked from a dying proxystyle
-    if (!newStyle || newStyle == this || qobject_cast<QStyle*>(newStyle))
+    if (!newStyle || newStyle == this || !qobject_cast<QStyle*>(newStyle))
         return;
     BE::Style *beStyle = qobject_cast<BE::Style*>(newStyle);
     if (beStyle && beStyle->m_usingStandardPalette)
