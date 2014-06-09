@@ -128,25 +128,24 @@ int Style::pixelMetric( PixelMetric pm, const QStyleOption *option, const QWidge
             return 0;
 
         const QTabBar *tabBar = qobject_cast<const QTabBar*>(widget);
-        if (!tabBar)
-        if (const QTabWidget *tw = qobject_cast<const QTabWidget*>(widget))
-        {
+        if (!tabBar) {
+        if (const QTabWidget *tw = qobject_cast<const QTabWidget*>(widget)) {
             if ( tw->styleSheet().contains("pane", Qt::CaseInsensitive) &&
                  tw->styleSheet().contains("border", Qt::CaseInsensitive))
                 return 0;
-            if (!tw->children().isEmpty())
-            {
-                foreach(QObject *obj, widget->children())
-                    if (qobject_cast<QTabBar*>(obj))
-                        { tabBar = (QTabBar*)obj; break; }
-            }
-        }
+#if QT_VERSION < 0x050000
+            foreach(QObject *obj, widget->children())
+                if (qobject_cast<QTabBar*>(obj))
+                    { tabBar = (QTabBar*)obj; break; }
+#else
+            tabBar = tw->tabBar();
+#endif
+        } }
         if (!tabBar || !tabBar->isVisible())
             return 0; //F(16);
 
         if (const QStyleOptionTabWidgetFrame *twf =
-            qstyleoption_cast<const QStyleOptionTabWidgetFrame *>(option))
-        {
+            qstyleoption_cast<const QStyleOptionTabWidgetFrame *>(option)) {
             if (twf->shape == QTabBar::RoundedEast || twf->shape == QTabBar::TriangularEast ||
                 twf->shape == QTabBar::RoundedWest || twf->shape == QTabBar::TriangularWest)
                 return tabBar->width();
