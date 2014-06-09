@@ -181,7 +181,7 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
                 if (fnt.pointSize() > 0) {
                     QSize osz(QFontMetrics(fnt).boundingRect(tab->text).size());
                     fnt.setPointSize(16*fnt.pointSize()/10);
-//                     fnt.setBold(true);
+                    fnt.setBold(true);
                     QSize sz(QFontMetrics(fnt).boundingRect(tab->text).size());
                     sz.setWidth((sz.width() - osz.width() + 1) / 2 + contentsSize.width());
                     sz.setHeight(qMax(sz.height(), contentsSize.height()));

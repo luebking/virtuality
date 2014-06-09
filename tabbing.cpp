@@ -448,7 +448,7 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
             setBold(painter, tab->text, tr.width());
         } else {
             QFont fnt(painter->font());
-//             fnt.setBold(true);
+            fnt.setBold(true);
             if (fnt.pointSize() > 0) {
                 fnt.setPointSize(16*fnt.pointSize()/10);
                 float w = QFontMetrics(fnt).width(tab->text);
