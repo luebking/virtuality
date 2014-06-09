@@ -254,17 +254,6 @@ Style::drawTab(const QStyleOption *option, QPainter *painter, const QWidget *wid
     if (!config.invert.headers) {
         drawTabShape(&copy, painter, widget);
     }
-    if HAVE_OPTION(tabV3, TabV3) {
-        int d[4] = {0,1,0,0};
-        if (verticalTabs(tab->shape)) {
-            if ( tabV3->leftButtonSize.isValid() ) d[1] = tabV3->leftButtonSize.height() + F(2);
-            if ( tabV3->rightButtonSize.isValid() ) d[3] = -tabV3->rightButtonSize.height() - F(2);
-        } else {
-            if ( tabV3->leftButtonSize.isValid() ) d[0] = tabV3->leftButtonSize.width() + F(2);
-            if ( tabV3->rightButtonSize.isValid() ) d[2] = -tabV3->rightButtonSize.width() - F(2);
-        }
-        copy.rect.adjust( d[0], d[1], d[2], d[3] );
-    }
     drawTabLabel(&copy, painter, widget);
     customColor = false;
     if (needRestore)
@@ -388,6 +377,13 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
             break;
     }
 
+    if (selected)
+    if HAVE_OPTION(tab3, TabV3)
+    if (tab3->documentMode) {
+        alignment &= ~(Qt::AlignBottom|Qt::AlignTop);
+        alignment |= Qt::AlignVCenter;
+    }
+
 
     if (vertical) {
         int newX, newY, newRot;
@@ -423,11 +419,15 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
 
     if HAVE_OPTION(tabV3, TabV3) {
         if (vertical) {
-            tr.setLeft(tr.left() + tabV3->leftButtonSize.height() + F(4));
-            tr.setRight(tr.right() - (tabV3->rightButtonSize.height() + F(4)));
+            if (tabV3->leftButtonSize.isValid())
+                tr.setLeft(tr.left() + tabV3->leftButtonSize.height() + F(4));
+            if (tabV3->rightButtonSize.isValid())
+                tr.setRight(tr.right() - (tabV3->rightButtonSize.height() + F(4)));
         } else {
-            tr.setLeft(tr.left() + tabV3->leftButtonSize.width() + F(4));
-            tr.setRight(tr.right() - (tabV3->rightButtonSize.width()+F(4)));
+            if (tabV3->leftButtonSize.isValid())
+                tr.setLeft(tr.left() + tabV3->leftButtonSize.width() + F(4));
+            if (tabV3->rightButtonSize.isValid())
+                tr.setRight(tr.right() - (tabV3->rightButtonSize.width()+F(4)));
         }
     }
 
@@ -453,9 +453,9 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
                 fnt.setPointSize(16*fnt.pointSize()/10);
                 float w = QFontMetrics(fnt).width(tab->text);
                 w = qMin(1.0f, tr.width()/w);
-                if (w < 0.8) {
+                if (w < 0.8f) {
                     elide = true;
-                    w = 0.8;
+                    w = 0.8f;
                 }
                 fnt.setPointSize(w*fnt.pointSize());
             }
