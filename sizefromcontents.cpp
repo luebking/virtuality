@@ -21,7 +21,6 @@
 #include <QStyleOptionMenuItem>
 #include <QTabBar>
 #include <QToolBar>
-#include "draw.h"
 #include "makros.h"
 #include "virtuality.h"
 

@@ -42,7 +42,6 @@ namespace Corner {
 
 #define BESPIN_MNEMONIC config.mnemonic
 
-#define FRAME_STROKE_WIDTH Style::config.strokeWidth
 #define STROKED_RECT(_RF_, _R_) QRectF _RF_(_R_); _RF_.adjust(Style::halfStroke, Style::halfStroke, -Style::halfStroke, -Style::halfStroke)
 #define FRAME_STROKE FRAME_STROKE_WIDTH, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin
 #define FRAME_COLOR FX::blend(FCOLOR(Window), FCOLOR(WindowText), 8, 1)

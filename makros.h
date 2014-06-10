@@ -44,6 +44,7 @@
 #define GRAD(_TYPE_) Style::config._TYPE_.gradient
 #define ROLES(_TYPE_) QPalette::ColorRole (*role)[2] = &Style::config._TYPE_##_role
 #define ROLE (*role)
+#define FRAME_STROKE_WIDTH Style::config.strokeWidth
 
 #define ASSURE_OPTION(_VAR_, _TYPE_) \
 const QStyleOption##_TYPE_ *_VAR_ = qstyleoption_cast<const QStyleOption##_TYPE_ *>(option);\
