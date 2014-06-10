@@ -40,12 +40,19 @@ Style::drawCheck(const QStyleOption *option, QPainter *painter, const QWidget *,
     painter->setRenderHint(QPainter::Antialiasing);
 
     // rect -> square
-    QRectF r = RECT;
+    STROKED_RECT(r, RECT);
     if (r.width() > r.height())
         r.setWidth(r.height());
     else
         r.setHeight(r.width());
-    r.moveCenter(FLOAT_CENTER(RECT));
+    r.adjust(F(1), F(1), -F(1), -F(1));
+    if (option->direction == Qt::LeftToRight)
+        r.moveRight(RECT.right() - (halfStroke + F(1)));
+    else
+        r.moveLeft(RECT.left() + (halfStroke + F(1)));
+    r.moveTop(RECT.top() + 0.5*(RECT.height() - r.height()));
+    if (!exclusive)
+        r.translate(0, -r.height()/4);
 
     if (itemview) { // itemViewCheck
         if (option->state & State_Selected)
