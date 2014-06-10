@@ -174,27 +174,22 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
         return contentsSize + QSize(contentsSize.height()/2  + 2*FRAME_STROKE_WIDTH, 0);
 //    case CT_Splitter: // A splitter, like QSplitter
     case CT_TabBarTab: { // A tab on a tab bar, like QTabBar
-        int d = F(2);
-        if (!config.invert.headers)
-            d += FRAME_STROKE_WIDTH;
         if HAVE_OPTION(tab, Tab) {
             if (!verticalTabs(tab->shape)) {
                 QFont fnt(widget?widget->font():QFont());
                 if (fnt.pointSize() > 0) {
                     QSize osz(QFontMetrics(fnt).boundingRect(tab->text).size());
                     fnt.setPointSize(16*fnt.pointSize()/10);
-                    fnt.setBold(true);
+                    if (!config.invert.headers)
+                        fnt.setBold(true);
                     QSize sz(QFontMetrics(fnt).boundingRect(tab->text).size());
                     sz.setWidth((sz.width() - osz.width() + 1) / 2 + contentsSize.width());
                     sz.setHeight(qMax(sz.height(), contentsSize.height()));
-                    return sz + QSize(d, d);
+                    return sz;
                 }
             }
-//             if ( appType == Dolphin && widget )
-//             if ( /*const QTabBar *bar =*/ qobject_cast<const QTabBar*>(widget) )
-//                 other = qMax( 0, 16+F(8)-contentsSize.height() ); // compensate the close buttons
         }
-        return contentsSize + QSize(d, d);
+        return contentsSize + QSize(F(2), F(2));
     }
     case CT_TabWidget: // A tab widget, like QTabWidget
         return contentsSize; // + QSize(F(8),F(6)); WARNING! this can causes recursive updates! (Qt 4.7 bug?)

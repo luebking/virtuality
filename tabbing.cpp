@@ -92,24 +92,29 @@ Style::drawTabBar(const QStyleOption *option, QPainter *painter, const QWidget *
     if (!config.invert.headers) {
         if (tbb->selectedTabRect.isEmpty())
             return; // only paint tab shapes
+        if HAVE_OPTION(tbb2, TabBarBaseV2) {
+            if (tbb2->documentMode) {
+                return; // useless and adds confliciting horizintal lines
+            }
+        }
         SAVE_PAINTER(Pen|Alias);
         painter->setRenderHint(QPainter::Antialiasing, false);
         painter->setPen(QPen(FRAME_COLOR, FRAME_STROKE_WIDTH));
         switch (tbb->shape) {
         case QTabBar::RoundedNorth: case QTabBar::TriangularNorth:
-            painter->drawLine(RECT.x(), RECT.bottom(), tbb->selectedTabRect.x() + tbb->selectedTabRect.width()/3, RECT.bottom());
+            painter->drawLine(RECT.x(), RECT.bottom(), tbb->selectedTabRect.x(), RECT.bottom());
             painter->drawLine(tbb->selectedTabRect.right(), RECT.bottom(), RECT.right(), RECT.bottom());
             break;
         case QTabBar::RoundedSouth: case QTabBar::TriangularSouth:
             painter->drawLine(RECT.x(), RECT.top(), tbb->selectedTabRect.x(), RECT.top());
-            painter->drawLine(tbb->selectedTabRect.right() - tbb->selectedTabRect.width()/3, RECT.top(), RECT.right(), RECT.top());
+            painter->drawLine(tbb->selectedTabRect.right(), RECT.top(), RECT.right(), RECT.top());
             break;
         case QTabBar::RoundedEast: case QTabBar::TriangularEast:
             painter->drawLine(RECT.x(), RECT.y(), RECT.x(), tbb->selectedTabRect.y());
-            painter->drawLine(RECT.x(), tbb->selectedTabRect.bottom() - tbb->selectedTabRect.height()/3, RECT.x(), RECT.bottom());
+            painter->drawLine(RECT.x(), tbb->selectedTabRect.bottom(), RECT.x(), RECT.bottom());
             break;
         case QTabBar::RoundedWest: case QTabBar::TriangularWest:
-            painter->drawLine(RECT.right(), RECT.y(), RECT.right(), tbb->selectedTabRect.y() + tbb->selectedTabRect.height()/3);
+            painter->drawLine(RECT.right(), RECT.y(), RECT.right(), tbb->selectedTabRect.y());
             painter->drawLine(RECT.right(), tbb->selectedTabRect.bottom(), RECT.right(), RECT.bottom());
             break;
         }
@@ -243,19 +248,21 @@ Style::drawTab(const QStyleOption *option, QPainter *painter, const QWidget *wid
     }
 
     // paint shape and label
-    QStyleOptionTab copy = *tab;
     // NOTICE: workaround for e.g. konsole,
     // which sets the tabs bg, but not the fg color to the palette, but just
     // presets the painter and hopes for the best... tststs
     // TODO: bug Konsole/Konqueror authors
+    QPalette origPal = tab->palette;
     if (widget)
-        copy.palette = widget->palette();
+        const_cast<QStyleOptionTab*>(tab)->palette = widget->palette();
 
     if (!config.invert.headers) {
-        drawTabShape(&copy, painter, widget);
+        drawTabShape(tab, painter, widget);
     }
-    drawTabLabel(&copy, painter, widget);
+    drawTabLabel(tab, painter, widget);
     customColor = false;
+    if (widget)
+        const_cast<QStyleOptionTab*>(tab)->palette = origPal;
     if (needRestore)
         painter->restore();
 }
@@ -269,72 +276,28 @@ Style::drawTabShape(const QStyleOption *option, QPainter *painter, const QWidget
         painter->setBrush(FCOLOR(WindowText));
         painter->drawRect(RECT);
         RESTORE_PAINTER
-    } else {
+    } else if (!(option->state & State_Selected)) {
+        if HAVE_OPTION(tab3, TabV3) {
+            if (tab3->documentMode)
+                return; // useless and adds confliciting horizintal lines
+        }
         ASSURE_OPTION(tab, Tab);
-        SAVE_PAINTER(Pen);
-        OPT_SELECTED
-        if (selected) {
-            painter->setPen(FRAME_PEN);
-            SAVE_PAINTER(Alias);
-            painter->setRenderHint(QPainter::Antialiasing);
-            bool docMode = false;
-            if HAVE_OPTION(tab3, TabV3) {
-                docMode = tab3->documentMode;
-            }
-            const int rnd = qMin(config.frame.roundness*2, RECT.height());
-            QRectF r(0,0,rnd,rnd);
-            QPainterPath path;
-            switch (tab->shape) {
-            case QTabBar::RoundedNorth: case QTabBar::TriangularNorth:
-                r.moveTopRight(RECT.topRight() + QPointF(-halfStroke, halfStroke));
-                path.moveTo(RECT.right() - (docMode ? RECT.height()/2 : RECT.width()/3), r.y());
-                path.lineTo(r.x() + r.width()/2, r.y());
-                path.arcTo(r, 90, -90);
-                path.lineTo(r.right(), RECT.y() + RECT.height()/2);
-                break;
-            case QTabBar::RoundedSouth: case QTabBar::TriangularSouth:
-                r.moveBottomLeft(RECT.bottomLeft() + QPointF(halfStroke, -halfStroke));
-                path.moveTo(RECT.left() + (docMode ? RECT.height()/2 : RECT.width()/3), r.bottom() + 1);
-                path.lineTo(r.x() + r.width()/2, r.bottom() + 1);
-                path.arcTo(r, -90, -90);
-                path.lineTo(r.x(), RECT.y() + RECT.height()/2);
-                break;
-            case QTabBar::RoundedEast: case QTabBar::TriangularEast:
-                r.moveTopRight(RECT.topRight() + QPointF(-halfStroke, halfStroke));
-                path.moveTo(RECT.right() - RECT.width()/2, r.y());
-                path.lineTo(r.x() + r.width()/2, r.y());
-                path.arcTo(r, 90, -90);
-                path.lineTo(r.right(), RECT.y() + (docMode ? RECT.width()/2 : RECT.height()/3));
-                break;
-            case QTabBar::RoundedWest: case QTabBar::TriangularWest:
-                r.moveBottomLeft(RECT.bottomLeft() + QPointF(halfStroke, -halfStroke));
-                path.moveTo(RECT.left() + RECT.width()/2, r.bottom() + 1);
-                path.lineTo(r.x() + r.width()/2, r.bottom() + 1);
-                path.arcTo(r, -90, -90);
-                path.lineTo(r.x(), RECT.y() + (docMode ? RECT.width()/2 : RECT.height()/3));
-                break;
-            }
-            painter->drawPath(path);
-            RESTORE_PAINTER
-        } else {
-            painter->setPen(QPen(FRAME_COLOR, FRAME_STROKE_WIDTH));
-            SAVE_PAINTER(Alias);
-            painter->setRenderHint(QPainter::Antialiasing, false);
-            switch (tab->shape) {
-            case QTabBar::RoundedNorth: case QTabBar::TriangularNorth:
-                painter->drawLine(RECT.bottomLeft(), RECT.bottomRight());
-                break;
-            case QTabBar::RoundedSouth: case QTabBar::TriangularSouth:
-                painter->drawLine(RECT.topLeft(), RECT.topRight());
-                break;
-            case QTabBar::RoundedEast: case QTabBar::TriangularEast:
-                painter->drawLine(RECT.topLeft(), RECT.bottomLeft());
-                break;
-            case QTabBar::RoundedWest: case QTabBar::TriangularWest:
-                painter->drawLine(RECT.topRight(), RECT.bottomRight());
-                break;
-            }
-            RESTORE_PAINTER
+        SAVE_PAINTER(Pen|Alias);
+        painter->setPen(QPen(FRAME_COLOR, FRAME_STROKE_WIDTH));
+        painter->setRenderHint(QPainter::Antialiasing, false);
+        switch (tab->shape) {
+        case QTabBar::RoundedNorth: case QTabBar::TriangularNorth:
+            painter->drawLine(RECT.bottomLeft(), RECT.bottomRight());
+            break;
+        case QTabBar::RoundedSouth: case QTabBar::TriangularSouth:
+            painter->drawLine(RECT.topLeft(), RECT.topRight());
+            break;
+        case QTabBar::RoundedEast: case QTabBar::TriangularEast:
+            painter->drawLine(RECT.topLeft(), RECT.bottomLeft());
+            break;
+        case QTabBar::RoundedWest: case QTabBar::TriangularWest:
+            painter->drawLine(RECT.topRight(), RECT.bottomRight());
+            break;
         }
         RESTORE_PAINTER
     }
@@ -448,7 +411,8 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
             setBold(painter, tab->text, tr.width());
         } else {
             QFont fnt(painter->font());
-            fnt.setBold(true);
+            if (!config.invert.headers)
+                fnt.setBold(true);
             if (fnt.pointSize() > 0) {
                 fnt.setPointSize(16*fnt.pointSize()/10);
                 float w = QFontMetrics(fnt).width(tab->text);
