@@ -33,7 +33,7 @@ int Style::pixelMetric( PixelMetric pm, const QStyleOption *option, const QWidge
     switch ( pm )
     {
     case PM_ButtonMargin: // Amount of whitespace between push button labels and the frame
-        return F(4);
+        return FRAME_STROKE_WIDTH;
     case PM_ButtonDefaultIndicator: // Width of the default-button indicator frame
         return F(2);
     case PM_MenuButtonIndicator: // Width of the menu button indicator proportional to the widget height
@@ -46,7 +46,7 @@ int Style::pixelMetric( PixelMetric pm, const QStyleOption *option, const QWidge
 //         if (frame->frameShape() != QFrame::StyledPanel)
 //             return F(6);
 //         if (qobject_cast<const QAbstractScrollArea*>(widget))
-            return F(2) + (config.frame.roundness+3)/4 + config.frame.roundness/20;
+            return FRAME_STROKE_WIDTH + (config.frame.roundness+3)/4 + config.frame.roundness/20;
 //         return F(2);
     case PM_SpinBoxFrameWidth: // Frame width of a spin box, defaults to PM_DefaultFrameWidth
         return F(1);
