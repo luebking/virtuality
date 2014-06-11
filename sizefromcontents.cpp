@@ -139,16 +139,18 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
         if HAVE_OPTION(btn, Button)
         {
             int w = contentsSize.width();
+            int h = contentsSize.height() - config.fontExtent;
+            h += 2*FRAME_STROKE_WIDTH;
+
             if (btn->features & QStyleOptionButton::HasMenu)
                 w += contentsSize.height()+F(16);
             else
                 if (widget)
                 if (const QAbstractButton* abn = qobject_cast<const QAbstractButton*>(widget))
-                if (abn->isCheckable())
+                if (abn->isCheckable()) {
                     w += contentsSize.height() + 2*FRAME_STROKE_WIDTH;
-
-            int h = contentsSize.height() - config.fontExtent;
-            h += 2*FRAME_STROKE_WIDTH;
+                    h = qMax(h, pixelMetric(PM_IndicatorHeight, option, widget));
+                }
 
             if (btn->text.isEmpty()) {
                 w += 8;
