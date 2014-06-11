@@ -173,7 +173,7 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
     case CT_ScrollBar: // A scroll bar, like QScrollBar
         return contentsSize;
     case CT_SpinBox: // A spin box, like QSpinBox
-        return contentsSize + QSize(contentsSize.height()/2  + 2*FRAME_STROKE_WIDTH, 0);
+        return contentsSize + QSize(contentsSize.height() + 2*FRAME_STROKE_WIDTH, 0);
 //    case CT_Splitter: // A splitter, like QSplitter
     case CT_TabBarTab: { // A tab on a tab bar, like QTabBar
         if HAVE_OPTION(tab, Tab) {
