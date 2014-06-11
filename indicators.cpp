@@ -51,10 +51,10 @@ Style::drawCheck(const QStyleOption *option, QPainter *painter, const QWidget *,
     else
         r.moveLeft(RECT.left() + (halfStroke + F(1)));
     r.moveTop(RECT.top() + 0.5*(RECT.height() - r.height()));
-    if (!exclusive)
-        r.translate(0, -r.height()/4);
 
     if (itemview) { // itemViewCheck
+        if (!exclusive)
+            r.translate(0, -r.height()/4);
         if (option->state & State_Selected)
             painter->setPen(FCOLOR(HighlightedText));
         else if (hover) // not necessarily selectable...
