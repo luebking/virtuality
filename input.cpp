@@ -43,7 +43,7 @@ Style::drawLineEditFrame(const QStyleOption *option, QPainter *painter, const QW
     r2.setWidth(r2.height());
     r2.moveRight(r.right());
     QPainterPath path;
-    path.moveTo(r.x() + config.frame.roundness, r.bottom()); // + config.frame.roundness to match aligned fames
+    path.moveTo(r.x() + config.frame.roundness, r.bottom()); // +config.frame.roundness to match aligned fames
     path.lineTo(r2.bottomLeft());
     path.arcTo(r2, -90, 180);
     const int max = Animator::Focus::maxSteps();
@@ -85,17 +85,28 @@ Style::drawLineEdit(const QStyleOption *option, QPainter *painter, const QWidget
         return;
     }
 
-    if (appType == Plasma && widget && widget->testAttribute(Qt::WA_SetPalette)) {
-        // plasma doesn't expose the theme colors anywhere - we MUST add an opaque background :-(
+    bool needFill = false;
+    if (widget && widget->testAttribute(Qt::WA_SetPalette)) {
+        needFill = appType == Plasma; // plasma doesn't expose the theme colors anywhere - we MUST add an opaque background :-(
+        if (!needFill) {
+            QPalette ppal = widget->parentWidget() ? widget->parentWidget()->palette() : qApp->palette();
+            needFill = !FX::haveContrast(FCOLOR(Text), ppal.color(QPalette::Window));
+        }
+    }
+    const QRect oRect = RECT;
+    if (needFill) {
         SAVE_PAINTER(Pen|Alias|Brush);
         painter->setPen(Qt::NoPen);
         painter->setBrush(FCOLOR(Base));
         painter->setRenderHint(QPainter::Antialiasing, true);
-        const int d = (F(2) & ~1)/2;
-        painter->drawRoundedRect(RECT.adjusted(d,d,-d,-d), config.frame.roundness, config.frame.roundness);
+        const int rnd = (RECT.height()-1)/2;
+        const int d = FRAME_STROKE_WIDTH;
+        painter->drawRoundedRect(RECT.adjusted(d,d,-d,-d), rnd, rnd);
         RESTORE_PAINTER
+        const_cast<QStyleOption*>(option)->rect.setX(RECT.x() + qMax(0, rnd - config.frame.roundness));
     }
     drawLineEditFrame(option, painter, widget);
+    const_cast<QStyleOption*>(option)->rect = oRect;
 }
 
 static void
