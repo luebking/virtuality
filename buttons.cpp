@@ -36,7 +36,7 @@ static bool isCheckableButton(const QWidget *w, const QStyleOption *option)
 {
     const QAbstractButton *b = qobject_cast<const QAbstractButton*>(w);
     if (b && b->isCheckable()) {
-        if (RECT.width() < RECT.height()/3 + F(32)) {
+        if (b->maximumWidth() < QWIDGETSIZE_MAX || RECT.width() < RECT.height()/3 + F(32)) {
             // fixed size buttons as in kcron won't - there's no space for the indicator
             if (option->state & QStyle::State_On) // we cheat and make the button focus'd if on
                 const_cast<QStyleOption*>(option)->state |= QStyle::State_HasFocus;
@@ -132,6 +132,7 @@ Style::drawButtonFrame(const QStyleOption *option, QPainter *painter, const QWid
         opt.rect = subElementRect(SE_CheckBoxIndicator, &opt, widget);
         drawRadioOrCheckBox(&opt, painter, widget, false);
     } else {
+        hasFocus = option->state & QStyle::State_HasFocus; // might have been changed by isCheckableButton check
         QColor oc(FCOLOR(WindowText));
         if (widget && widget->testAttribute(Qt::WA_SetPalette)) { // button has custom palette - see which color differs
             const QColor globalBg = QApplication::palette().color(PAL.currentColorGroup(), QPalette::Button),
@@ -152,13 +153,9 @@ Style::drawButtonFrame(const QStyleOption *option, QPainter *painter, const QWid
 //                 anim.step = 1;
 //             }
         }
-        QColor c(oc);
-        if (!sunken) {
-            c = FX::blend(FCOLOR(Window), c, MAX_STEPS, 1 + 2*anim.step);
-            if (hasFocus)
-                c = FX::blend(FCOLOR(Highlight), c, MAX_STEPS-anim.step, anim.step);
-        }
+
         STROKED_RECT(r, RECT);
+        bool squareButton = false;
         if (r.width() > r.height() + F(8)) {
             if (!hasFocus) {
 //                 r.setHeight(r.height() - F(1)*(MAX_STEPS-anim.step)/2);
@@ -166,9 +163,19 @@ Style::drawButtonFrame(const QStyleOption *option, QPainter *painter, const QWid
             }
             r.adjust(F(4)*sunken, 0, -F(4)*sunken, 0);
         } else {
-            r.setHeight(r.width());
+            squareButton = true;
+            r.setHeight(qMin(r.height(), r.width()));
         }
+
         SAVE_PAINTER(Pen|Brush|Alias);
+
+        QColor c(oc);
+        if (!sunken) {
+            c = FX::blend(FCOLOR(Window), c, MAX_STEPS, 1 + (squareButton+1)*anim.step);
+            if (hasFocus)
+                c = FX::blend(FCOLOR(Highlight), c, MAX_STEPS-anim.step, anim.step);
+        }
+
         r.moveCenter(FLOAT_CENTER(RECT));
         if (sunken) {
             painter->setPen(Qt::NoPen);
@@ -177,10 +184,10 @@ Style::drawButtonFrame(const QStyleOption *option, QPainter *painter, const QWid
             painter->setPen(QPen(c, FRAME_STROKE));
             painter->setBrush(Qt::NoBrush);
         }
-        painter->setRenderHint(QPainter::Antialiasing, true);
+        painter->setRenderHint(QPainter::Antialiasing);
         const int radius = r.height()/2;
-#if true // gradient ... ;-) for unhovered button outline
-        if (!(sunken || hasFocus || anim.step)) {
+
+        if (!(squareButton || sunken || hasFocus || anim.step)) {
             QLinearGradient lg(r.x(), r.y(), r.x(), r.bottom());
             const QColor c1(FX::blend(FCOLOR(Window), oc, MAX_STEPS, 1 + MAX_STEPS/2));
             lg.setColorAt(0.0, c1);
@@ -189,7 +196,7 @@ Style::drawButtonFrame(const QStyleOption *option, QPainter *painter, const QWid
             lg.setColorAt(1.0, c1);
             painter->setPen(QPen(lg, FRAME_STROKE));
         }
-#endif
+
         painter->drawRoundedRect(r, radius, radius);
 #if false // rails
         if (!(sunken || hasFocus) && anim.step < MAX_STEPS) {
