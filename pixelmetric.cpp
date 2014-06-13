@@ -33,9 +33,9 @@ int Style::pixelMetric( PixelMetric pm, const QStyleOption *option, const QWidge
     switch ( pm )
     {
     case PM_ButtonMargin: // Amount of whitespace between push button labels and the frame
-        return FRAME_STROKE_WIDTH;
+        return F(2); //FRAME_STROKE_WIDTH;
     case PM_ButtonDefaultIndicator: // Width of the default-button indicator frame
-        return F(2);
+        return 0;
     case PM_MenuButtonIndicator: // Width of the menu button indicator proportional to the widget height
         return F(7);
     case PM_ButtonShiftHorizontal: // Horizontal contents shift of a button when the button is down
@@ -215,7 +215,7 @@ int Style::pixelMetric( PixelMetric pm, const QStyleOption *option, const QWidge
 //     case PM_FocusFrameHMargin: // Horizontal margin that the focus frame will outset the widget by.
 //         return //F(4); // GNARF, KCategoryView or dolphin hardcodes this value to Qt def. TODO!
     case PM_FocusFrameVMargin: // Vertical margin that the focus frame will outset the widget by.
-        return F(2);
+        return 0;
 //    case PM_IconViewIconSize: //
 //    case PM_ListViewIconSize: //
 //       return 10;

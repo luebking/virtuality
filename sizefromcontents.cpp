@@ -56,7 +56,7 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
             int margin = 0;
             // we add 4 pixels for label margins
             if (btn->icon.isNull() || !btn->text.isEmpty())
-                margin = F(7);
+                margin = F(4);
             return QSize(contentsSize.width() + w + margin, h);
         }
     case CT_ComboBox: // A combo box, like QComboBox
@@ -140,22 +140,22 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
         {
             int w = contentsSize.width();
             int h = contentsSize.height() - config.fontExtent;
-            h += 2*FRAME_STROKE_WIDTH;
 
-            if (btn->features & QStyleOptionButton::HasMenu)
-                w += contentsSize.height()+F(16);
-            else
+            if (btn->features & QStyleOptionButton::HasMenu) {
+                w += contentsSize.height() + F(16);
+            } else {
                 if (widget)
                 if (const QAbstractButton* abn = qobject_cast<const QAbstractButton*>(widget))
                 if (abn->isCheckable()) {
-                    w += contentsSize.height() + 2*FRAME_STROKE_WIDTH;
+                    w += contentsSize.height() + 2*FRAME_STROKE_WIDTH + F(4);
                     h = qMax(h, pixelMetric(PM_IndicatorHeight, option, widget));
                 }
-
+            }
+            h += 2*FRAME_STROKE_WIDTH + F(4);
             if (btn->text.isEmpty()) {
                 w += 8;
             } else {
-                w += F(20);
+                w += h + F(4);
                 if (!btn->icon.isNull())
                     w += F(4) + btn->iconSize.width(); // we want symmetry and need 2px padding (+the blind icon and it's blind padding)
                 if (w < F(80))

@@ -402,7 +402,7 @@ Style::subElementRect(SubElement element, const QStyleOption *option, const QWid
     switch (element)
     {
     case SE_PushButtonContents: // Area containing the label (icon with text or pixmap)
-        return visualRect(option->direction, RECT, RECT.adjusted(F(4), F(4), -F(4), -F(4)));
+        return visualRect(option->direction, RECT, RECT);
     case SE_PushButtonFocusRect: // Area for the focus rect (usually larger than the contents rect)
     case SE_LineEditContents:
         return RECT.adjusted(F(2),0,-F(2),-F(1));
