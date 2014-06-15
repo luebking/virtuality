@@ -186,9 +186,7 @@ if (area->horizontalScrollBar()->isVisible())\
 if (area->verticalScrollBar()->isVisible())\
     play(area->verticalScrollBar(), _DIR_)
 
-#define isAttachedScrollbar\
-/*if*/ (kid && kid->parent() == object)\
-if ((sb = qobject_cast<QScrollBar*>(kid)))
+#define isAttachedScrollbar kid && kid->parent() == object && (sb = qobject_cast<QScrollBar*>(kid))
 
 
 #define IF_WIDGET QWidget* widget = qobject_cast<QWidget*>(object); \
@@ -209,7 +207,7 @@ Hover::eventFilter( QObject* object, QEvent *e )
             QObjectList kids = object->children();
             QWidget *sb;
             foreach (QObject *kid, kids) {
-                if isAttachedScrollbar
+                if (isAttachedScrollbar)
                     play(sb);
             }
             return false;
@@ -231,7 +229,7 @@ Hover::eventFilter( QObject* object, QEvent *e )
             QObjectList kids = object->children();
             QWidget *sb;
             foreach (QObject *kid, kids) {
-                if isAttachedScrollbar
+                if (isAttachedScrollbar)
                     play(sb, true);
             }
             return false;
@@ -241,6 +239,24 @@ Hover::eventFilter( QObject* object, QEvent *e )
         IF_WIDGET
             play(widget, true);
         return false;
+    }
+    case QEvent::FocusIn:
+    case QEvent::FocusOut: {
+        if (QAbstractScrollArea* area = qobject_cast<QAbstractScrollArea*>(object)) {
+            if (area->horizontalScrollBar()->isVisible())
+                area->horizontalScrollBar()->update();
+            if (area->verticalScrollBar()->isVisible())
+                area->verticalScrollBar()->update();
+            return false;
+        } else if (_scrollAreas.contains(object)) {
+            QObjectList kids = object->children();
+            QWidget *sb;
+            foreach (QObject *kid, kids) {
+                if (isAttachedScrollbar)
+                    play(sb);
+            }
+            return false;
+        }
     }
 #undef HANDLE_SCROLL_AREA_EVENT
     default:

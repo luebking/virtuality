@@ -26,34 +26,44 @@
 
 #define MAX_STEPS Animator::Hover::maxSteps()
 
-inline static bool
-scrollAreaHovered(const QWidget* slider)
+static uchar gs_scrollAreaState = 0;
+enum ScrollAreaStates { ComboDropDown = 1<<0, Hovered = 1<<1, HasFocus = 1<<2 };
+
+inline static void
+detectScrollAreaStates(const QWidget* slider)
 {
-//     bool scrollerActive = false;
-    if (!slider) return true;
+    gs_scrollAreaState &= ~(Hovered|HasFocus);
+
+    if (!slider) {
+        gs_scrollAreaState |= Hovered;
+        return;
+    }
+
     QWidget *scrollWidget = const_cast<QWidget*>(slider);
     if (!scrollWidget->isEnabled())
-        return false;
+        return;
+
     while (scrollWidget && !(qobject_cast<QAbstractScrollArea*>(scrollWidget) || Animator::Hover::managesArea(scrollWidget)))
         scrollWidget = const_cast<QWidget*>(scrollWidget->parentWidget());
-    bool isActive = true;
-    if (scrollWidget)
-    {
-        if (!scrollWidget->underMouse())
-            return false;
-//         QAbstractScrollArea* scrollWidget = (QAbstractScrollArea*)daddy;
-        QPoint tl = scrollWidget->mapToGlobal(QPoint(0,0));
-        QRegion scrollArea(tl.x(), tl.y(), scrollWidget->width(), scrollWidget->height());
-        QList<QAbstractScrollArea*> scrollChilds = scrollWidget->findChildren<QAbstractScrollArea*>();
-        for (int i = 0; i < scrollChilds.size(); ++i)
-        {
-            QPoint tl = scrollChilds[i]->mapToGlobal(QPoint(0,0));
-            scrollArea -= QRegion(tl.x(), tl.y(), scrollChilds[i]->width(), scrollChilds[i]->height());
+
+    if (scrollWidget) {
+        if (scrollWidget->hasFocus())
+            gs_scrollAreaState |= HasFocus;
+        if (scrollWidget->underMouse()) {
+            QPoint tl = scrollWidget->mapToGlobal(QPoint(0,0));
+            QRegion scrollArea(tl.x(), tl.y(), scrollWidget->width(), scrollWidget->height());
+            QList<QAbstractScrollArea*> scrollChilds = scrollWidget->findChildren<QAbstractScrollArea*>();
+            for (int i = 0; i < scrollChilds.size(); ++i) {
+                QPoint tl = scrollChilds[i]->mapToGlobal(QPoint(0,0));
+                scrollArea -= QRegion(tl.x(), tl.y(), scrollChilds[i]->width(), scrollChilds[i]->height());
+            }
+
+            if (scrollArea.contains(QCursor::pos()))
+                gs_scrollAreaState |= Hovered;
         }
-//         scrollerActive = scrollArea.contains(QCursor::pos());
-        isActive = scrollArea.contains(QCursor::pos());
+    } else {
+        gs_scrollAreaState |= Hovered;
     }
-    return isActive;
 }
 
 #define PAINT_ELEMENT(_E_)\
@@ -75,7 +85,6 @@ if (scrollbar->subControls & SC_ScrollBar##_E_)\
     }\
 }//
 
-static bool isComboDropDownSlider, scrollAreaHovered_;
 static int complexStep, widgetStep;
 
 
@@ -160,12 +169,12 @@ Style::drawScrollBar(const QStyleOptionComplex *option, QPainter *painter, const
         if ( last_flags & ComboBox )
         {   /// catch combobox dropdowns ==========
             painter->fillRect(RECT, PAL.brush(QPalette::Base));
-            isComboDropDownSlider = true;
+            gs_scrollAreaState |= ComboDropDown;
         }
 
         else
         {   /// default scrollbar ===============
-            isComboDropDownSlider = false;
+            gs_scrollAreaState &= ~ComboDropDown;
 
             if (option->state & State_Sunken)
             {   /// use caching for sliding scrollers to gain speed
@@ -208,12 +217,16 @@ Style::drawScrollBar(const QStyleOptionComplex *option, QPainter *painter, const
         saveFlags &= ~State_Enabled; // there'd be nothing to scroll anyway...
 
     /// hover animation =================
-    if (scrollbar->activeSubControls & SC_ScrollBarSlider)
-        { widgetStep = 0; scrollAreaHovered_ = true; }
-    else
-    {
+    detectScrollAreaStates(widget);
+    if (isWebKit && widget && widget->hasFocus()) {
+        gs_scrollAreaState |= HasFocus;
+    }
+    if (scrollbar->activeSubControls & SC_ScrollBarSlider) {
+        widgetStep = 0; gs_scrollAreaState |= Hovered;
+    } else {
         widgetStep = Animator::Hover::step(widget);
-        scrollAreaHovered_ = !isWebKit && scrollAreaHovered(widget);
+        if (isWebKit)
+            gs_scrollAreaState &= ~Hovered;
     }
 
     SubControls hoverControls = scrollbar->activeSubControls &
@@ -261,7 +274,7 @@ Style::drawScrollBar(const QStyleOptionComplex *option, QPainter *painter, const
         }
     }
 
-    isComboDropDownSlider = scrollAreaHovered_ = false;
+    gs_scrollAreaState = 0;
     widgetStep = complexStep = 0;
     RESTORE_PAINTER
 }
@@ -274,7 +287,7 @@ Style::drawScrollBarButton(const QStyleOption *option, QPainter *painter, const 
     SAVE_PAINTER(Pen|Brush|Alias);
     const Navi::Direction dir = (option->state & QStyle::State_Horizontal) ? (up?Navi::W:Navi::E) : (up?Navi::N:Navi::S);
 
-    if (isComboDropDownSlider) {   // gets a classic triangular look and is allways shown
+    if (gs_scrollAreaState & ComboDropDown) {   // gets a classic triangular look and is allways shown
         OPT_HOVER
 
         painter->setPen(Qt::NoPen);
@@ -310,7 +323,7 @@ Style::drawScrollBarSlider(const QStyleOption *option, QPainter *painter, const 
                              // at least opera doesn't propagate this
                              RECT.width() > RECT.height();
 
-    if (isComboDropDownSlider) {   //gets a special slimmer and simpler look
+    if (gs_scrollAreaState & ComboDropDown) {   //gets a special slimmer and simpler look
         SAVE_PAINTER(Pen|Brush|Alias);
         QRect r = RECT;
         if (horizontal) {
@@ -340,33 +353,32 @@ Style::drawScrollBarSlider(const QStyleOption *option, QPainter *painter, const 
     // COLOR: the hover indicator (inside area)
 #define SCROLL_COLOR(_X_) (widgetStep ? FX::blend(  bgC, fgC, MAX_STEPS - _X_, _X_) : bgC)
 
-    if (scrollAreaHovered_ && !widgetStep)
+    if ((gs_scrollAreaState & Hovered) && !widgetStep)
         widgetStep = MAX_STEPS;
 
-    QColor c, bgC = FCOLOR(Window), fgC = FCOLOR(WindowText);
+    QColor c, bgC = FCOLOR(Window),
+              fgC = (gs_scrollAreaState & HasFocus) ? FCOLOR(Highlight) :  FCOLOR(WindowText);
 
     if ( widget && widget->isActiveWindow() ) {
         if (!widgetStep)
             widgetStep = 2;
-        else if (!(hover || scrollAreaHovered_))
+        else if (!(hover || (gs_scrollAreaState & Hovered)))
             widgetStep = qMax(2, widgetStep);
     }
 
     if (sunken) {
         c = SCROLL_COLOR(MAX_STEPS);
         complexStep = MAX_STEPS;
-    }
-    else if (complexStep)
-    {
+    } else if (complexStep) {
         c = FX::blend(bgC, SCROLL_COLOR(widgetStep));
         c = FX::blend(c, SCROLL_COLOR(complexStep), MAX_STEPS-complexStep, complexStep);
-    }
-    else if (hover)
-        { complexStep = MAX_STEPS; c = SCROLL_COLOR(MAX_STEPS); }
-    else if (widgetStep)
+    } else if (hover) {
+        complexStep = MAX_STEPS; c = SCROLL_COLOR(MAX_STEPS);
+    } else if (widgetStep) {
         c = FX::blend(bgC, SCROLL_COLOR(widgetStep));
-    else
+    } else {
         c = bgC;
+    }
     c.setAlpha(255); // bg could be transparent, i don't want scrollers translucent, though.
 #undef SCROLL_COLOR
 
