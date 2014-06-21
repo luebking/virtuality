@@ -191,6 +191,7 @@ Config::Config(QWidget *parent) : BConfig(parent), loadedPal(0), infoIsManage(fa
     "BackgroundMode" specifies the entry in the ini style config file and
     "3" is the default value for this entry*/
     handleSettings(ui.roundness, ROUNDNESS);
+    handleSettings(ui.thinLines, STROKE_WIDTH);
 
     handleSettings(ui.windowOpacity, BG_OPACITY);
     connect(ui.windowOpacity, SIGNAL(valueChanged(int)), SLOT(alignLabel()));
@@ -418,6 +419,14 @@ Config::colors(const QPalette &pal, QPalette::ColorGroup group)
     for (int i = 0; i < QPalette::NColorRoles; i++)
         list << pal.color(group, (QPalette::ColorRole) i).name();
     return list;
+}
+
+QVariant
+Config::variant(const QObject *w) const
+{
+    if (w == ui.thinLines)
+        return QVariant(ui.thinLines->isChecked() ? 1 : 2);
+    return BConfig::variant(w);
 }
 
 void

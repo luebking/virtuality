@@ -107,7 +107,7 @@ protected:
     virtual bool eventFilter ( QObject * watched, QEvent * event );
     virtual void loadSettings(QSettings *settings = 0, bool updateInitValue = true, bool merge = false);
     virtual bool _save(QSettings *settings = 0, bool makeDirty = true);
-    QVariant variant(const QObject *w) const;
+    virtual QVariant variant(const QObject *w) const;
     bool setVariant(QObject *w, const QVariant &v) const;
 signals:
     void changed(bool);
