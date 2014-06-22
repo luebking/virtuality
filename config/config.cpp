@@ -429,6 +429,15 @@ Config::variant(const QObject *w) const
     return BConfig::variant(w);
 }
 
+bool Config::setVariant(QObject *w, const QVariant &v) const
+{
+    if (w == ui.thinLines) {
+        ui.thinLines->setChecked(v.toInt() == 1);
+        return true;
+    }
+    return BConfig::setVariant(w, v);
+}
+
 void
 Config::updatePalette(QPalette &pal, QPalette::ColorGroup group, const QStringList &list)
 {

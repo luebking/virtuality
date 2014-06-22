@@ -38,6 +38,7 @@ protected:
     void changeEvent(QEvent *event);
     bool eventFilter( QObject *o, QEvent *e );
     QVariant variant(const QObject *w) const;
+    bool setVariant(QObject *w, const QVariant &v) const;
 public slots:
     /** We'll reimplement the im/export functions to handle color settings as well*/
     bool save(); // to store colors to qt configuration - in case
