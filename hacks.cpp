@@ -52,10 +52,14 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#if QT_VERSION >= 0x050000
+#include <xcb/xcb.h>
+#endif
 #include <QX11Info>
 #include "xproperty.h"
 
 static Atom netMoveResize = XInternAtom(QX11Info::display(), "_NET_WM_MOVERESIZE", False);
+
 #endif
 
 #include <QtDebug>
@@ -198,22 +202,65 @@ static int autoSlideTimer = 0;
 static void
 triggerWMMove(const QWidget *w, const QPoint &p)
 {
+    // stolen... errr "adapted!" from QSizeGrip
 #ifdef BE_WS_X11
-   // stolen... errr "adapted!" from QSizeGrip
-   XEvent xev;
-   xev.xclient.type = ClientMessage;
-   xev.xclient.message_type = netMoveResize;
-   xev.xclient.display = QX11Info::display();
-   xev.xclient.window = w->window()->winId();
-   xev.xclient.format = 32;
-   xev.xclient.data.l[0] = p.x();
-   xev.xclient.data.l[1] = p.y();
-   xev.xclient.data.l[2] = 8; // NET::Move
-   xev.xclient.data.l[3] = Button1;
-   xev.xclient.data.l[4] = 0;
-   XUngrabPointer(QX11Info::display(), QX11Info::appTime());
-   XSendEvent(QX11Info::display(), QX11Info::appRootWindow(QX11Info::appScreen()), False,
-               SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+#if QT_VERSION < 0x050000
+    XEvent xev;
+    xev.xclient.type = ClientMessage;
+    xev.xclient.message_type = netMoveResize;
+    xev.xclient.display = QX11Info::display();
+    xev.xclient.window = w->window()->winId();
+    xev.xclient.format = 32;
+    xev.xclient.data.l[0] = p.x();
+    xev.xclient.data.l[1] = p.y();
+    xev.xclient.data.l[2] = 8; // NET::Move
+    xev.xclient.data.l[3] = Button1;
+    xev.xclient.data.l[4] = 0;
+    XUngrabPointer(QX11Info::display(), QX11Info::appTime());
+    XSendEvent(QX11Info::display(), QX11Info::appRootWindow(QX11Info::appScreen()), False,
+                SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+#else
+    const WId wid = w->window()->winId();
+    xcb_connection_t *c = QX11Info::connection();
+
+    // "release" button
+    xcb_button_release_event_t rev;
+    memset(&rev, 0, sizeof(rev));
+    rev.response_type = XCB_BUTTON_RELEASE;
+//     rev.sequence = ??;
+    rev.event = wid;
+    rev.child = XCB_WINDOW_NONE;
+    rev.root = QX11Info::appRootWindow();
+    const QPoint lp = w->mapFromGlobal(p);
+    rev.event_x = lp.x();
+    rev.event_y = lp.x();
+    rev.root_x = p.x();
+    rev.root_y = p.y();
+    rev.detail = XCB_BUTTON_INDEX_1;
+    rev.state = XCB_BUTTON_MASK_1;
+    rev.time = XCB_CURRENT_TIME;
+    rev.same_screen = true;
+    xcb_send_event(c, false, wid, XCB_EVENT_MASK_BUTTON_RELEASE, reinterpret_cast<const char*>(&rev));
+
+    // release pointer
+    xcb_ungrab_pointer(c, XCB_CURRENT_TIME);
+
+    // trigger the move
+    xcb_client_message_event_t ev;
+    memset(&ev, 0, sizeof(ev));
+    ev.response_type = XCB_CLIENT_MESSAGE;
+    ev.window = wid;
+    ev.type = netMoveResize;
+    ev.format = 32;
+    ev.data.data32[0] = p.x();
+    ev.data.data32[1] = p.y();
+    ev.data.data32[2] = 8; // NET::Move
+    ev.data.data32[3] = XCB_BUTTON_INDEX_1;
+    ev.data.data32[4] = 0;
+    xcb_send_event(c, false, QX11Info::appRootWindow(),
+                   XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY,
+                   reinterpret_cast<const char*>(&ev));
+#endif
 #endif // BE_WS_X11
 }
 
@@ -316,12 +363,14 @@ Hacks::eventFilter(QObject *o, QEvent *e)
     {
         qApp->removeEventFilter(this);
         dragWidget->setMouseTracking(dragWidgetHadTrack);
+#if QT_VERSION < 0x050000
         // the widget needs an leave/enter to update the mouse state
         // sending events doesn't work, so we generate a wink-of-an-eye cursor repositioning ;-P
         const QPoint cursor = QCursor::pos();
         QWidget *window = dragWidget->window();
         QCursor::setPos(window->mapToGlobal( window->rect().topRight() ) + QPoint(2, 0) );
         QCursor::setPos(cursor);
+#endif
         s_dragWidget = NULL;
         dragWidget = 0;
         s_dragCandidate = NULL;
@@ -439,12 +488,6 @@ Hacks::eventFilter(QObject *o, QEvent *e)
         if ( wmDrag )
         {
             s_dragWidget = dragWidget = dragCandidate;
-
-            // the release would set "dragCandidate = 0L;", therfore it cannot be done in hackMoveWindow
-            // it's probably not required either
-//             QMouseEvent *mev = static_cast<QMouseEvent*>(e);
-//             QMouseEvent mbr(QEvent::MouseButtonRelease, mev->pos(), mev->button(), mev->buttons(), mev->modifiers());
-//             QCoreApplication::sendEvent( dragWidget, &mbr );
             dragWidgetHadTrack = dragWidget->hasMouseTracking();
             dragWidget->setMouseTracking(true);
         }
