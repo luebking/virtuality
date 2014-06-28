@@ -461,13 +461,21 @@ Style::drawItem(const QStyleOption *option, QPainter *painter, const QWidget *wi
                 painter->drawRoundedRect(r, rnd, rnd);
         } else {
             painter->setPen(Qt::NoPen);
-            painter->setBrush(high);
-//             if (item->viewItemPosition == QStyleOptionViewItemV4::Invalid && widget->inherits("QCalendarView")) {
-//                 const int r = (qMin(RECT.width(), RECT.height()) - 1 ) / 2;
-//                 painter->setBrush(Qt::red);
-//                 painter->drawRoundedRect(RECT, r,r);
-//             } else
+            if (selected && item->viewItemPosition == QStyleOptionViewItemV4::Invalid &&
+                widget->inherits("QCalendarView")) {
+                SAVE_PAINTER(Alias);
+                const int s = qMin(RECT.width(), RECT.height());
+                QRect r(0,0,s,s);
+                r.moveCenter(RECT.center());
+                painter->setRenderHint(QPainter::Antialiasing);
+                high.setAlpha(255);
+                painter->setBrush(high);
+                painter->drawEllipse(r);
+                RESTORE_PAINTER
+            } else {
+                painter->setBrush(high);
                 painter->drawRect(RECT);
+            }
         }
         // try to convince the itemview to use the proper fg color, WORKAROUND (kcategorizedview, mainly)
         if (selected)

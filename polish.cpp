@@ -518,9 +518,28 @@ Style::polish( QWidget * widget )
             if (QAbstractItemView *itemView = qobject_cast<QAbstractItemView*>(frame) ) {
                 if (widget->inherits("KCompletionBox") && !(kStyleFeatureRequest & NoShadow))
                     Shadows::manage(widget);
-                else if (widget->inherits("QTableView"))
+                else if (widget->inherits("QTableView")) {
                     frame->setFrameShape(QFrame::NoFrame); // ugly and superfluous - has grid and/or headers
-                else if (itemView->inherits("KCategorizedView")) { // fix scrolldistance...
+                    if (widget->inherits("QCalendarView")) {
+                        // MEGAUGLY HACK
+                        // QCalendarView looks shit. I want. *want* the selected date round.
+                        // unfortunately the view uses a private delegate on top of QItemDelegate
+                        // which just paints rects.
+                        // Tried tricking by erasing with the focus frame, but that only works while
+                        // the widget has the foucs.
+                        // So instead we set the Highlight role to 0 alpha -> the stupid delegate will
+                        // paint the big invisibility, what means the PE item from QTableView shines
+                        // through... which happens to be painted by us >-)
+                        QPalette pal = widget->palette();
+                        QColor c = pal.color(QPalette::Active, QPalette::Highlight); c.setAlpha(0);
+                        pal.setColor(QPalette::Active, QPalette::Highlight, c);
+                        c = pal.color(QPalette::Inactive, QPalette::Highlight); c.setAlpha(0);
+                        pal.setColor(QPalette::Inactive, QPalette::Highlight, c);
+                        c = pal.color(QPalette::Disabled, QPalette::Highlight); c.setAlpha(0);
+                        pal.setColor(QPalette::Disabled, QPalette::Highlight, c);
+                        widget->setPalette(pal);
+                    }
+                } else if (itemView->inherits("KCategorizedView")) { // fix scrolldistance...
                     FILTER_EVENTS(itemView);
                 } else if ( QTreeView* tv = qobject_cast<QTreeView*>(itemView) ) {
                     tv->setAnimated(true); // allow all treeviews to be animated!
