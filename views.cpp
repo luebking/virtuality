@@ -461,7 +461,7 @@ Style::drawItem(const QStyleOption *option, QPainter *painter, const QWidget *wi
                 painter->drawRoundedRect(r, rnd, rnd);
         } else {
             painter->setPen(Qt::NoPen);
-            if (selected && item->viewItemPosition == QStyleOptionViewItemV4::Invalid &&
+            if (selected && item->viewItemPosition == QStyleOptionViewItemV4::Invalid && widget &&
                 widget->inherits("QCalendarView")) {
                 SAVE_PAINTER(Alias);
                 const int s = qMin(RECT.width(), RECT.height());
