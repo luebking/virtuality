@@ -76,30 +76,29 @@ Style::subControlRect(ComplexControl control, const QStyleOptionComplex *option,
         int x,y,wi,he;
         cb->rect.getRect(&x,&y,&wi,&he);
         const int fh = (cb->fontMetrics.ascent() + FRAME_STROKE_WIDTH) | 1;
-        int margin = 0;
 
         switch (subControl)
         {
         case SC_ComboBoxFrame:
-            ret.setRect(x, y, wi+2*margin, he+2*margin);
+            ret.setRect(x, y, wi, he);
             break;
          case SC_ComboBoxArrow:
             x += wi; wi = fh;
-            x -= margin + wi;
+            x -= wi;
             y += (he - fh + 1)/2;
             ret.setRect(x, y, wi, fh);
             break;
         case SC_ComboBoxEditField:
-            wi -= fh + 2*margin;
-            ret.setRect(x+margin, y+margin, wi, he - 2*margin);
+            wi -= fh;
+            ret.setRect(x, y, wi, he);
             break;
         case SC_ComboBoxListBoxPopup:
             if (const QComboBox *box = qobject_cast<const QComboBox*>(widget))
-            if (box->count() <= box->maxVisibleItems())
-            {   // shorten for the arrow
-                wi -= (int)((fh - 2*margin)/1.1) + 3*margin;
+            if (box->count() <= box->maxVisibleItems()) {
+                // shorten for the arrow
+                wi -= 10*fh/11;
             }
-            ret.setRect(x + margin, y, wi, he);
+            ret.setRect(x, y, wi, he);
             break;
         default:
             break;

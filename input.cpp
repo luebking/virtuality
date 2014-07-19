@@ -331,17 +331,15 @@ Style::drawComboBoxLabel(const QStyleOption *option, QPainter *painter, const QW
         QFont fnt(painter->font());
         fnt.setBold(true);
         painter->setFont(fnt);
-        if (cb->frame) {
-            if (animStep < 0) {
-                OPT_HOVER
-                animStep = hover ? MAX_STEPS : 0;
-            } else {
-                if (const QComboBox* combo = qobject_cast<const QComboBox*>(widget))
-                if (combo->view() && ((QWidget*)(combo->view()))->isVisible())
-                    animStep = MAX_STEPS;
-            }
-            editRect.adjust(F(3),0, -F(3), 0);
+        if (animStep < 0) {
+            OPT_HOVER
+            animStep = hover ? MAX_STEPS : 0;
+        } else {
+            if (const QComboBox* combo = qobject_cast<const QComboBox*>(widget))
+            if (combo->view() && ((QWidget*)(combo->view()))->isVisible())
+                animStep = MAX_STEPS;
         }
+        editRect.adjust(F(3),0, -F(3), 0);
         const int align = Qt::AlignVCenter | (cb->direction == Qt::LeftToRight ? Qt::AlignLeft : Qt::AlignRight);
         drawItemText(painter, editRect, align, PAL, isEnabled, cb->currentText, QPalette::WindowText);
         RESTORE_PAINTER
