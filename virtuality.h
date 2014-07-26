@@ -161,6 +161,7 @@ protected:
     void drawMenuBarItem(const QStyleOption*, QPainter*, const QWidget*) const;
     void drawMenuItem(const QStyleOption*, QPainter*, const QWidget*) const;
     void drawMenuScroller(const QStyleOption*, QPainter*, const QWidget*) const;
+    void drawMenuTearOff(const QStyleOption*, QPainter*, const QWidget*) const;
 
     // progress.cpp
     void drawCapacityBar(const QStyleOption*, QPainter*, const QWidget*) const;

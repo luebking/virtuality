@@ -238,5 +238,16 @@ Style::drawMenuScroller(const QStyleOption *option, QPainter *painter, const QWi
     RESTORE_PAINTER
 }
 
-//    case CE_MenuTearoff: // A menu item representing the tear off section of a QMenu
+void
+Style::drawMenuTearOff(const QStyleOption *option, QPainter *painter, const QWidget *) const
+{
+    OPT_SUNKEN OPT_HOVER
+    SAVE_PAINTER(Alias|Pen);
+    painter->setRenderHint(QPainter::Antialiasing, false);
+    const QColor c = FX::blend(FCOLOR(Window), FCOLOR(WindowText), 1, 1 + 2*hover + 6*sunken);
+    painter->setPen(QPen(c, F(1), Qt::DotLine));
+    const int y = RECT.y() + RECT.height()/2;
+    painter->drawLine(RECT.x(), y, RECT.right(), y);
+    RESTORE_PAINTER
+}
 

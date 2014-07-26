@@ -170,6 +170,7 @@ Style::registerRoutines()
     registerCE(drawMenuBarItem, CE_MenuBarItem);
     registerCE(drawMenuItem, CE_MenuItem);
     registerCE(drawMenuScroller, CE_MenuScroller);
+    registerCE(drawMenuTearOff, CE_MenuTearoff);
     registerCE(skip, CE_MenuEmptyArea);
     registerCE(skip, CE_MenuHMargin);
     registerCE(skip, CE_MenuVMargin);
