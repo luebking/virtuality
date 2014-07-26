@@ -205,9 +205,11 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
             }
             if (QWidget *dvc = dolphinViewContainer(appType == Dolphin, widget)) {
                 ib = config.invert.toolbars || config.invert.docks;
-                foreach (QObject *o, dvc->children()) {
-                    if (QWidget *dsb = widgetOfClass("DolphinStatusBar", o)) {
-                        r.adjust(0,0,0, -dsb->height());
+                if (config.invert.toolbars) {
+                    foreach (QObject *o, dvc->children()) {
+                        if (QWidget *dsb = widgetOfClass("DolphinStatusBar", o)) {
+                            r.adjust(0,0,0, -dsb->height());
+                        }
                     }
                 }
             } else if (!ib && geo.bottom() < parentRect.bottom()) {
