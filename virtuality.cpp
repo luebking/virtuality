@@ -255,9 +255,17 @@ Style::Style(const QString &name) : QCommonStyle()
     if (m_usingStandardPalette) {
         originalPalette = new QPalette(standardPalette());
         polish(*originalPalette, true);
-        QApplication::setPalette(*originalPalette);
-        qApp->installEventFilter(this);
-        QTimer::singleShot(10000, this, SLOT(removeAppEventFilter()));
+        static bool isRecursion = false;
+        if (!isRecursion) {
+            isRecursion = true; // some applications (TEA editor at least) are aggressive on forcing
+                                // palettes. Too aggressive, by creating a new style everytiem. We
+                                // therefore detect this and escape the recursion.
+                                // TEA looks pretty ... interesting ... anyway ;-P
+            QApplication::setPalette(*originalPalette);
+            qApp->installEventFilter(this);
+            QTimer::singleShot(10000, this, SLOT(removeAppEventFilter()));
+            isRecursion = false;
+        }
     }
     init();
     registerRoutines();
