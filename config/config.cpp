@@ -230,6 +230,9 @@ Config::Config(QWidget *parent) : BConfig(parent), loadedPal(0), infoIsManage(fa
     handleSettings(ui.tabAnimDuration, TAB_DURATION);
     handleSettings(ui.tabTransition, TAB_TRANSITION);
 
+    handleSettings(ui.menuShowIcons, MENU_SHOWICONS);
+    handleSettings(ui.menuIndent, MENU_INDENT);
+
     handleSettings(ui.hackFixGwenview, HACK_FIX_GWENVIEW);
     setContextHelp(ui.hackFixGwenview, "<b>Gwenview's Thumbview</b><hr>\
     There are two major issues with the thumbnail browsing in Gwenview.\

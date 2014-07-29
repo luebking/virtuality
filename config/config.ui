@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>646</width>
-    <height>582</height>
+    <height>675</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -36,106 +36,6 @@
        <string>Settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="2" column="0" colspan="2">
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="title">
-          <string>Translucency</string>
-         </property>
-         <layout class="QFormLayout" name="formLayout">
-          <property name="fieldGrowthPolicy">
-           <enum>QFormLayout::ExpandingFieldsGrow</enum>
-          </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Window Opacity</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <item>
-             <widget class="QSlider" name="windowOpacity">
-              <property name="minimum">
-               <number>100</number>
-              </property>
-              <property name="maximum">
-               <number>255</number>
-              </property>
-              <property name="singleStep">
-               <number>10</number>
-              </property>
-              <property name="value">
-               <number>255</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="windowOpacityLabel">
-              <property name="text">
-               <string>100.00 %</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_34">
-            <property name="text">
-             <string>Modal Window Opacity</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <layout class="QHBoxLayout" name="_2">
-            <item>
-             <widget class="QSlider" name="modalOpacity">
-              <property name="minimum">
-               <number>100</number>
-              </property>
-              <property name="maximum">
-               <number>255</number>
-              </property>
-              <property name="singleStep">
-               <number>10</number>
-              </property>
-              <property name="value">
-               <number>255</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="modalOpacityLabel">
-              <property name="text">
-               <string>100.00 %</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Blur background</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="blurTranslucent">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
        <item row="3" column="1">
         <widget class="QGroupBox" name="tabTransitionGroup">
          <property name="title">
@@ -287,20 +187,65 @@
          </layout>
         </widget>
        </item>
-       <item row="4" column="1">
-        <spacer name="verticalSpacer_7">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+       <item row="1" column="0" colspan="2">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Inverted elements</string>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="invertModals">
+            <property name="text">
+             <string>Modal windows</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="invertDocks">
+            <property name="text">
+             <string>Docks</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="invertMenubars">
+            <property name="text">
+             <string>Menubars</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QCheckBox" name="invertPopups">
+            <property name="text">
+             <string>Popup menus</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="invertToolbars">
+            <property name="text">
+             <string>Toolbars</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="invertTitlebars">
+            <property name="text">
+             <string>Titlebars</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QCheckBox" name="invertHeaders">
+            <property name="text">
+             <string>Headers</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
-       <item row="3" column="0" rowspan="2">
+       <item row="3" column="0" rowspan="3">
         <widget class="QGroupBox" name="groupBox_3">
          <property name="title">
           <string>System integration</string>
@@ -416,7 +361,6 @@
            </widget>
           </item>
          </layout>
-         <zorder></zorder>
          <zorder>dialogBtnLayout</zorder>
          <zorder>label_54</zorder>
          <zorder>label_17</zorder>
@@ -427,71 +371,123 @@
          <zorder>pwEchoChar</zorder>
         </widget>
        </item>
-       <item row="5" column="0">
-        <spacer name="verticalSpacer_5">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QGroupBox" name="groupBox">
+       <item row="4" column="1" rowspan="3">
+        <widget class="QGroupBox" name="groupBox_5">
          <property name="title">
-          <string>Inverted elements</string>
+          <string>Menus</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="invertModals">
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QCheckBox" name="menuShowIcons">
             <property name="text">
-             <string>Modal windows</string>
+             <string>Show icons</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="menuIndent">
+            <property name="text">
+             <string>Indent selected</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Translucency</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout">
+          <property name="fieldGrowthPolicy">
+           <enum>QFormLayout::ExpandingFieldsGrow</enum>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Window Opacity</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QCheckBox" name="invertDocks">
-            <property name="text">
-             <string>Docks</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QSlider" name="windowOpacity">
+              <property name="minimum">
+               <number>100</number>
+              </property>
+              <property name="maximum">
+               <number>255</number>
+              </property>
+              <property name="singleStep">
+               <number>10</number>
+              </property>
+              <property name="value">
+               <number>255</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="windowOpacityLabel">
+              <property name="text">
+               <string>100.00 %</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="1" column="0">
-           <widget class="QCheckBox" name="invertMenubars">
+           <widget class="QLabel" name="label_34">
             <property name="text">
-             <string>Menubars</string>
+             <string>Modal Window Opacity</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QCheckBox" name="invertPopups">
-            <property name="text">
-             <string>Popup menus</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="_2">
+            <item>
+             <widget class="QSlider" name="modalOpacity">
+              <property name="minimum">
+               <number>100</number>
+              </property>
+              <property name="maximum">
+               <number>255</number>
+              </property>
+              <property name="singleStep">
+               <number>10</number>
+              </property>
+              <property name="value">
+               <number>255</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="modalOpacityLabel">
+              <property name="text">
+               <string>100.00 %</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="2" column="0">
-           <widget class="QCheckBox" name="invertToolbars">
+           <widget class="QLabel" name="label_3">
             <property name="text">
-             <string>Toolbars</string>
+             <string>Blur background</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QCheckBox" name="invertTitlebars">
+           <widget class="QCheckBox" name="blurTranslucent">
             <property name="text">
-             <string>Titlebars</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QCheckBox" name="invertHeaders">
-            <property name="text">
-             <string>Headers</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -563,6 +559,32 @@
           </item>
          </layout>
         </widget>
+       </item>
+       <item row="7" column="1">
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="6" column="0" rowspan="2">
+        <spacer name="verticalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
