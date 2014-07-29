@@ -77,7 +77,7 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
             return QSize(contentsSize.width() + d + hgt, hgt);
         }
 //    case CT_DialogButtons: //
-//       return QSize((contentsSize.width()+16 < 80) ? 80 : contentsSize.width()+16, contentsSize.height()+10);
+//         return QSize((contentsSize.width() + 16 < 80) ? 80 : contentsSize.width() + 16, contentsSize.height() + 10);
 //    case CT_Q3DockWindow: //
     case CT_HeaderSection: // A header section, like QHeader
         if HAVE_OPTION(hdr, Header)
@@ -104,19 +104,18 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
                 return QSize(10, F(6));
 
             bool checkable = menuItem->menuHasCheckableItems;
-            int maxpmw = config.menu.showIcons*menuItem->maxIconWidth;
             int w = contentsSize.width();
             int h = qMax(contentsSize.height(), menuItem->fontMetrics.lineSpacing()) + F(4) - config.fontExtent;
 
-            if (config.menu.showIcons && !menuItem->icon.isNull())
+            if (!menuItem->icon.isNull())
                 h = qMax(h, menuItem->icon.pixmap(pixelMetric(PM_SmallIconSize), QIcon::Normal).height() + F(4) - config.fontExtent);
             if (menuItem->text.contains('\t'))
                 w += F(12);
-            if (maxpmw > 0)
-                w += maxpmw + F(6);
+            if (menuItem->maxIconWidth > 0)
+                w += menuItem->maxIconWidth + F(6);
             if (checkable)
                 w += 2*(h - F(4))/3 + F(7);
-            w += (checkable + (maxpmw > 0))*F(2);
+            w += (checkable + (menuItem->maxIconWidth > 0))*F(2);
             w += config.menu.indent ? F(20) : F(12);
             if (menuItem->menuItemType == QStyleOptionMenuItem::SubMenu)
                 w += 2 * windowsArrowHMargin;

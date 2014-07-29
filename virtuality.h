@@ -250,6 +250,7 @@ private:
 private slots:
     void clearScrollbarCache();
     void dockLocationChanged( Qt::DockWidgetArea );
+    void setMenuIconsVisible(bool vis);
     void removeAppEventFilter();
     void resetRingPix();
     void unlockDocks(bool);

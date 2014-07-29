@@ -125,7 +125,7 @@ Style::drawMenuItem(const QStyleOption *option, QPainter *painter, const QWidget
 
     int xpos = r.x() + hMargin;
 
-    if (isEnabled && config.menu.showIcons && !checkable && !menuItem->icon.isNull()) {
+    if (isEnabled && !checkable && !menuItem->icon.isNull()) {
         QRect vCheckRect = visualRect(option->direction, r, QRect(r.x(), r.y(), menuitem->maxIconWidth, r.height()));
         const QPixmap &pixmap = menuItem->icon.pixmap(pixelMetric(PM_SmallIconSize), QIcon::Normal, checked ? QIcon::On : QIcon::Off);
 

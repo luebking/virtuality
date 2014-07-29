@@ -113,6 +113,12 @@ Style::removeAppEventFilter()
 }
 
 void
+Style::setMenuIconsVisible(bool vis)
+{
+    qApp->setAttribute(Qt::AA_DontShowIconsInMenus, !vis);
+}
+
+void
 Style::readSettings(QString appName)
 {
     QSettings *iSettings = new QSettings("BE", "Style");
@@ -154,8 +160,9 @@ Style::readSettings(QString appName)
     config.input.pwEchoChar = ushort(iSettings->value(INPUT_PWECHOCHAR).toUInt());
 
     config.menu.delay = readInt(MENU_DELAY);
-    config.menu.showIcons = appType == Opera || readBool(MENU_SHOWICONS);
-//     config.menu.showIcons = !qApp->testAttribute(Qt::AA_DontShowIconsInMenus);
+    const bool menuIconsVis = readBool(MENU_SHOWICONS);
+    // allow (K)Application to manipulate this first
+    QMetaObject::invokeMethod(this, "setMenuIconsVisible", Qt::QueuedConnection, Q_ARG(bool, menuIconsVis));
     config.menu.indent = readBool(MENU_INDENT);
 
     config.winBtnStyle = 2; // this is a kwin deco setting, TODO: read from there?
