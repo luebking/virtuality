@@ -288,10 +288,17 @@ Style::~Style()
     // harden a bit
     qApp->removeEventFilter(this);
     m_usingStandardPalette = false;
-    // set default palette of new style
+
+
+#if 0 // set default palette of new style
+    // setting the palette during the deconstructor is no good idea.
+    // at least the style kcm will try to delete the deleted style in return
+    // and deferring this to the end of the event queue will just cause a recursion
+    // on the eventloop
     QPalette pal = newStyle->standardPalette();
     newStyle->polish(pal);
     QApplication::setPalette(pal);
+#endif
 }
 
 #include "makros.h"
