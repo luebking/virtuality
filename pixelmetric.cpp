@@ -207,24 +207,24 @@ int Style::pixelMetric( PixelMetric pm, const QStyleOption *option, const QWidge
     case PM_DefaultTopLevelMargin: //
         return F(8);
     case PM_ToolBarIconSize: // Default tool bar icon size, defaults to PM_SmallIconSize
-        return 22;
+        return F(22);
     case PM_SmallIconSize: // Default small icon size
-        return 16;
+        return F(16);
     case PM_LargeIconSize: // Default large icon size
-        return 32;
+        return F(32);
 //     case PM_FocusFrameHMargin: // Horizontal margin that the focus frame will outset the widget by.
 //         return //F(4); // GNARF, KCategoryView or dolphin hardcodes this value to Qt def. TODO!
     case PM_FocusFrameVMargin: // Vertical margin that the focus frame will outset the widget by.
         return 0;
-//    case PM_IconViewIconSize: //
-//    case PM_ListViewIconSize: //
-//       return 10;
-//       if (option) return option->rect.height()-F(4);
-//       return F(16);
+   case PM_IconViewIconSize: //
+       return F(32);
+   case PM_ListViewIconSize: //
+       return F(22);
     case PM_TabBarIconSize:
-        return 16;
+    case PM_ButtonIconSize:
+        return (16);
     case PM_MessageBoxIconSize:
-        return 64;
+        return F(64);
     case PM_ToolTipLabelFrameWidth: //
         return F(4); // they're so tiny ;)
     default:

@@ -264,7 +264,8 @@ void Style::initMetrics()
     BE::Dpi::target.f12 = SCALE(12); BE::Dpi::target.f13 = SCALE(13);
     BE::Dpi::target.f16 = SCALE(16); BE::Dpi::target.f17 = SCALE(17);
     BE::Dpi::target.f18 = SCALE(18); BE::Dpi::target.f20 = SCALE(20);
-    BE::Dpi::target.f32 = SCALE(32); BE::Dpi::target.f80 = SCALE(80);
+    BE::Dpi::target.f22 = SCALE(22); BE::Dpi::target.f32 = SCALE(32);
+    BE::Dpi::target.f64 = SCALE(64); BE::Dpi::target.f80 = SCALE(80);
     config.slider.thickness = SCALE(11);
 }
 

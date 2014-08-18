@@ -21,7 +21,7 @@ namespace Dpi {
 
 typedef struct BLIB_EXPORT
 {
-    int f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f12, f13, f16, f17, f32, f18, f20, f80;
+    int f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f12, f13, f16, f17, f32, f18, f20, f80, f22, f64;
 } Target;
 extern BLIB_EXPORT Target target;
 
