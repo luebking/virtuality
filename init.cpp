@@ -17,6 +17,7 @@
  */
 
 #include <QApplication>
+#include <QDesktopWidget>
 #include <QDir>
 #include <QFile>
 #include <QPainter>
@@ -209,27 +210,24 @@ Style::readSettings(QString appName)
     Animator::Tab::setFPS(25);
 
     // General ===========================
-    config.scale = 1.0f;
-    const char *scale = getenv("BESPIN_SCALE");
-    if ( scale )
-    {
+    const QDesktopWidget *dw = qApp->desktop();
+    config.scale = (dw->logicalDpiX() + dw->logicalDpiY()) /  170.0f;
+    if (const char *scale = getenv("VIRTUALITY_SCALE")) {
         bool ok = false;
-        config.scale = QString(scale).toFloat(&ok);
-        if ( !ok )
-            config.scale = 1.0f;
-        else
-            config.scale = CLAMP( config.scale, 1.0f, 3.0f );
-
-        if (config.scale != 1.0)
-        {
-            scale = getenv("BESPIN_SCALE_FONT");
-            if (!qstrcmp( scale, "true" ))
-            {
-                QFont fnt = qApp->font();
-                if (fnt.pointSize() > -1) fnt.setPointSize(fnt.pointSize()*config.scale);
-                else fnt.setPixelSize(fnt.pixelSize()*config.scale);
-                qApp->setFont(fnt);
+        const float envScale = QString(scale).toFloat(&ok); // CLAMP(envScale, 1.0f, 3.0f);
+        if (ok) {
+            if (envScale != config.scale) {
+                scale = getenv("VIRTUALITY_SCALE_FONT");
+                if (!qstrcmp(scale, "true")) {
+                    QFont fnt = qApp->font();
+                    if (fnt.pointSize() > -1)
+                        fnt.setPointSize(fnt.pointSize()*envScale/config.scale);
+                    else
+                        fnt.setPixelSize(fnt.pixelSize()*envScale/config.scale);
+                    qApp->setFont(fnt);
+                }
             }
+            config.scale = envScale;
         }
     }
 
