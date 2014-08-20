@@ -211,7 +211,7 @@ Style::readSettings(QString appName)
 
     // General ===========================
     const QDesktopWidget *dw = qApp->desktop();
-    config.scale = (dw->logicalDpiX() + dw->logicalDpiY()) / float(dw->physicalDpiX() + dw->physicalDpiY());
+    config.scale = (dw->logicalDpiX() + dw->logicalDpiY()) /  170.0f;
     if (const char *scale = getenv("VIRTUALITY_SCALE")) {
         bool ok = false;
         const float envScale = QString(scale).toFloat(&ok); // CLAMP(envScale, 1.0f, 3.0f);
