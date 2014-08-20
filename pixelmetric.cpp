@@ -52,7 +52,8 @@ int Style::pixelMetric( PixelMetric pm, const QStyleOption *option, const QWidge
         return F(1);
     case PM_ComboBoxFrameWidth: // Frame width of a combo box, defaults to PM_DefaultFrameWidth.
         return 1; //  cosmetic, qt hates 0 sized popupframes
-    //    case PM_MDIFrameWidth: // Frame width of an MDI window
+    case PM_MDIFrameWidth: // Frame width of an MDI window
+        return 1;
     //    case PM_MDIMinimizedWidth: // Width of a minimized MDI window
     case PM_MaximumDragDistance: // Some feels require the scroll bar or other sliders to jump back to the original position when the mouse pointer is too far away while dragging; a value of -1 disables this behavior
         return -1;

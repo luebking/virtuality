@@ -62,7 +62,7 @@ Style::drawWindowFrame(const QStyleOption *option, QPainter *painter, const QWid
 {
     // windows, docks etc. - just a frame
     SAVE_PAINTER(Pen|Brush|Alias);
-    painter->setPen(FCOLOR(WindowText));
+    painter->setPen(FRAME_COLOR);
     painter->setBrush(Qt::NoBrush);
     painter->setRenderHint(QPainter::Antialiasing, false);
     painter->drawRect(RECT.adjusted(0,0,-1,-1));
@@ -333,6 +333,19 @@ Style::drawToolTip(const QStyleOption *option, QPainter *painter, const QWidget 
 void
 Style::drawTitleBar(const QStyleOptionComplex *option, QPainter *painter, const QWidget *widget) const
 {
+    // windows, docks etc. - just a frame
+    SAVE_PAINTER(Pen|Brush|Alias);
+    painter->setPen(FRAME_COLOR);
+    painter->setBrush(Qt::NoBrush);
+    painter->setRenderHint(QPainter::Antialiasing, false);
+    QPainterPath path;
+    path.moveTo(RECT.bottomRight());
+    path.lineTo(RECT.topRight());
+    path.lineTo(RECT.topLeft());
+    path.lineTo(RECT.bottomLeft());
+    painter->drawPath(path);
+    RESTORE_PAINTER
+
     const QStyleOptionTitleBar *tb = qstyleoption_cast<const QStyleOptionTitleBar *>(option);
     if (!tb) return;
 
