@@ -39,33 +39,30 @@ Style::drawCapacityBar(const QStyleOption *option, QPainter *painter, const QWid
         x = RECT.right() - x;
     else
         x = RECT.x() + x;
-    QRect r(RECT.adjusted(F(1), F(1), -F(1), -F(1)));
+    QRect r = RECT;
+    r.adjust(1, 0, -1, 0); // helps with blending artifacts
     int radius = qMin(r.width(), r.height())/2;
     painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setPen(QPen(GROOVE_COLOR, F(2) & ~1));
-    painter->setBrush(Qt::NoBrush);
-    painter->drawRoundedRect(r, radius, radius);
-
-    r.adjust(F(1), F(1), -F(1), -F(1));
-    if (cb->direction == Qt::LeftToRight) r.setRight(x); else r.setLeft(x);
-    radius = qMin(r.width(), r.height())/2;
     painter->setPen(Qt::NoPen);
     painter->setBrush(THERMOMETER_COLOR);
+    painter->drawRoundedRect(r, radius, radius);
+
+    r.adjust(-1, 0, 1, 0); // reset, see above
+    cb->direction == Qt::LeftToRight ? r.setLeft(x) : r.setRight(x);
+    radius = qMin(r.width(), r.height())/2;
+    painter->setBrush(GROOVE_COLOR);
     painter->drawRoundedRect(r, radius, radius);
 
     if (cb->textVisible && !cb->text.isEmpty()) {
         const int tw = painter->fontMetrics().width(cb->text);
         int align = Qt::AlignCenter;
         if (tw <= r.width()) {   // paint on free part
+            painter->setPen(THERMOMETER_COLOR);
+        } else if (tw <= RECT.width() - r.width()) { // paint on used part
             painter->setPen(GROOVE_COLOR);
             r = RECT;
-            if (cb->direction == Qt::LeftToRight) r.setRight(x); else r.setLeft(x);
-        }
-        else if (tw <= RECT.width() - r.width()) { // paint on used part
-            painter->setPen(THERMOMETER_COLOR);
-            r = RECT;
             align = Qt::AlignLeft;
-            if (cb->direction == Qt::LeftToRight) r.setLeft(x + F(2)); else r.setRight(x - F(2));
+            cb->direction == Qt::LeftToRight ? r.setRight(x) : r.setLeft(x);
         } else {   // paint centered
             r = RECT;
             painter->setPen(FX::blend(FCOLOR(Window), THERMOMETER_COLOR, 1, 1));
