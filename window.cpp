@@ -304,7 +304,15 @@ Style::drawToolTip(const QStyleOption *option, QPainter *painter, const QWidget 
     if (widget && widget->testAttribute(Qt::WA_TranslucentBackground) && FX::compositingActive())
         c.setAlpha(config.bg.modal.opacity);
     painter->setBrush(c);
-    painter->setPen(FCOLOR(ToolTipText));
+    const int v = FX::value(c);
+    if (v < 16)
+        c = c.lighter(120);
+    else if (v > 240 || v < 128)
+        c = c.darker(120);
+    else // 128 - 240
+        c = c.lighter(120);
+//     painter->setPen(FCOLOR(ToolTipText));
+    painter->setPen(c);
     if (config.frame.roundness && widget && widget->testAttribute(Qt::WA_TranslucentBackground) && FX::compositingActive()) {
         painter->setRenderHint(QPainter::Antialiasing, true);
         const int rnd = qMin(config.frame.roundness, 6);
