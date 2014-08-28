@@ -210,8 +210,8 @@ Style::readSettings(QString appName)
     Animator::Tab::setFPS(25);
 
     // General ===========================
-    const QDesktopWidget *dw = qApp->desktop();
-    config.scale = (dw->logicalDpiX() + dw->logicalDpiY()) /  170.0f;
+//     const QDesktopWidget *dw = qApp->desktop();
+    config.scale = 1.0; //(dw->logicalDpiX() + dw->logicalDpiY()) /  170.0f;
     if (const char *scale = getenv("VIRTUALITY_SCALE")) {
         bool ok = false;
         const float envScale = QString(scale).toFloat(&ok); // CLAMP(envScale, 1.0f, 3.0f);
