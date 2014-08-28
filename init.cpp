@@ -17,7 +17,6 @@
  */
 
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QDir>
 #include <QFile>
 #include <QPainter>
@@ -210,8 +209,9 @@ Style::readSettings(QString appName)
     Animator::Tab::setFPS(25);
 
     // General ===========================
-//     const QDesktopWidget *dw = qApp->desktop();
-    config.scale = 1.0; //(dw->logicalDpiX() + dw->logicalDpiY()) /  170.0f;
+    QWidget dummy;  // calling out to qApp->desktopWidget() would seem natural
+                    // BUT BREAKS THE CLIPBOARD!
+    config.scale = (dummy.logicalDpiX() + dummy.logicalDpiY()) /  170.0f;
     if (const char *scale = getenv("VIRTUALITY_SCALE")) {
         bool ok = false;
         const float envScale = QString(scale).toFloat(&ok); // CLAMP(envScale, 1.0f, 3.0f);
