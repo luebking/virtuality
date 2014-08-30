@@ -385,8 +385,7 @@ Hacks::eventFilter(QObject *o, QEvent *e)
         if (config.titleWidgets)
         if (QLabel *label = qobject_cast<QLabel*>(o)) {
         if (label->parentWidget() && label->parentWidget()->parentWidget() &&
-            label->parentWidget()->parentWidget()->inherits("KTitleWidget"))
-        {
+            label->parentWidget()->parentWidget()->inherits("KTitleWidget")) {
             QWidget *container = label->parentWidget();
 
             QString string = label->text();
@@ -399,27 +398,30 @@ Hacks::eventFilter(QObject *o, QEvent *e)
 //             qDebug() << strings;
 
             QRect r = label->contentsRect();
-            const int fh = r.height()/(strings.count()+1)/* - 1*/;
+            // Font height is all height / line amount (+1 because the top line should be 2em)
+            // 2*(strings.count()-1) for the line padding
+            const int fh = (r.height() - 2*(strings.count()-1)) / (strings.count() + 1);
             QPainter p(label);
             p.setPen(container->palette().color(container->foregroundRole()));
             QFont fnt(container->font());
-            fnt.setPointSize/*F*/(float(2*fh*72)/label->logicalDpiY());
-//             fnt.setPixelSize(2*fh);
+            fnt.setPointSizeF(float(2*fh*72)/label->logicalDpiY());
+            const QRect br = QFontMetrics(fnt).boundingRect(strings.at(0));
+            if (br.width() > r.width())
+                fnt.setPointSizeF(fnt.pointSizeF()*r.width()/br.width());
             r.setBottom(r.top()+2*fh);
             p.setFont(fnt);
-            p.drawText( r, Qt::AlignCenter|Qt::TextSingleLine, strings.at(0) );
+            p.drawText(r, Qt::AlignLeft|Qt::AlignVCenter|Qt::TextSingleLine, strings.at(0));
 
             if (strings.count() < 2)
                 return true;
 
-            fnt.setPixelSize(fh-2);
+            fnt.setPointSizeF(float(fh*72)/label->logicalDpiY());
             p.setFont(fnt);
             r.setTop(r.top()+fh);
 
-            for (int i = 1; i < strings.count(); ++i)
-            {
+            for (int i = 1; i < strings.count(); ++i) {
                 r.translate(0, fh);
-                p.drawText( r, Qt::AlignCenter|Qt::TextSingleLine, strings.at(i) );
+                p.drawText(r, Qt::AlignLeft|Qt::AlignVCenter|Qt::TextSingleLine, strings.at(i));
             }
             return true;
         }
@@ -748,11 +750,8 @@ Hacks::add(QWidget *w)
     if (config.titleWidgets)
     if (QLabel *label = qobject_cast<QLabel*>(w))
     if (QFrame *frame = qobject_cast<QFrame*>(label->parentWidget()))
-    if (frame->parentWidget() && frame->parentWidget()->inherits("KTitleWidget"))
-    {
+    if (frame->parentWidget() && frame->parentWidget()->inherits("KTitleWidget")) {
         ENSURE_INSTANCE;
-        frame->setFrameShadow(QFrame::Sunken);
-        frame->setAutoFillBackground(true);
         FILTER_EVENTS(label);
     }
 

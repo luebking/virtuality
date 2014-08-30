@@ -471,8 +471,7 @@ Style::polish( QWidget * widget )
     //END Window handling                                                                          -
 
     //BEGIN Frames                                                                                 -
-    if ( QFrame *frame = qobject_cast<QFrame *>(widget) )
-    {
+    if (QFrame *frame = qobject_cast<QFrame*>(widget)) {
         if (frame->isWindow()) {
             frame->setFrameShape(QFrame::NoFrame); // no. ugly & pointless.
         } else {
@@ -480,21 +479,20 @@ Style::polish( QWidget * widget )
                 if (label->parentWidget() && label->parentWidget()->inherits("KFontRequester"))
                     label->setAlignment(Qt::AlignCenter); // fix alignment
             } else if (frame->parentWidget() && frame->parentWidget()->inherits("KTitleWidget")) {
-                // sunken looks soo much nicer ;)
-                if (Hacks::config.titleWidgets)
-                {   // to invert or to not invert, ...?
-                    frame->setFrameShape(QFrame::NoFrame);
+                if (config.invert.headers) {
+                    frame->setFrameStyle(QFrame::StyledPanel|QFrame::Sunken);
+                    frame->setAutoFillBackground(true);
                     frame->setBackgroundRole(QPalette::WindowText);
                     frame->setForegroundRole(QPalette::Window);
-                    QList<QLabel*> labels = frame->findChildren<QLabel*>();
-                    foreach (QLabel *label, labels) {
-                        label->setBackgroundRole(frame->backgroundRole());
-                        label->setForegroundRole(frame->foregroundRole());
-                    }
-                }
-                else {
+                } else {
                     frame->setFrameShape(QFrame::NoFrame);
                     frame->setAutoFillBackground(false);
+                }
+                QList<QLabel*> labels = frame->findChildren<QLabel*>();
+                foreach (QLabel *label, labels) {
+                    label->setAutoFillBackground(false);
+                    label->setBackgroundRole(frame->backgroundRole());
+                    label->setForegroundRole(frame->foregroundRole());
                 }
             } else if (frame->parentWidget() && frame->parentWidget()->inherits("KateView")) { // nonono..
                 frame->setFrameShape(QFrame::NoFrame);
