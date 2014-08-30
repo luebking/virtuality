@@ -157,8 +157,8 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
                 w += h + F(4);
                 if (!btn->icon.isNull())
                     w += F(4) + btn->iconSize.width(); // we want symmetry and need 2px padding (+the blind icon and it's blind padding)
-                if (w < F(80))
-                    w = F(80);
+//                 if (w < F(80))
+//                     w = F(80);
             }
 
             return QSize(w, qMax(config.btn.minHeight, h));
