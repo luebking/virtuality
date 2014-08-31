@@ -52,6 +52,8 @@ int Style::styleHint(StyleHint hint, const QStyleOption *option, const QWidget *
     case SH_ScrollBar_ScrollWhenPointerLeavesControl:
         return true; // UIs are no ego shooters...
     case SH_TabBar_Alignment: {
+        if (qobject_cast<const QTabWidget*>(widget))
+            return Qt::AlignCenter;
 #if 0 // this does not work - Qt screws the tear indicator positon... or is it me?
         QTabBar::Shape shape = QTabBar::RoundedNorth;
         if HAVE_OPTION(tab, Tab)
