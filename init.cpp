@@ -212,6 +212,9 @@ Style::readSettings(QString appName)
     QWidget dummy;  // calling out to qApp->desktopWidget() would seem natural
                     // BUT BREAKS THE CLIPBOARD!
     config.scale = (dummy.logicalDpiX() + dummy.logicalDpiY()) /  170.0f;
+    QFont fnt = qApp->font();
+    if (fnt.pointSizeF() > -1)
+        config.scale *= fnt.pointSizeF()/10.0f;
     if (const char *scale = getenv("VIRTUALITY_SCALE")) {
         bool ok = false;
         const float envScale = QString(scale).toFloat(&ok); // CLAMP(envScale, 1.0f, 3.0f);
@@ -219,9 +222,8 @@ Style::readSettings(QString appName)
             if (envScale != config.scale) {
                 scale = getenv("VIRTUALITY_SCALE_FONT");
                 if (!qstrcmp(scale, "true")) {
-                    QFont fnt = qApp->font();
                     if (fnt.pointSize() > -1)
-                        fnt.setPointSize(fnt.pointSize()*envScale/config.scale);
+                        fnt.setPointSizeF(fnt.pointSizeF()*envScale/config.scale);
                     else
                         fnt.setPixelSize(fnt.pixelSize()*envScale/config.scale);
                     qApp->setFont(fnt);
