@@ -84,7 +84,20 @@ Style::drawDockTitle(const QStyleOption *option, QPainter *painter, const QWidge
     if (!dock->title.isEmpty()) {
         OPT_ENABLED
         const int bo = 16 + F(6);
-        rect.adjust(dock->closable ? bo : F(4), 0, dock->closable ? -bo : -F(4), 0);
+        bool verticalTitleBar = false;
+        if HAVE_OPTION(dock2, DockWidgetV2) {
+            verticalTitleBar = dock2->verticalTitleBar;
+        }
+        if (verticalTitleBar) {
+            int y = rect.y() + rect.height();
+            rect.setRect(0, 0, rect.height(), rect.width());
+            QMatrix m; m.translate(0, y);
+            m.rotate(-90);
+            painter->setMatrix(m, true);
+            rect.adjust(0, dock->closable ? bo : F(4), 0, dock->closable ? -bo : -F(4));
+        } else {
+            rect.adjust(dock->closable ? bo : F(4), 0, dock->closable ? -bo : -F(4), 0);
+        }
 
         // text
         const int itemtextopts = Qt::AlignCenter | Qt::TextSingleLine | Qt::TextHideMnemonic;

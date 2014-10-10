@@ -434,14 +434,30 @@ Style::subElementRect(SubElement element, const QStyleOption *option, const QWid
 //    case SE_Q3DockWindowHandleRect: // Area for the tear-off handle
     case SE_DockWidgetFloatButton:
     {
-        QRect r = RECT; r.setWidth(16); r.moveRight(RECT.right()-F(4));
+        QRect r = RECT;
+        bool verticalTitleBar = false;
+        if HAVE_OPTION(dock2, DockWidgetV2)
+            verticalTitleBar = dock2->verticalTitleBar;
+        if (verticalTitleBar) {
+            r.setHeight(16); r.moveTop(RECT.top()+F(4));
+        } else {
+            r.setWidth(16); r.moveRight(RECT.right()-F(4));
+        }
         return r;
     }
     case SE_DockWidgetTitleBarText:
         return RECT;
     case SE_DockWidgetCloseButton:
     {
-        QRect r = RECT; r.setWidth(16); r.moveLeft(RECT.left()+F(4));
+        QRect r = RECT;
+        bool verticalTitleBar = false;
+        if HAVE_OPTION(dock2, DockWidgetV2)
+            verticalTitleBar = dock2->verticalTitleBar;
+        if (verticalTitleBar) {
+            r.setHeight(16); r.moveBottom(RECT.bottom()-F(4));
+        } else {
+            r.setWidth(16); r.moveLeft(RECT.left()+F(4));
+        }
         return r;
     }
     case SE_ProgressBarGroove: // Area for the groove
