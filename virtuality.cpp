@@ -395,7 +395,7 @@ Style::drawPrimitive(PrimitiveElement pe, const QStyleOption *option, QPainter *
         QCommonStyle::drawPrimitive( pe, option, painter, widget );
     }
     if (gs_painterStore.flags) {
-        qDebug() << "drawPrimitive : unbalanced painter" << pe;
+        qDebug() << "drawPrimitive : unbalanced painter" << pe << gs_painterStore.flags;
         gs_painterStore.flags = 0;
     }
 }
