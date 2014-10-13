@@ -48,7 +48,9 @@ Style::drawTabWidget(const QStyleOption *option, QPainter *painter, const QWidge
 
 #define SET_BASE_HEIGHT(_o_) \
 baseHeight = twf->tabBarSize._o_(); \
-if (!baseHeight) return; /*  no base -> no tabbing -> no bottom border either. period.*/\
+if (!baseHeight) { \
+    RESTORE_PAINTER; return; \
+} /*  no base -> no tabbing -> no bottom border either. period.*/\
 if (baseHeight < 0) \
     baseHeight = pixelMetric( PM_TabBarBaseHeight, option, widget )
 
