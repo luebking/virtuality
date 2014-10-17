@@ -210,6 +210,8 @@ Config::Config(QWidget *parent) : BConfig(parent), loadedPal(0), infoIsManage(fa
     This controls the order of the Yes/No/Cancel buttons, use with care, you might accidently\
     misclick if you revert it from e.g. KDE to OS X");
 
+    handleSettings(ui.dialogWatermark, BG_RING_OVERLAY);
+
     handleSettings(ui.invertModals, INVERT_MODALS);
     setContextHelp(ui.invertModals, "<b>Invert modal Dialogs</b><hr>\
     Invert colors of dialogs that block access to their main window");

@@ -362,18 +362,17 @@ Style::polish( QWidget * widget )
                 if (!(kStyleFeatureRequest & NoShadow))
                     Shadows::manage(widget);
             }
-        }
-        else if ( widget->testAttribute(Qt::WA_X11NetWmWindowTypeDND) && FX::compositingActive() )
+        } else if (widget->windowType() == Qt::Dialog) {
+            if (config.bg.ringOverlay && !widget->testAttribute(Qt::WA_TranslucentBackground)) {
+                widget->setAttribute(Qt::WA_StyledBackground);
+            }
+        } else if ( widget->testAttribute(Qt::WA_X11NetWmWindowTypeDND) && FX::compositingActive() )
         {
             if (!(kStyleFeatureRequest & NoARGB))
                 widget->setAttribute(Qt::WA_TranslucentBackground);
             widget->clearMask();
         }
 
-        if ( (false && config.bg.ringOverlay) )  {
-            if (!widget->testAttribute(Qt::WA_TranslucentBackground))
-                widget->setAttribute(Qt::WA_StyledBackground);
-        }
         if ( QMainWindow *mw = qobject_cast<QMainWindow*>(widget) ) {
             if (appType == Dolphin)
                 mw->setDockOptions(mw->dockOptions()|QMainWindow::VerticalTabs);

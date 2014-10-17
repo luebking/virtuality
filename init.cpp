@@ -188,7 +188,7 @@ Style::readSettings(QString appName)
     else
         config.bg.blur = false;
 
-    config.bg.ringOverlay = readBool(BG_RING_OVERLAY);
+    config.bg.ringOverlay = readInt(BG_RING_OVERLAY);
 
 
     // Buttons ===========================
@@ -343,6 +343,7 @@ Style::init()
         config.bg.modal.opacity = 250;
         config.bg.blur = false;
         config.frame.roundness = 6;
+        config.bg.ringOverlay = 2;
     } else if (objectName() == "flynn") {
         config.invert.docks = false;
         config.invert.menubars = false;
@@ -350,6 +351,7 @@ Style::init()
         config.invert.modals = false;
         config.invert.titlebars = false;
         config.invert.toolbars = false;
+        config.bg.ringOverlay = 3;
 //         config.bg.opacity = readInt(BG_OPACITY);
 //         config.bg.modal.opacity = readInt(BG_MODAL_OPACITY);
 //         config.bg.blur = false;
@@ -367,6 +369,7 @@ Style::init()
         config.bg.blur = false;
 //         config.btn.tool.disabledStyle = readInt(BTN_DISABLED_TOOLS);
         config.frame.roundness = 2;
+        config.bg.ringOverlay = 4;
     }
     initMetrics();
     setProperty("VirtualityStyleRevision", virtuality_revision());

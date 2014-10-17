@@ -41,7 +41,7 @@ typedef struct Config
 
     struct bg
     {
-        bool ringOverlay;
+        char ringOverlay;
         int structure;
         struct {
             int opacity;

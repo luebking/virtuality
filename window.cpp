@@ -107,6 +107,82 @@ createRingPix(int alpha, int value)
     p.drawPath(ringPath);
     p.end();
 }
+
+static inline void
+createImperialPix(const QColor &c)
+{
+    rings = new QPixmap(240,240);
+    rings->fill(Qt::transparent);
+    QPainter p(rings);
+    p.setBrush(Qt::NoBrush);
+    p.setRenderHint(QPainter::Antialiasing);
+    QPen pen;
+    pen.setColor(c);
+    pen.setWidth(10);
+    p.setPen(pen);
+    p.drawEllipse(5,5,230,230);
+    pen.setCapStyle(Qt::FlatCap); // w/o flat cap, we won't get segments for the thicker pens
+    pen.setDashPattern(QVector<qreal>() << 1 << 10.1);
+    pen.setDashOffset(6);
+    p.setPen(pen);
+    p.drawEllipse(14,14,212,212);
+    pen.setWidth(28);
+    pen.setDashPattern(QVector<qreal>() << 1.5 << 1.8);
+    pen.setDashOffset(-0.9);
+    p.setPen(pen);
+    p.drawEllipse(32,32,176,176);
+    pen.setWidth(60);
+    pen.setDashPattern(QVector<qreal>() << 0.8 << 0.3);
+    pen.setDashOffset(-0.125);
+    p.setPen(pen);
+    // the blocks of the innermost ring cover the 0° (3 o'clock) position and the flat cap causes a
+    // gap (flat cap is required to have segments at all at this size ;-)
+    // so we paint an arc and start at the uncovered 90° position
+    p.drawArc(QRect(57,57,126,126), 90*16, 360*16);
+    p.end();
+}
+
+static inline void
+createTronPix(const QColor &c)
+{
+    rings = new QPixmap(240,240);
+    rings->fill(Qt::transparent);
+    QPainter p(rings);
+    p.setBrush(Qt::NoBrush);
+    p.setRenderHint(QPainter::Antialiasing);
+    QPen pen;
+    pen.setColor(c);
+    pen.setWidth(16);
+    p.setPen(pen);
+    p.drawEllipse(8,8,224,224);
+    pen.setWidth(8);
+    p.setPen(pen);
+    p.drawEllipse(56,56,128,128);
+    p.end();
+}
+
+static inline void
+createPlasmaPix(const QColor &c)
+{
+    rings = new QPixmap(210,210);
+    rings->fill(Qt::transparent);
+    QPainter p(rings);
+    p.setBrush(c);
+    p.setPen(Qt::NoPen);
+    p.setRenderHint(QPainter::Antialiasing);
+    p.drawEllipse(40,0,24,24);
+    p.drawEllipse(0,80,36,36);
+    p.drawEllipse(52,158,52,52);
+    p.setPen(QPen(c, 36, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+    QPainterPath path;
+    path.moveTo(130,16);
+    path.lineTo(180,64);
+    path.lineTo(130,120);
+    p.setBrush(Qt::NoBrush);
+    p.drawPath(path);
+    p.end();
+}
+
 void
 Style::resetRingPix()
 {
@@ -251,8 +327,9 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
     QColor c = pal.color(widget->backgroundRole());
     if (c == Qt::transparent) // plasma uses this
         return;
+
     if (c.alpha() == 0xff && (widget->windowFlags() & Qt::WindowType_Mask) == Qt::Popup && widget->style() == this) {
-            c.setAlpha(config.bg.modal.opacity);
+        c.setAlpha(config.bg.modal.opacity);
     }
 
 //     if (c.alpha() < 0xff && QPainter::redirected(painter->device()) != widget) {
@@ -264,11 +341,8 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
     painter->fillRect( widget->rect(), c );
 
     // Ensure ring texture --------------------------------------------------------
-    bool drawRings = false;
-    if (false && config.bg.ringOverlay) {
-        const bool hasTitleBar = !(widget->windowFlags() & ((Qt::Popup | Qt::ToolTip | Qt::SplashScreen | Qt::Desktop | Qt::X11BypassWindowManagerHint | Qt::FramelessWindowHint) & ~Qt::Window));
-        drawRings = hasTitleBar;
-        if (drawRings && !rings) {
+    if (widget->windowType() == Qt::Dialog && config.bg.ringOverlay) {
+        if (!rings) {
 //             int ringValue = (FX::value(pal.color(widget->backgroundRole())) + 128) / 2; //[64,191]
 //             ringValue += (64 - qAbs(ringValue - 128))/2; //[64,191]
             int ringValue = FX::value(pal.color(widget->backgroundRole()));
@@ -280,13 +354,27 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
                 ringValue = qMin(ringValue+24,255);
             else
                 ringValue -= 24;
-            createRingPix(255, ringValue);
+            switch (config.bg.ringOverlay) {
+                default:
+                case 1: createRingPix(255, ringValue); break;
+                case 2:
+                    createImperialPix(FX::blend(pal.color(widget->backgroundRole()),
+                                                QColor(ringValue,ringValue,ringValue), 10, 1)); break;
+                case 3:
+                    createTronPix(FX::blend(pal.color(widget->backgroundRole()),
+                                            QColor(ringValue,ringValue,ringValue), 10, 1)); break;
+                case 4:
+                    createPlasmaPix(FX::blend(pal.color(widget->backgroundRole()),
+                                            QColor(ringValue,ringValue,ringValue), 5, 1)); break;
+            }
             disconnect(&ringResetTimer, SIGNAL(timeout()), this, SLOT(resetRingPix()));
             connect(&ringResetTimer, SIGNAL(timeout()), this, SLOT(resetRingPix()));
         }
+        switch (config.bg.ringOverlay) {
+            case 1: painter->drawPixmap(widget->width()-rings->width(), 0, *rings); break;
+            default: painter->drawPixmap(widget->width()-(rings->width()+32), widget->height() - (rings->height() + 48), *rings); break;
+        }
         ringResetTimer.start(5000);
-        if (drawRings)
-            painter->drawPixmap(widget->width()-450, 0, *rings);
     }
     if (widget->testAttribute(Qt::WA_TranslucentBackground)) {
         const QVariant wdv = widget->property("BespinWindowHints");
