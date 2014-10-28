@@ -778,6 +778,7 @@ Style::polish( QWidget * widget )
         QWidget *win = bar->window();
         if (win && win->inherits("DolphinMainWindow"))
             bar->setDocumentMode(true);
+        bar->setExpanding(false);
         // the eventfilter overtakes the widget painting to allow tabs ABOVE the tabbar
         FILTER_EVENTS(widget);
     }

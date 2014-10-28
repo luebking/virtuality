@@ -184,7 +184,12 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
                     if (!config.invert.headers)
                         fnt.setBold(true);
                     QSize sz(QFontMetrics(fnt).boundingRect(tab->text).size());
-                    sz.setWidth((sz.width() - osz.width() + 1) / 2 + contentsSize.width());
+                    int diff = qMax(0, sz.width() - osz.width()) + 1;
+                    if HAVE_OPTION(tab3, TabV3) {
+                        if (!tab3->documentMode)
+                            diff /= 2;
+                    }
+                    sz.setWidth(diff + contentsSize.width());
                     sz.setHeight(qMax(sz.height(), contentsSize.height()));
                     return sz;
                 }
