@@ -51,7 +51,7 @@ void
 Style::drawPushButton(const QStyleOption *option, QPainter *painter, const QWidget *widget) const
 {
     ASSURE_OPTION(btn, Button);
-    OPT_SUNKEN OPT_HOVER;
+    OPT_SUNKEN OPT_HOVER OPT_FOCUS;
 
     if ( widget ) {
         if ( qobject_cast<const QAbstractItemView*>(widget) ) {
@@ -65,7 +65,13 @@ Style::drawPushButton(const QStyleOption *option, QPainter *painter, const QWidg
     anim.widget = widget;
     anim.step = HOVER_STEP;
 
-    if (isCheckableButton(widget, option)) {
+    if (btn->features & QStyleOptionButton::CommandLinkButton) {
+        OPT_FOCUS
+        if (hasFocus)
+            drawPushButtonBevel(btn, painter, widget);
+        const QColor c = FX::blend(FCOLOR(ButtonText), FCOLOR(Highlight), MAX_STEPS - anim.step, anim.step);
+        const_cast<QStyleOptionButton*>(btn)->palette.setColor(QPalette::ButtonText, c);
+    } else if (isCheckableButton(widget, option)) {
         if (!(option->state & State_On))
             const_cast<QStyleOption*>(option)->state |= State_Off; // fix state - there's no tristate pushbutton
         drawCheckBoxItem(option, painter, widget);

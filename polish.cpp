@@ -22,6 +22,7 @@
 #include <QAction>
 #include <QApplication>
 #include <QComboBox>
+#include <QCommandLinkButton>
 #include <QDockWidget>
 #include <QHeaderView>
 #include <QLabel>
@@ -626,14 +627,9 @@ Style::polish( QWidget * widget )
         {
             if (QPushButton *pbtn = qobject_cast<QPushButton*>(widget))
             {
-                QFont fnt(widget->font());
-                fnt.setBold(true);
-                widget->setFont(fnt);
-
                 // HACK around "weird" original appearance ;-P
                 // also see eventFilter
-                if (pbtn->inherits("KUrlNavigatorButtonBase") || pbtn->inherits("BreadcrumbItemButton"))
-                {
+                if (pbtn->inherits("KUrlNavigatorButtonBase") || pbtn->inherits("BreadcrumbItemButton")) {
                     pbtn->setBackgroundRole(QPalette::Window);
                     pbtn->setForegroundRole(QPalette::Link);
                     QPalette pal = pbtn->palette();
@@ -643,6 +639,10 @@ Style::polish( QWidget * widget )
                     pbtn->setCursor(Qt::PointingHandCursor);
                     FILTER_EVENTS(pbtn);
                     widget->setAttribute(Qt::WA_Hover);
+                } else if (!qobject_cast<QCommandLinkButton*>(pbtn)) {
+                    QFont fnt(widget->font());
+                    fnt.setBold(true);
+                    widget->setFont(fnt);
                 }
             }
             else if (widget->inherits("QToolButton") &&
