@@ -57,9 +57,6 @@
 #endif
 #include <QX11Info>
 #include "xproperty.h"
-
-static Atom netMoveResize = XInternAtom(QX11Info::display(), "_NET_WM_MOVERESIZE", False);
-
 #endif
 
 #include <QtDebug>
@@ -204,6 +201,7 @@ triggerWMMove(const QWidget *w, const QPoint &p)
 {
     // stolen... errr "adapted!" from QSizeGrip
 #ifdef BE_WS_X11
+static Atom netMoveResize = XInternAtom(QX11Info::display(), "_NET_WM_MOVERESIZE", False);
 #if QT_VERSION < 0x050000
     XEvent xev;
     xev.xclient.type = ClientMessage;

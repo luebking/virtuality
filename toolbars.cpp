@@ -19,6 +19,7 @@
 #include <QMainWindow>
 #include <QToolBar>
 #include <QToolButton>
+#include <QVarLengthArray>
 #include "draw.h"
 #include "animator/hover.h"
 #include "FX.h"
@@ -89,25 +90,55 @@ Style::drawToolButton(const QStyleOptionComplex *option, QPainter *painter, cons
    RESTORE_PAINTER
 }
 
-static QPixmap scaledIcon, emptyIcon;
-qint64 lastIconPix = 0;
 static QPixmap &
 icon(QPixmap &pix, int step)
 {
-    if (pix.cacheKey() != lastIconPix)
-    {
-        scaledIcon = pix.scaledToHeight ( pix.height() + F(4), Qt::SmoothTransformation );
-        if (emptyIcon.size() != scaledIcon.size())
-            emptyIcon = QPixmap(scaledIcon.size());
-        lastIconPix = pix.cacheKey();
+#if 0
+    static QVarLengthArray<float> table;
+    const int n = MAX_STEPS + 1;
+    if (table.size() != n) {
+        table.resize(n);
+        const float accel = 1.0f/3.0f;
+        const float factor = pow(0.5f, accel);
+        for (int i = (n+1)/2; i < n; ++i) {
+            float ratio = i/float(MAX_STEPS);
+            if (ratio == 0.5f)
+                table[i] = 0.f;
+            else
+                table[i] = (pow(ratio - 0.5f, accel) + factor) / (2.0f*factor);
+        }
+        for (int i = 0; i <= n/2; ++i) {
+            table[i] = 1.0f - table[MAX_STEPS-i];
+        }
     }
+
+    const float ratio = table.at(step);
+#else
+    const float ratio = step/float(MAX_STEPS);
+#endif
+    static QPixmap scaledIcon[2], emptyIcon;
+    static qint64 lastIconPix[2] = {0, 0};
+    int idx = pix.cacheKey() == lastIconPix[0] ? 0 : (pix.cacheKey() == lastIconPix[1] ? 1 : -1);
+    if (idx < 0) {
+        idx = 1;
+        if (lastIconPix[1]) {
+            scaledIcon[0] = scaledIcon[1];
+            lastIconPix[0] = lastIconPix[1];
+        }
+        scaledIcon[1] = pix.scaledToHeight(pix.height() + F(4), Qt::SmoothTransformation);
+        if (emptyIcon.size() != scaledIcon[1].size()) {
+            emptyIcon = QPixmap(scaledIcon[1].size());
+        }
+        lastIconPix[1] = pix.cacheKey();
+    }
+
+    if (step == MAX_STEPS)
+        return scaledIcon[idx];
+
     emptyIcon.fill(Qt::transparent);
-    float quote = step/float(MAX_STEPS);
-    if (quote >= 1.0)
-        return scaledIcon;
 
     FX::blend(pix, emptyIcon, 1.0, F(2), F(2));
-    FX::blend(scaledIcon, emptyIcon, quote);
+    FX::blend(scaledIcon[idx], emptyIcon, ratio);
     return emptyIcon;
 }
 
