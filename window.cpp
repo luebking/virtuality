@@ -24,6 +24,7 @@
 #include <QMainWindow>
 #include <QMetaObject>
 #include <QSplitter>
+#include <QTimer>
 #include <QtDebug>
 #include "draw.h"
 
@@ -69,9 +70,8 @@ Style::drawWindowFrame(const QStyleOption *option, QPainter *painter, const QWid
     RESTORE_PAINTER
 }
 
-static QPixmap *rings = 0L;
-#include <QTimer>
-static QTimer ringResetTimer;
+static QPixmap *gs_overlay = 0L;
+
 static inline void
 createRingPix(int alpha, int value)
 {
@@ -95,9 +95,9 @@ createRingPix(int alpha, int value)
     ringPath.addEllipse(280,190,140,140);
     ringPath.addEllipse(310,220,80,80);
 
-    rings = new QPixmap(450,360);
-    rings->fill(Qt::transparent);
-    QPainter p(rings);
+    gs_overlay = new QPixmap(450,360);
+    gs_overlay->fill(Qt::transparent);
+    QPainter p(gs_overlay);
     QColor color(value,value,value,(alpha+16)*112/255);
     p.setPen(color);
 //     p.setPen(Qt::NoPen);
@@ -111,9 +111,9 @@ createRingPix(int alpha, int value)
 static inline void
 createImperialPix(const QColor &c)
 {
-    rings = new QPixmap(240,240);
-    rings->fill(Qt::transparent);
-    QPainter p(rings);
+    gs_overlay = new QPixmap(240,240);
+    gs_overlay->fill(Qt::transparent);
+    QPainter p(gs_overlay);
     p.setBrush(Qt::NoBrush);
     p.setRenderHint(QPainter::Antialiasing);
     QPen pen;
@@ -145,9 +145,9 @@ createImperialPix(const QColor &c)
 static inline void
 createTronPix(const QColor &c)
 {
-    rings = new QPixmap(240,240);
-    rings->fill(Qt::transparent);
-    QPainter p(rings);
+    gs_overlay = new QPixmap(240,240);
+    gs_overlay->fill(Qt::transparent);
+    QPainter p(gs_overlay);
     p.setBrush(Qt::NoBrush);
     p.setRenderHint(QPainter::Antialiasing);
     QPen pen;
@@ -164,9 +164,9 @@ createTronPix(const QColor &c)
 static inline void
 createPlasmaPix(const QColor &c)
 {
-    rings = new QPixmap(210,210);
-    rings->fill(Qt::transparent);
-    QPainter p(rings);
+    gs_overlay = new QPixmap(210,210);
+    gs_overlay->fill(Qt::transparent);
+    QPainter p(gs_overlay);
     p.setBrush(c);
     p.setPen(Qt::NoPen);
     p.setRenderHint(QPainter::Antialiasing);
@@ -186,8 +186,7 @@ createPlasmaPix(const QColor &c)
 void
 Style::resetRingPix()
 {
-    ringResetTimer.stop();
-    delete rings; rings = 0L;
+    delete gs_overlay; gs_overlay = 0L;
 }
 
 static inline
@@ -342,10 +341,15 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
 
     // Ensure ring texture --------------------------------------------------------
     if (widget->windowType() == Qt::Dialog && config.bg.ringOverlay) {
-        if (!rings) {
+        static QRgb lastRgb = 0;
+        static QTimer *ringResetTimer = NULL;
+
+        const QColor bgColor = pal.color(widget->backgroundRole());
+        if (!gs_overlay || bgColor.rgb() != lastRgb) {
+            lastRgb = bgColor.rgb();
 //             int ringValue = (FX::value(pal.color(widget->backgroundRole())) + 128) / 2; //[64,191]
 //             ringValue += (64 - qAbs(ringValue - 128))/2; //[64,191]
-            int ringValue = FX::value(pal.color(widget->backgroundRole()));
+            int ringValue = FX::value(bgColor);
             if (ringValue < 48)
                 ringValue += qMax(48-ringValue,24);
             else if (ringValue < 160)
@@ -354,27 +358,33 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
                 ringValue = qMin(ringValue+24,255);
             else
                 ringValue -= 24;
+            const QColor grey(ringValue, ringValue, ringValue);
             switch (config.bg.ringOverlay) {
                 default:
                 case 1: createRingPix(255, ringValue); break;
                 case 2:
-                    createImperialPix(FX::blend(pal.color(widget->backgroundRole()),
-                                                QColor(ringValue,ringValue,ringValue), 10, 1)); break;
+                    createImperialPix(FX::blend(bgColor, grey, 10, 1));
+                    break;
                 case 3:
-                    createTronPix(FX::blend(pal.color(widget->backgroundRole()),
-                                            QColor(ringValue,ringValue,ringValue), 10, 1)); break;
+                    createTronPix(FX::blend(bgColor, grey, 10, 1));
+                    break;
                 case 4:
-                    createPlasmaPix(FX::blend(pal.color(widget->backgroundRole()),
-                                            QColor(ringValue,ringValue,ringValue), 5, 1)); break;
+                    createPlasmaPix(FX::blend(bgColor, grey, 5, 1));
+                    break;
             }
-            disconnect(&ringResetTimer, SIGNAL(timeout()), this, SLOT(resetRingPix()));
-            connect(&ringResetTimer, SIGNAL(timeout()), this, SLOT(resetRingPix()));
+            if (!ringResetTimer) {
+                ringResetTimer = new QTimer(const_cast<BE::Style*>(this));
+                ringResetTimer->setSingleShot(true);
+                connect(ringResetTimer, SIGNAL(timeout()), SLOT(resetRingPix()));
+                connect(ringResetTimer, SIGNAL(destroyed()), SLOT(resetRingPix()));
+            }
         }
         switch (config.bg.ringOverlay) {
-            case 1: painter->drawPixmap(widget->width()-rings->width(), 0, *rings); break;
-            default: painter->drawPixmap(widget->width()-(rings->width()+32), widget->height() - (rings->height() + 48), *rings); break;
+            case 1: painter->drawPixmap(widget->width()-gs_overlay->width(), 0, *gs_overlay); break;
+            default: painter->drawPixmap(widget->width()-(gs_overlay->width()+32),
+                                         widget->height() - (gs_overlay->height() + 48), *gs_overlay); break;
         }
-        ringResetTimer.start(5000);
+        ringResetTimer->start(5000);
     }
     if (widget->testAttribute(Qt::WA_TranslucentBackground)) {
         const QVariant wdv = widget->property("BespinWindowHints");
