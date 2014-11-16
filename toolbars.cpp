@@ -93,12 +93,12 @@ Style::drawToolButton(const QStyleOptionComplex *option, QPainter *painter, cons
 static QPixmap &
 icon(QPixmap &pix, int step)
 {
-#if 0
+#if 1
     static QVarLengthArray<float> table;
     const int n = MAX_STEPS + 1;
     if (table.size() != n) {
         table.resize(n);
-        const float accel = 1.0f/3.0f;
+        const float accel = 0.5f;
         const float factor = pow(0.5f, accel);
         for (int i = (n+1)/2; i < n; ++i) {
             float ratio = i/float(MAX_STEPS);
