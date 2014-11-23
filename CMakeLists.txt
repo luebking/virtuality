@@ -24,6 +24,9 @@ find_package(X11)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_custom_target(revision.h ALL COMMAND ${CMAKE_COMMAND} ARGS -P ${CMAKE_CURRENT_SOURCE_DIR}/revision.cmake)
 set_property(SOURCE revision.cpp APPEND PROPERTY OBJECT_DEPENDS revision.h)
+if (WITH_QT5)
+    set_property(SOURCE moc_virtuality.cpp APPEND PROPERTY OBJECT_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/virtuality.json)
+endif (WITH_QT5)
 
 # add_definitions (-DQT_NO_CAST_FROM_ASCII -DQT_NO_CAST_TO_ASCII)
 
