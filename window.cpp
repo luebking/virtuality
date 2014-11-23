@@ -183,6 +183,27 @@ createPlasmaPix(const QColor &c)
     p.end();
 }
 
+static inline void
+createArtDecoPix(const QColor &c, Qt::Orientation o)
+{
+    if (o == Qt::Horizontal)
+        gs_overlay = new QPixmap(320,160);
+    else
+        gs_overlay = new QPixmap(160,320);
+    gs_overlay->fill(Qt::transparent);
+    QPainter p(gs_overlay);
+    p.setPen(Qt::NoPen);
+    p.setBrush(c);
+    for (int y = 0; y < 160-24; y += 24) {
+        const int x = 32 + (y%48 ? -1 : 1)*16 + (y%72 ? -1 : 1)*8 + (y%96 ? -1 : 1)*8;
+        if (o == Qt::Horizontal)
+            p.drawRect(x, y, 320-x, 16);
+        else
+            p.drawRect(y, 0, 16, 320-x);
+    }
+    p.end();
+}
+
 void
 Style::resetRingPix()
 {
@@ -362,15 +383,11 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
             switch (config.bg.ringOverlay) {
                 default:
                 case 1: createRingPix(255, ringValue); break;
-                case 2:
-                    createImperialPix(FX::blend(bgColor, grey, 10, 1));
-                    break;
-                case 3:
-                    createTronPix(FX::blend(bgColor, grey, 10, 1));
-                    break;
-                case 4:
-                    createPlasmaPix(FX::blend(bgColor, grey, 5, 1));
-                    break;
+                case 2: createImperialPix(FX::blend(bgColor, grey, 10, 1)); break;
+                case 3: createTronPix(FX::blend(bgColor, grey, 10, 1)); break;
+                case 4: createPlasmaPix(FX::blend(bgColor, grey, 5, 1)); break;
+                case 5: createArtDecoPix(FX::blend(bgColor, grey, 20, 1), Qt::Horizontal); break;
+                case 6: createArtDecoPix(FX::blend(bgColor, grey, 20, 1), Qt::Vertical); break;
             }
             if (!ringResetTimer) {
                 ringResetTimer = new QTimer(const_cast<BE::Style*>(this));
@@ -379,11 +396,14 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
                 connect(ringResetTimer, SIGNAL(destroyed()), SLOT(resetRingPix()));
             }
         }
+        int x(widget->width()-gs_overlay->width()), y(0);
         switch (config.bg.ringOverlay) {
-            case 1: painter->drawPixmap(widget->width()-gs_overlay->width(), 0, *gs_overlay); break;
-            default: painter->drawPixmap(widget->width()-(gs_overlay->width()+32),
-                                         widget->height() - (gs_overlay->height() + 48), *gs_overlay); break;
+            case 6: x -= 32; // fall through
+            case 1: break;
+            default: x -= 32; // fall through
+            case 5: y = widget->height() - (gs_overlay->height() + 48); break;
         }
+        painter->drawPixmap(x, y, *gs_overlay);
         ringResetTimer->start(5000);
     }
     if (widget->testAttribute(Qt::WA_TranslucentBackground)) {
