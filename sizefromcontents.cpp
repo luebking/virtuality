@@ -21,6 +21,7 @@
 #include <QStyleOptionMenuItem>
 #include <QTabBar>
 #include <QToolBar>
+#include <QTreeView>
 #include "makros.h"
 #include "virtuality.h"
 
@@ -213,6 +214,24 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
         if (toolbutton && hasMenuIndicator(toolbutton))
             w += pixelMetric(PM_MenuButtonIndicator, option, widget)/* + F(4)*/;
         return QSize(w, h);
+    }
+    case CT_ItemViewItem: {
+        QSize sz = QCommonStyle::sizeFromContents(ct, option, contentsSize, widget);
+        static const QWidget *lastWidget = NULL;
+        static uint margin = 0;
+        if (widget != lastWidget) {
+            lastWidget = widget;
+            margin = 0;
+            if (const QAbstractItemView *view = qobject_cast<const QAbstractItemView*>(widget)) {
+                if (view->alternatingRowColors())
+                    margin = F(2);
+                else if (qobject_cast<const QTreeView*>(view))
+                    margin = F(3);
+            }
+        }
+        if (margin)
+            sz.setHeight(sz.height() + margin);
+        return sz;
     }
     default: ;
     } // switch
