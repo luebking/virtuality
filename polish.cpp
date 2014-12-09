@@ -220,6 +220,9 @@ void Style::polish( QPalette &pal, bool onInit )
     pal.setColor(QPalette::Disabled, QPalette::Highlight, hgt);
     hgt = FX::blend(hgt, pal.color(QPalette::Active, QPalette::HighlightedText));
     pal.setColor(QPalette::Disabled, QPalette::HighlightedText, hgt);
+    h = qGray(pal.color(QPalette::Active, QPalette::HighlightedText).rgb());
+    hgt = QColor(h,h,h);
+    pal.setColor(QPalette::Inactive, QPalette::HighlightedText, hgt);
 
     // more on tooltips... (we force some colors...)
     if (!onInit)
