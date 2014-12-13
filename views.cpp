@@ -498,3 +498,9 @@ Style::drawItem(const QStyleOption *option, QPainter *painter, const QWidget *wi
     }
     RESTORE_PAINTER
 }
+
+//NOTICE this is a hell lot of code in QCommonStyle, so for the moment, it's not customized
+void Style::drawViewItem(const QStyleOption *option, QPainter *painter, const QWidget *widget) const
+{
+    painter->fillRect(RECT, Qt::green);
+}

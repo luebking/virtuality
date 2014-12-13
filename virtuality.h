@@ -235,6 +235,7 @@ protected:
         { drawItem(o, p, w, true); }
     inline void drawItemRow(const QStyleOption *o, QPainter *p, const QWidget *w) const
         { drawItem(o, p, w, false); }
+    void drawViewItem(const QStyleOption *, QPainter *, const QWidget *) const;
     void drawRubberBand(const QStyleOption*, QPainter*, const QWidget*) const;
 
     // window.cpp

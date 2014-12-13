@@ -231,6 +231,8 @@ Style::registerRoutines()
     registerPE(drawHeaderArrow, PE_IndicatorHeaderArrow);
     registerPE(drawItemRow, PE_PanelItemViewRow);
     registerPE(drawItemItem, PE_PanelItemViewItem);
+    //NOTICE this is a hell lot of code in QCommonStyle, so for the moment, it's not customized
+//     registerCE(drawViewItem, CE_ItemViewItem);
 
     // window.cpp
     registerPE(drawWindowFrame, PE_FrameWindow);
