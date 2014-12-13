@@ -233,6 +233,8 @@ shadowData(Shadows::Type t, bool storeToRoot)
 bool
 Shadows::areSet(WId id)
 {
+    if (!BE::isPlatformX11())
+        return false; // TODO: port XProperty for wayland
 #ifdef BE_WS_X11
     XProperty::init();
     unsigned long _12 = 12;
@@ -263,6 +265,8 @@ void
 Shadows::manage(QWidget *w)
 {
 #ifdef BE_WS_X11
+    if (!BE::isPlatformX11())
+        return; // TODO: port XProperty for wayland
     if (!shadowManager)
         shadowManager = new ShadowManager;
     w->removeEventFilter(shadowManager);
@@ -274,6 +278,8 @@ void
 Shadows::set(WId id, Shadows::Type t, bool storeToRoot)
 {
 #ifdef BE_WS_X11
+    if (!BE::isPlatformX11())
+        return; // TODO: port XProperty for wayland
     if (id == QX11Info::appRootWindow()) {
         qWarning("BESPIN WARNING! Setting shadow to ROOT window is NOT supported");
         return;

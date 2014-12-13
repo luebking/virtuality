@@ -25,7 +25,7 @@
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
 #include "fixx11h.h"
-
+#include <QX11Info>
 #include <QWidget>
 #include <QtDebug>
 
@@ -84,5 +84,13 @@ private:
         return _n ? _n : 1L;
     }
 };
+
+inline bool isPlatformX11() {
+#if QT_VERSION < 0x050000
+    return true;
+#else
+    return QX11Info::isPlatformX11();
+#endif
+}
 }
 #endif // XPROPERTY_H

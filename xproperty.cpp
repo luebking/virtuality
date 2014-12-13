@@ -23,7 +23,6 @@ using namespace BE;
 
 #include <X11/Xatom.h>
 #include "fixx11h.h"
-#include <QX11Info>
 
 BLIB_EXPORT Atom XProperty::winData;
 BLIB_EXPORT Atom XProperty::bgPics;

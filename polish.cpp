@@ -1028,8 +1028,10 @@ Style::unpolish( QWidget *widget )
 //             window->setAttribute(Qt::WA_NoSystemBackground, false);
 //         }
 #ifdef BE_WS_X11
-        BE::XProperty::remove(widget->winId(), BE::XProperty::winData);
-        BE::XProperty::remove(widget->winId(), BE::XProperty::bgPics);
+        if (BE::isPlatformX11()) { // TODO: port XProperty for wayland
+            BE::XProperty::remove(widget->winId(), BE::XProperty::winData);
+            BE::XProperty::remove(widget->winId(), BE::XProperty::bgPics);
+        }
 #endif
         if (qobject_cast<QMenu *>(widget))
             widget->clearMask();
@@ -1068,6 +1070,8 @@ void
 Style::setupDecoFor(QWidget *widget, const QPalette &palette)
 {
 #ifdef BE_WS_X11
+    if (!BE::isPlatformX11())
+        return; // TODO: port XProperty for wayland
     if ((appType == KWin))
         return;
 

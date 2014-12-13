@@ -249,7 +249,8 @@ Style::Style(const QString &name) : QCommonStyle()
     m_usingStandardPalette = (name == "sienar" || name == "flynn" || name == "virtualbreeze");
     setObjectName(name);
 #ifdef BE_WS_X11
-    BE::XProperty::init();
+    if (BE::isPlatformX11()) // TODO: port XProperty for wayland
+        BE::XProperty::init();
 #endif
     FX::init();
     if (m_usingStandardPalette) {
@@ -515,6 +516,8 @@ static QTime _lastCheckTime(-1,-1);
 bool
 Style::serverSupportsShadows()
 {
+    if (!BE::isPlatformX11())
+        return false; // TODO: port XProperty for wayland
     if (appType == KDM)
         return false;
 #ifdef BE_WS_X11
@@ -694,7 +697,9 @@ void
 Style::updateBlurRegions() const
 {
 #ifdef BE_WS_X11 // hint blur region for the kwin plugin
-for (QList<QWeakPointer<QWidget> >::const_iterator it = pendingBlurUpdates.constBegin(),
+    if (!BE::isPlatformX11())
+        return; // TODO: port XProperty for wayland
+    for (QList<QWeakPointer<QWidget> >::const_iterator it = pendingBlurUpdates.constBegin(),
                                                   end = pendingBlurUpdates.constEnd(); it != end; ++it)
     {
         QWidget *widget = it->data();
@@ -725,7 +730,7 @@ for (QList<QWeakPointer<QWidget> >::const_iterator it = pendingBlurUpdates.const
 static void shapeCorners( QWidget *widget, bool forceShadows )
 {
 #ifdef BE_WS_X11
-    if ( forceShadows ) // kwin/beshadowed needs a little hint to shadow this one nevertheless
+    if (forceShadows && isPlatformX11()) // kwin/beshadowed needs a little hint to shadow this one nevertheless
         BE::XProperty::setAtom( widget->winId(), BE::XProperty::forceShadows );
 #endif
 
@@ -1019,7 +1024,8 @@ Style::eventFilter( QObject *object, QEvent *ev )
             }
 #ifdef BE_WS_X11
             if (config.bg.blur && widget->windowOpacity() < 1.0 &&
-                widget->testAttribute(Qt::WA_WState_Created) << widget->internalWinId()) {
+                widget->testAttribute(Qt::WA_WState_Created) << widget->internalWinId() &&
+                BE::isPlatformX11()) { // TODO: port XProperty for wayland
                 unsigned long zero(0);
                 XProperty::set<unsigned long>(widget->winId(), XProperty::blurRegion, &zero, XProperty::LONG, 1);
             }
@@ -1041,7 +1047,8 @@ Style::eventFilter( QObject *object, QEvent *ev )
 #ifdef BE_WS_X11
         // talk to kwin about colors, gradients, etc.
         if (widget->testAttribute(Qt::WA_WState_Created) && widget->internalWinId() &&
-            widget->isWindow() && !(widget->windowFlags() & ignoreForDecoHints))
+            widget->isWindow() && !(widget->windowFlags() & ignoreForDecoHints) &&
+            BE::isPlatformX11()) // TODO: port XProperty for wayland
         {
             setupDecoFor(widget, widget->palette());
             BE::XProperty::remove(widget->winId(), BE::XProperty::bgPics);

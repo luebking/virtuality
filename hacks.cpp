@@ -201,6 +201,8 @@ triggerWMMove(const QWidget *w, const QPoint &p)
 {
     // stolen... errr "adapted!" from QSizeGrip
 #ifdef BE_WS_X11
+    if (!BE::isPlatformX11())
+        return;
 static Atom netMoveResize = XInternAtom(QX11Info::display(), "_NET_WM_MOVERESIZE", False);
 #if QT_VERSION < 0x050000
     XEvent xev;
@@ -615,6 +617,7 @@ Hacks::eventFilter(QObject *o, QEvent *e)
 #ifdef BE_WS_X11
     if (e->type() == QEvent::WindowStateChange)
     {
+        if (BE::isPlatformX11()) // TODO port XProperty for wayland
         if (config.suspendFullscreenPlayers)
         if (QWidget *w = qobject_cast<QWidget*>(o))
         if (w->isWindow())
