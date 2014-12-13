@@ -477,7 +477,7 @@ FX::swap(QPalette &pal, QPalette::ColorGroup group, QPalette::ColorRole r1, QPal
         c1.getRgb(&r, &g, &b);
         bool swapOther = v < 128;
         v = qMax(qMax(255-r,255-g),255-b);
-        swapOther = swapOther != v < 128;
+        swapOther = (swapOther != (v < 128));
         c1.setHsv(h,s,v,c1.alpha());
         pal.setColor(group, r1, c1);
 
