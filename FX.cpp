@@ -29,6 +29,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include "fixx11h.h"
+#include "xproperty.h"
 namespace BE { namespace FX { static Atom net_wm_cm; } }
 #endif
 
@@ -131,6 +132,8 @@ FX::expblur(QImage &img, int radius, Qt::Orientations o)
 bool FX::compositingActive()
 {
 #ifdef BE_WS_X11
+    if (!BE::isPlatformX11())
+        return true; // we assume wayland - or any other compositing capable display server
     return XGetSelectionOwner( QX11Info::display(), BE::FX::net_wm_cm ) != None;
 #else
     return true;
@@ -143,6 +146,8 @@ void
 FX::init()
 {
 #ifdef BE_WS_X11
+    if (!BE::isPlatformX11())
+        return;
     Display *dpy = QX11Info::display();
     char string[ 100 ];
     sprintf(string, "_NET_WM_CM_S%d", DefaultScreen( dpy ));
