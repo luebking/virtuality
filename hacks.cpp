@@ -203,8 +203,8 @@ triggerWMMove(const QWidget *w, const QPoint &p)
 #ifdef BE_WS_X11
     if (!BE::isPlatformX11())
         return;
-static Atom netMoveResize = XInternAtom(QX11Info::display(), "_NET_WM_MOVERESIZE", False);
 #if QT_VERSION < 0x050000
+    static Atom netMoveResize = XInternAtom(QX11Info::display(), "_NET_WM_MOVERESIZE", False);
     XEvent xev;
     xev.xclient.type = ClientMessage;
     xev.xclient.message_type = netMoveResize;
@@ -222,6 +222,16 @@ static Atom netMoveResize = XInternAtom(QX11Info::display(), "_NET_WM_MOVERESIZE
 #else
     const WId wid = w->window()->winId();
     xcb_connection_t *c = QX11Info::connection();
+
+    static xcb_atom_t netMoveResize = 0;
+    if (!netMoveResize) {
+        xcb_intern_atom_cookie_t cookie = xcb_intern_atom (c, 0, strlen("_NET_WM_MOVERESIZE"), "_NET_WM_MOVERESIZE");
+        xcb_intern_atom_reply_t *reply = xcb_intern_atom_reply (c, cookie, NULL);
+        if (reply) {
+            netMoveResize = reply->atom;
+            free (reply);
+        }
+    }
 
     // "release" button
     xcb_button_release_event_t rev;
