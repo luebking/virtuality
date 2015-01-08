@@ -18,6 +18,7 @@
 
 #include <QPainter>
 #include <QWidget>
+#include <QVarLengthArray>
 #include <QtDebug>
 
 #include <cmath>
@@ -34,6 +35,59 @@ namespace BE { namespace FX { static Atom net_wm_cm; } }
 #endif
 
 using namespace BE;
+
+
+QPixmap &
+FX::scaledIcon(QPixmap &pix, int step, int maxSteps, int pad)
+{
+#if 1
+    static QVarLengthArray<float> table;
+    const int n = maxSteps + 1;
+    if (table.size() != n) {
+        table.resize(n);
+        const float accel = 0.5f;
+        const float factor = pow(0.5f, accel);
+        for (int i = (n+1)/2; i < n; ++i) {
+            float ratio = i/float(maxSteps);
+            if (ratio == 0.5f)
+                table[i] = 0.f;
+            else
+                table[i] = (pow(ratio - 0.5f, accel) + factor) / (2.0f*factor);
+        }
+        for (int i = 0; i <= n/2; ++i) {
+            table[i] = 1.0f - table[maxSteps-i];
+        }
+    }
+
+    const float ratio = table.at(step);
+#else
+    const float ratio = step/float(MAX_STEPS);
+#endif
+    static QPixmap scaledIcon[2], emptyIcon;
+    static qint64 lastIconPix[2] = {0, 0};
+    int idx = pix.cacheKey() == lastIconPix[0] ? 0 : (pix.cacheKey() == lastIconPix[1] ? 1 : -1);
+    if (idx < 0) {
+        idx = 1;
+        if (lastIconPix[1]) {
+            scaledIcon[0] = scaledIcon[1];
+            lastIconPix[0] = lastIconPix[1];
+        }
+        scaledIcon[1] = pix.scaledToHeight(pix.height() + 2*pad, Qt::SmoothTransformation);
+        if (emptyIcon.size() != scaledIcon[1].size()) {
+            emptyIcon = QPixmap(scaledIcon[1].size());
+        }
+        lastIconPix[1] = pix.cacheKey();
+    }
+
+    if (step == maxSteps)
+        return scaledIcon[idx];
+
+    emptyIcon.fill(Qt::transparent);
+
+    FX::blend(pix, emptyIcon, 1.0, pad, pad);
+    FX::blend(scaledIcon[idx], emptyIcon, ratio);
+    return emptyIcon;
+}
 
 /*
 // Exponential blur, Jani Huhtanen, 2006 ==========================
