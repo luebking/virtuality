@@ -60,7 +60,7 @@ int Style::pixelMetric( PixelMetric pm, const QStyleOption *option, const QWidge
     case PM_ScrollView_ScrollBarSpacing:
         return F(1);
     case PM_ScrollBarExtent: // Width of a vertical scroll bar and the height of a horizontal scroll bar
-        return F(9);
+        return config.slider.thickness - F(2);
     case PM_ScrollBarSliderMin: // The minimum height of a vertical scroll bar's slider and the minimum width of a horizontal scroll bar's slider
         return F(32);
     case PM_SliderThickness: // Total slider thickness
