@@ -361,13 +361,12 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
         painter->setMatrix(m, true);
     }
 
-    if ( !tab->icon.isNull() ) {
+    if (!tab->icon.isNull()) {
         QSize iconSize;
         if (const QStyleOptionTabV2 *tabV2 = qstyleoption_cast<const QStyleOptionTabV2*>(tab)) {
             iconSize = tabV2->iconSize;
         }
-        if ( !iconSize.isValid() )
-        {
+        if (!iconSize.isValid()) {
             if (const QTabBar* tabbar = qobject_cast<const QTabBar*>(widget)) {
                 iconSize = tabbar->iconSize();
             } else {
@@ -376,10 +375,52 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
             }
         }
         QPixmap tabIcon = tab->icon.pixmap(iconSize, (isEnabled) ? QIcon::Normal : QIcon::Disabled);
+        if (tab->text.isEmpty()) {
+            if (animStep || sunken) {
+#if 0
+                const int s = 1414*qMin(tr.width(), tr.height())/1000;
+                QRect gr(0,0,s,s);
+                gr.moveCenter(tr.center());
+                QRadialGradient rg(gr.center(), s/2.0f);
+                QColor bgc(config.invert.headers ? PAL.color(QPalette::Active, QPalette::WindowText) :
+                                                   PAL.color(QPalette::Active, QPalette::Window));
+                QColor c(FCOLOR(Highlight));
+                int contrast = FX::contrastOf(bgc, c);
+                if (contrast < 16) { // Bad contrast between Highlight and background...
+                    c = FX::blend(FCOLOR(Highlight), config.invert.headers ? FCOLOR(Window) : FCOLOR(WindowText), contrast, 8);
+                    contrast = FX::contrastOf(bgc, c);
+                }
+                c.setAlpha(sunken ? 96 + 1024/contrast : 255*animStep/6);
+                rg.setColorAt(0, c);
+                c.setAlpha(0);
+                rg.setColorAt(1, c);
+                painter->setClipping(false);
+                painter->fillRect(gr, rg);
+#else
+            if (sunken)
+                animStep = 12;
+            QColor c;
+            if (config.invert.headers)
+                c = FX::blend(PAL.color(QPalette::Active, QPalette::WindowText), FCOLOR(Window), 6-animStep/2, animStep/2);
+            else
+                c = FX::blend(PAL.color(QPalette::Active, QPalette::Window), FCOLOR(Highlight), 6-animStep/2, animStep/2);
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(c);
+            painter->drawRect(tr);
+#endif
+            }
+            painter->drawPixmap(tr.center() - QPoint(tabIcon.width(), tabIcon.height())/2, tabIcon);
+        } else {
+            painter->drawPixmap(tr.left() + F(9), tr.center().y() - tabIcon.height() / 2, tabIcon);
+            tr.setLeft(tr.left() + iconSize.width() + F(12));
+            alignment = (alignment & ~Qt::AlignHCenter) |  Qt::AlignLeft;
+        }
+    }
 
-        painter->drawPixmap(tr.left() + F(9), tr.center().y() - tabIcon.height() / 2, tabIcon);
-        tr.setLeft(tr.left() + iconSize.width() + F(12));
-        alignment = (alignment & ~Qt::AlignHCenter) |  Qt::AlignLeft;
+    if (tab->text.isEmpty()) {
+        painter->restore();
+        animStep = -1;
+        return;
     }
 
     if HAVE_OPTION(tabV3, TabV3) {
