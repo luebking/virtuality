@@ -535,15 +535,18 @@ Config::savePalette(const QPalette &pal)
 {
 
     // for Qt =====================================
-    QSettings settings("Trolltech");
-    settings.beginGroup("Qt");
-    settings.beginGroup("Palette");
+    const char* configs[2] = { "Trolltech", "QtProject" };
+    for (int i = 0; i < 2; ++i) {
+        QSettings settings(configs[i]);
+        settings.beginGroup("Qt");
+        settings.beginGroup("Palette");
 
-    settings.setValue ( "active", colors(pal, QPalette::Active) );
-    settings.setValue ( "inactive", colors(pal, QPalette::Inactive) );
-    settings.setValue ( "disabled", colors(pal, QPalette::Disabled) );
+        settings.setValue ( "active", colors(pal, QPalette::Active) );
+        settings.setValue ( "inactive", colors(pal, QPalette::Inactive) );
+        settings.setValue ( "disabled", colors(pal, QPalette::Disabled) );
 
-    settings.endGroup(); settings.endGroup();
+        settings.endGroup(); settings.endGroup();
+    }
 
     // and KDE ==== I'm now gonna mourn a bit and not allways be prudent...:
     //
