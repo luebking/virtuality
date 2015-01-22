@@ -176,7 +176,9 @@ Style::drawButtonFrame(const QStyleOption *option, QPainter *painter, const QWid
         SAVE_PAINTER(Pen|Brush|Alias);
 
         QColor c(oc);
-        if (!sunken) {
+        if (sunken) {
+            c = FCOLOR(Highlight);
+        } else {
             c = FX::blend(FCOLOR(Window), c, MAX_STEPS, 1 + (squareButton+1)*anim.step);
             if (hasFocus)
                 c = FX::blend(FCOLOR(Highlight), c, MAX_STEPS-anim.step, anim.step);
@@ -186,6 +188,8 @@ Style::drawButtonFrame(const QStyleOption *option, QPainter *painter, const QWid
         if (sunken) {
             painter->setPen(Qt::NoPen);
             painter->setBrush(c);
+            if (int(Style::halfStroke) != Style::halfStroke)
+                r.adjust(0.5f, 0.5f, -0.5f, -0.5f);
         } else {
             painter->setPen(QPen(c, FRAME_STROKE));
             painter->setBrush(Qt::NoBrush);
@@ -244,7 +248,7 @@ Style::drawPushButtonLabel(const QStyleOption *option, QPainter *painter, const 
     if (!btn->text.isEmpty()) {
         SAVE_PAINTER(Pen);
         if (sunken)
-            painter->setPen(FCOLOR(Button));
+            painter->setPen(FCOLOR(HighlightedText));
         else if (hasFocus)
             painter->setPen(FX::blend(FCOLOR(WindowText), FCOLOR(Highlight), MAX_STEPS-anim.step, anim.step));
         else if (btn->features & QStyleOptionButton::DefaultButton) {
@@ -319,7 +323,7 @@ Style::drawRadioOrCheckBox(const QStyleOption *option, QPainter *painter, const 
         painter->setBrush(Qt::NoBrush);
     } else if (sunken) {
         painter->setPen(Qt::NoPen);
-        painter->setBrush(FCOLOR(WindowText));
+        painter->setBrush(FCOLOR(Highlight));
     } else {
         const QColor c(FX::blend(FCOLOR(Window), FCOLOR(WindowText)));
         painter->setPen(QPen(hasFocus ? FX::blend(FCOLOR(Highlight), c, MAX_STEPS-animStep, animStep) : c, FRAME_STROKE));
@@ -338,7 +342,7 @@ Style::drawRadioOrCheckBox(const QStyleOption *option, QPainter *painter, const 
         const int d = intMin(F(4), r.height()/3);
         r.adjust(d, d, -d, -d);
         if (sunken) {
-            painter->setBrush(FCOLOR(Window));
+            painter->setBrush(FCOLOR(HighlightedText));
         } else if (hasFocus) {
             painter->setBrush(FX::blend(FCOLOR(WindowText), FCOLOR(Highlight), MAX_STEPS - animStep, animStep));
         } else {
