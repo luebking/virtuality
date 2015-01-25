@@ -755,6 +755,30 @@ static void shapeCorners( QWidget *widget, bool forceShadows )
     widget->setMask(mask);
 }
 
+void reBlur(QWidget *widget, bool round) {
+#ifdef BE_WS_X11
+    if (!(widget->windowOpacity() < 1.0 && widget->testAttribute(Qt::WA_WState_Created) &&
+          widget->internalWinId() && BE::isPlatformX11())) // TODO: port XProperty for wayland
+        return;
+
+    if (!round) {
+        unsigned long zero(0);
+        XProperty::set<unsigned long>(widget->winId(), XProperty::blurRegion, &zero, XProperty::LONG, 1);
+        return;
+    }
+
+    const int w = widget->rect().width();
+    const int h = widget->rect().height();
+    QVector<unsigned long> data(4 * 4);
+    data << 4 << 0 << w - 8 << h
+         << 0 << 4 << w << h - 8
+         << 2 << 1 << w - 4 << h - 2
+         << 1 << 2 << w - 2 << h - 4;
+
+    BE::XProperty::set<unsigned long>(widget->winId(), BE::XProperty::blurRegion, (unsigned long*)data.constData(), BE::XProperty::LONG, data.size());
+#endif
+}
+
 bool
 Style::eventFilter( QObject *object, QEvent *ev )
 {
@@ -1025,14 +1049,23 @@ Style::eventFilter( QObject *object, QEvent *ev )
                     shapeCorners( widget, false );
             }
 #ifdef BE_WS_X11
-            if (config.bg.blur && widget->windowOpacity() < 1.0 &&
-                widget->testAttribute(Qt::WA_WState_Created) << widget->internalWinId() &&
-                BE::isPlatformX11()) { // TODO: port XProperty for wayland
-                unsigned long zero(0);
-                XProperty::set<unsigned long>(widget->winId(), XProperty::blurRegion, &zero, XProperty::LONG, 1);
-            }
+            if (config.bg.blur)
+                reBlur(widget, config.frame.roundness > 2);
 #endif
             return false;
+        }
+        return false;
+    }
+
+    case QEvent::Resize:
+    {
+        QWidget * widget = qobject_cast<QWidget*>(object);
+        if (!widget)
+            return false;
+
+        // talk to kwin about colors, gradients, etc.
+        if (widget->isWindow() && widget->isVisible() && config.bg.blur) {
+            reBlur(widget, config.frame.roundness > 2);
         }
         return false;
     }
