@@ -118,7 +118,11 @@ int Style::styleHint(StyleHint hint, const QStyleOption *option, const QWidget *
     case SH_ScrollView_FrameOnlyAroundContents: // YES - period.
         return (!(widget && widget->inherits("QComboBoxListView")));
     case SH_MenuBar_AltKeyNavigation:
+#if QT_VERSION < 0x050000
         return true;
+#else
+        return false;
+#endif
     case SH_ComboBox_ListMouseTracking:
     case SH_Menu_MouseTracking:
     case SH_MenuBar_MouseTracking:
