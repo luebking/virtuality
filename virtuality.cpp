@@ -629,6 +629,10 @@ Style::swapPalette(QWidget *widget)
         originalPalette = 0;
         // ... reapply the shits...
         QMap<QWidget*, QString>::const_iterator shit = shits.constBegin();
+        qApp->installEventFilter(&eventKiller); // temp. change to trick next setStyleSheet calls
+                                                // nobody needs to know and some clients - looking at
+                                                // ktexteditor here - do *really* expensive stuff on app
+                                                // palette changes
         while (shit != shits.constEnd()) {
             QApplication::setPalette(shit.key()->palette());
             if (shit.value().isEmpty()) // *sigh*
@@ -638,6 +642,7 @@ Style::swapPalette(QWidget *widget)
         }
         // ... and reset the apps palette
         QApplication::setPalette(appPal);
+        qApp->removeEventFilter(&eventKiller);
         originalPalette = savedPal;
     }
 }
