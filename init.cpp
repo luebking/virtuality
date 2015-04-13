@@ -297,7 +297,7 @@ Style::init()
             appType = Konversation;
         else if (appName == "be.shell")
             appType = BEshell;
-        else if (appName == "plasma" || appName.startsWith("plasma-") || appName == "krunner")
+        else if (appName.startsWith("plasma") || appName == "krunner" || appName == "kscreenlocker_greet")
             appType = Plasma;
         else if (appName == "qbittorrent")
             appType = QBittorrent;

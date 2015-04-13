@@ -95,17 +95,19 @@ Style::drawLineEdit(const QStyleOption *option, QPainter *painter, const QWidget
     }
     const QRect oRect = RECT;
     if (needFill) {
+        OPT_FOCUS
         SAVE_PAINTER(Pen|Alias|Brush);
         painter->setPen(Qt::NoPen);
-        painter->setBrush(FCOLOR(Base));
+        painter->setBrush(hasFocus ? FX::blend(FCOLOR(Base), FCOLOR(Highlight), 6, 1) : FCOLOR(Base));
         painter->setRenderHint(QPainter::Antialiasing, true);
         const int rnd = (RECT.height()-1)/2;
         const int d = FRAME_STROKE_WIDTH;
         painter->drawRoundedRect(RECT.adjusted(d,d,-d,-d), rnd, rnd);
         RESTORE_PAINTER
         const_cast<QStyleOption*>(option)->rect.setX(RECT.x() + qMax(0, rnd - config.frame.roundness));
+    } else {
+        drawLineEditFrame(option, painter, widget);
     }
-    drawLineEditFrame(option, painter, widget);
     const_cast<QStyleOption*>(option)->rect = oRect;
 }
 
