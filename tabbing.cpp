@@ -46,8 +46,14 @@ Style::drawTabWidget(const QStyleOption *option, QPainter *painter, const QWidge
         tbb.selectedTabRect = twf2->selectedTabRect;
     }
 
+#if QT_VERSION >= 0x050000
+#define VALID_TABBAR_RECT twf->tabBarRect.isValid()
+#else
+#define VALID_TABBAR_RECT false
+#endif
+
 #define SET_BASE_HEIGHT(_o_) \
-baseHeight = (widget || twf->tabBarRect.isValid()) ? twf->tabBarSize._o_() : -1; \
+baseHeight = (widget || VALID_TABBAR_RECT) ? twf->tabBarSize._o_() : -1; \
 if (!baseHeight) { \
     RESTORE_PAINTER; return; \
 } /*  no base -> no tabbing -> no bottom border either. period.*/\
