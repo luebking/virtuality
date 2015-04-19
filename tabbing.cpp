@@ -47,7 +47,7 @@ Style::drawTabWidget(const QStyleOption *option, QPainter *painter, const QWidge
     }
 
 #define SET_BASE_HEIGHT(_o_) \
-baseHeight = twf->tabBarSize._o_(); \
+baseHeight = (widget || twf->tabBarRect.isValid()) ? twf->tabBarSize._o_() : -1; \
 if (!baseHeight) { \
     RESTORE_PAINTER; return; \
 } /*  no base -> no tabbing -> no bottom border either. period.*/\
@@ -327,6 +327,7 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
 {
     ASSURE_OPTION(tab, Tab);
     OPT_SUNKEN OPT_ENABLED OPT_SELECTED OPT_FOCUS
+    const bool inverted = widget && config.invert.headers; // inverted tabbars are atm. not possible w/ eg. QML
 
     calcAnimStep( option, painter, widget );
 
@@ -359,9 +360,9 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
             break;
     }
 
-    if (selected)
-    if HAVE_OPTION(tab3, TabV3)
-    if (tab3->documentMode) {
+    const QStyleOptionTabV3 *tabV3 = qstyleoption_cast<const QStyleOptionTabV3*>(option);
+
+    if (selected && tabV3 && tabV3->documentMode) {
         alignment &= ~(Qt::AlignBottom|Qt::AlignTop);
         alignment |= Qt::AlignVCenter;
     }
@@ -399,12 +400,12 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
                 QRect gr(0,0,s,s);
                 gr.moveCenter(tr.center());
                 QRadialGradient rg(gr.center(), s/2.0f);
-                QColor bgc(config.invert.headers ? PAL.color(QPalette::Active, QPalette::WindowText) :
+                QColor bgc(inverted ? PAL.color(QPalette::Active, QPalette::WindowText) :
                                                    PAL.color(QPalette::Active, QPalette::Window));
                 QColor c(FCOLOR(Highlight));
                 int contrast = FX::contrastOf(bgc, c);
                 if (contrast < 16) { // Bad contrast between Highlight and background...
-                    c = FX::blend(FCOLOR(Highlight), config.invert.headers ? FCOLOR(Window) : FCOLOR(WindowText), contrast, 8);
+                    c = FX::blend(FCOLOR(Highlight), inverted ? FCOLOR(Window) : FCOLOR(WindowText), contrast, 8);
                     contrast = FX::contrastOf(bgc, c);
                 }
                 c.setAlpha(sunken ? 96 + 1024/contrast : 255*animStep/6);
@@ -417,7 +418,7 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
             if (sunken)
                 animStep = 12;
             QColor c;
-            if (config.invert.headers)
+            if (inverted)
                 c = FX::blend(PAL.color(QPalette::Active, QPalette::WindowText), FCOLOR(Window), 6-animStep/2, animStep/2);
             else
                 c = FX::blend(PAL.color(QPalette::Active, QPalette::Window), FCOLOR(Highlight), 6-animStep/2, animStep/2);
@@ -445,7 +446,7 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
         return;
     }
 
-    if HAVE_OPTION(tabV3, TabV3) {
+    if (tabV3) {
         if (vertical) {
             if (tabV3->leftButtonSize.isValid())
                 tr.setLeft(tr.left() + tabV3->leftButtonSize.height() + F(4));
@@ -462,7 +463,7 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
     // color adjustment
     bool elide(false);
     QColor cF, cB;
-    if (config.invert.headers) {
+    if (inverted) {
         cF = hasFocus && selected &&
              FX::haveContrast(FCOLOR(Highlight), FCOLOR(WindowText)) ? FCOLOR(Highlight) : FCOLOR(Window);
         cB = FCOLOR(WindowText);
@@ -476,7 +477,7 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
             setBold(painter, tab->text, tr.width());
         } else {
             QFont fnt(painter->font());
-            if (!config.invert.headers)
+            if (!inverted)
                 fnt.setBold(true);
             if (fnt.pointSize() > 0) {
                 fnt.setPointSize(16*fnt.pointSize()/10);

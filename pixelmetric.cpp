@@ -18,6 +18,7 @@
 
 #include <QAbstractScrollArea>
 #include <QFrame>
+#include <QFontMetrics>
 #include <QSlider>
 #include <QStyleOptionTabWidgetFrame>
 #include <QTabBar>
@@ -122,10 +123,10 @@ int Style::pixelMetric( PixelMetric pm, const QStyleOption *option, const QWidge
     case PM_TabBarBaseOverlap: { // Number of pixels the tab bar overlaps the tab bar base
     // ... but yesterday it was...
 #if 1
-        if (!widget)
-            return F(16);
+        if (!widget) // dragging the base below the tabs doesn't work w/ QML :-(
+            return 0; //16*QFontMetrics(QFont()).height()/10;
 
-        if (appType == KDevelop )
+        if (appType == KDevelop)
             return 0;
 
         const QTabBar *tabBar = qobject_cast<const QTabBar*>(widget);
