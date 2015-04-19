@@ -94,30 +94,30 @@ Style::drawTabBar(const QStyleOption *option, QPainter *painter, const QWidget *
     if (!config.invert.headers) {
         if (tbb->selectedTabRect.isEmpty())
             return; // only paint tab shapes
-        if HAVE_OPTION(tbb2, TabBarBaseV2) {
-            if (tbb2->documentMode) {
-                return; // useless and adds confliciting horizintal lines
-            }
-        }
+
+        if HAVE_OPTION(tbb2, TabBarBaseV2)
+        if (tbb2->documentMode)
+            return; // useless and adds confliciting horizintal lines
+
         SAVE_PAINTER(Pen|Alias);
         painter->setRenderHint(QPainter::Antialiasing, false);
         painter->setPen(QPen(FRAME_COLOR, FRAME_STROKE_WIDTH));
         switch (tbb->shape) {
         case QTabBar::RoundedNorth: case QTabBar::TriangularNorth:
             painter->drawLine(RECT.x(), RECT.bottom(), tbb->selectedTabRect.x(), RECT.bottom());
-            painter->drawLine(tbb->selectedTabRect.right(), RECT.bottom(), RECT.right(), RECT.bottom());
+            painter->drawLine(tbb->selectedTabRect.right() + 1, RECT.bottom(), RECT.right(), RECT.bottom());
             break;
         case QTabBar::RoundedSouth: case QTabBar::TriangularSouth:
             painter->drawLine(RECT.x(), RECT.top(), tbb->selectedTabRect.x(), RECT.top());
-            painter->drawLine(tbb->selectedTabRect.right(), RECT.top(), RECT.right(), RECT.top());
+            painter->drawLine(tbb->selectedTabRect.right() + 1, RECT.top(), RECT.right(), RECT.top());
             break;
         case QTabBar::RoundedEast: case QTabBar::TriangularEast:
             painter->drawLine(RECT.x(), RECT.y(), RECT.x(), tbb->selectedTabRect.y());
-            painter->drawLine(RECT.x(), tbb->selectedTabRect.bottom(), RECT.x(), RECT.bottom());
+            painter->drawLine(RECT.x(), tbb->selectedTabRect.bottom() + 1, RECT.x(), RECT.bottom());
             break;
         case QTabBar::RoundedWest: case QTabBar::TriangularWest:
             painter->drawLine(RECT.right(), RECT.y(), RECT.right(), tbb->selectedTabRect.y());
-            painter->drawLine(RECT.right(), tbb->selectedTabRect.bottom(), RECT.right(), RECT.bottom());
+            painter->drawLine(RECT.right(), tbb->selectedTabRect.bottom() + 1, RECT.right(), RECT.bottom());
             break;
         }
         RESTORE_PAINTER
@@ -272,6 +272,10 @@ Style::drawTab(const QStyleOption *option, QPainter *painter, const QWidget *wid
 void
 Style::drawTabShape(const QStyleOption *option, QPainter *painter, const QWidget *) const
 {
+    if HAVE_OPTION(tab3, TabV3) {
+        if (tab3->documentMode)
+            return; // useless and adds confliciting horizintal lines resp. wrong colors
+    }
     if (config.invert.headers) {
         SAVE_PAINTER(Pen|Brush);
         painter->setPen(Qt::NoPen);
@@ -279,12 +283,9 @@ Style::drawTabShape(const QStyleOption *option, QPainter *painter, const QWidget
         painter->drawRect(RECT);
         RESTORE_PAINTER
     } else if (!(option->state & State_Selected)) {
-        if HAVE_OPTION(tab3, TabV3) {
-            if (tab3->documentMode)
-                return; // useless and adds confliciting horizintal lines
-        }
         ASSURE_OPTION(tab, Tab);
-        SAVE_PAINTER(Pen|Alias);
+        SAVE_PAINTER(Pen|Alias|Brush);
+        painter->setClipping(false);
         painter->setPen(QPen(FRAME_COLOR, FRAME_STROKE_WIDTH));
         painter->setRenderHint(QPainter::Antialiasing, false);
         switch (tab->shape) {
@@ -301,6 +302,22 @@ Style::drawTabShape(const QStyleOption *option, QPainter *painter, const QWidget
             painter->drawLine(RECT.topRight(), RECT.bottomRight());
             break;
         }
+#if 0
+        painter->setBrush(tab->selectedPosition == QStyleOptionTab::NextIsSelected ?
+                                                                       FRAME_COLOR : FCOLOR(Window));
+        painter->setRenderHint(QPainter::Antialiasing);
+        QRect r(0,0,F(8),F(8));
+        r.moveBottom(RECT.bottom() + F(4));
+        if (tab->position != QStyleOptionTab::End) {
+            r.moveRight(RECT.right());
+            painter->drawEllipse(r);
+        }
+        if (tab->selectedPosition == QStyleOptionTab::PreviousIsSelected) {
+            r.moveLeft(RECT.left());
+            painter->setBrush(FRAME_COLOR);
+            painter->drawEllipse(r);
+        }
+#endif
         RESTORE_PAINTER
     }
 }
@@ -411,7 +428,12 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
             }
             painter->drawPixmap(tr.center() - QPoint(tabIcon.width(), tabIcon.height())/2, tabIcon);
         } else {
-            painter->drawPixmap(tr.left() + F(9), tr.center().y() - tabIcon.height() / 2, tabIcon);
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(tabIcon);
+            QPoint pos(tr.left() + F(9), tr.center().y() - tabIcon.height() / 2);
+            painter->setBrushOrigin(pos);
+            painter->setRenderHint(QPainter::Antialiasing);
+            painter->drawEllipse(QRect(pos, tabIcon.size()));
             tr.setLeft(tr.left() + iconSize.width() + F(12));
             alignment = (alignment & ~Qt::AlignHCenter) |  Qt::AlignLeft;
         }
