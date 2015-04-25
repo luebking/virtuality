@@ -424,12 +424,15 @@ Style::polish( QWidget * widget )
         //BEGIN Popup menu handling                                                                -
         if (QMenu *menu = qobject_cast<QMenu *>(widget)) {
             // opacity
-            if ( !(menu->testAttribute(Qt::WA_TranslucentBackground) || (kStyleFeatureRequest & NoARGB)) && (config.bg.modal.opacity != 0xff || config.frame.roundness))  {
-                menu->setAttribute(Qt::WA_TranslucentBackground);
-                menu->setAttribute(Qt::WA_StyledBackground);
-                menu->setAutoFillBackground(false);
-            } else
+            if ((config.bg.modal.opacity != 0xff || config.frame.roundness) && !(kStyleFeatureRequest & NoARGB)) {
+                if (appType == Plasma || !(menu->testAttribute(Qt::WA_TranslucentBackground))) {
+                    menu->setAttribute(Qt::WA_TranslucentBackground);
+                    menu->setAttribute(Qt::WA_StyledBackground);
+                    menu->setAutoFillBackground(false);
+                }
+            } else {
                 menu->setAutoFillBackground(true);
+            }
 
             // color swapping
             if (config.invert.menus)
