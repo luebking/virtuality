@@ -416,8 +416,16 @@ Hacks::eventFilter(QObject *o, QEvent *e)
             QFont fnt(container->font());
             fnt.setPointSizeF(float(2*fh*72)/label->logicalDpiY());
             const QRect br = QFontMetrics(fnt).boundingRect(strings.at(0));
+            float f = 1.0f;
             if (br.width() > r.width())
-                fnt.setPointSizeF(fnt.pointSizeF()*r.width()/br.width());
+                f = float(r.width())/br.width();
+            // despite the font size being smaller than tightBoundingRect,
+            // boundingRect is bigger what leads to cut off descents
+            // -> pick a fontsize adjust by slightly more than half the difference
+            if (br.height() > r.height())
+                f = qMin(f, (r.height()+(br.height()-r.height())/2.25f)/br.height());
+            if (f < 1.0f)
+                fnt.setPointSizeF(fnt.pointSizeF()*f);
             r.setBottom(r.top()+2*fh);
             p.setFont(fnt);
             p.drawText(r, Qt::AlignLeft|Qt::AlignVCenter|Qt::TextSingleLine, strings.at(0));
