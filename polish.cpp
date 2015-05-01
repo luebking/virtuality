@@ -490,9 +490,13 @@ Style::polish( QWidget * widget )
                     frame->setAutoFillBackground(true);
                     frame->setBackgroundRole(QPalette::WindowText);
                     frame->setForegroundRole(QPalette::Window);
+                    if (frame->layout())
+                        frame->layout()->setContentsMargins(F(6),0,F(6),0);
                 } else {
                     frame->setFrameShape(QFrame::NoFrame);
                     frame->setAutoFillBackground(false);
+                    if (frame->layout())
+                        frame->layout()->setContentsMargins(0,0,0,0);
                 }
                 QList<QLabel*> labels = frame->findChildren<QLabel*>();
                 foreach (QLabel *label, labels) {

@@ -421,14 +421,16 @@ Hacks::eventFilter(QObject *o, QEvent *e)
                 f = float(r.width())/br.width();
             // despite the font size being smaller than tightBoundingRect,
             // boundingRect is bigger what leads to cut off descents
-            // -> pick a fontsize adjust by slightly more than half the difference
+            // -> pick a fontsize adjust by a third of the difference
             if (br.height() > r.height())
-                f = qMin(f, (r.height()+(br.height()-r.height())/2.25f)/br.height());
+                f = qMin(f, (r.height()+(br.height()-r.height())/3.0f)/br.height());
             if (f < 1.0f)
                 fnt.setPointSizeF(fnt.pointSizeF()*f);
             r.setBottom(r.top()+2*fh);
             p.setFont(fnt);
-            p.drawText(r, Qt::AlignLeft|Qt::AlignVCenter|Qt::TextSingleLine, strings.at(0));
+//             const int align = Qt::AlignVCenter|Qt::TextSingleLine|(strings.count() > 1 ? Qt::AlignLeft : Qt::AlignHCenter);
+            const int align = Qt::AlignVCenter|Qt::TextSingleLine|Qt::AlignLeft;
+            p.drawText(r, align, strings.at(0));
 
             if (strings.count() < 2)
                 return true;
@@ -770,6 +772,9 @@ Hacks::add(QWidget *w)
     if (QLabel *label = qobject_cast<QLabel*>(w))
     if (QFrame *frame = qobject_cast<QFrame*>(label->parentWidget()))
     if (frame->parentWidget() && frame->parentWidget()->inherits("KTitleWidget")) {
+        QFont fnt = label->font();
+        fnt.setPointSizeF(fnt.pointSizeF() * 1.5);
+        label->setMinimumHeight(QFontMetrics(fnt).height());
         ENSURE_INSTANCE;
         FILTER_EVENTS(label);
     }
