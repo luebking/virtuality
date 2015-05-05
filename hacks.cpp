@@ -421,9 +421,10 @@ Hacks::eventFilter(QObject *o, QEvent *e)
                 f = float(r.width())/br.width();
             // despite the font size being smaller than tightBoundingRect,
             // boundingRect is bigger what leads to cut off descents
-            // -> pick a fontsize adjust by a third of the difference
+            // -> pick a fontsize adjust by a resolution dependent fraction of the difference
             if (br.height() > r.height())
-                f = qMin(f, (r.height()+(br.height()-r.height())/3.0f)/br.height());
+                f = qMin(f, (r.height()+(br.height()-r.height())/(label->logicalDpiY()/30.0f))/br.height());
+//                 f = qMin(f, float(r.height())/br.height());
             if (f < 1.0f)
                 fnt.setPointSizeF(fnt.pointSizeF()*f);
             r.setBottom(r.top()+2*fh);
