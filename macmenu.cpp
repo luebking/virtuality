@@ -155,7 +155,7 @@ MacMenu::activate(QMenuBar *menu)
     menu->removeEventFilter(this);
 
     // and WOWWWW - no more per window menubars...
-    menu->setFixedSize(0,0);
+    menu->setFixedSize(1,0);
     //NOTICE i used to set the menu's parent->layout()->setMenuBar(0) to get rid of the free space
     // but this leads to side effects (e.g. kcalc won't come up anymore...)
     // so now the stylehint for the free space below checks the menubar height and returns
@@ -462,9 +462,9 @@ MacMenu::eventFilter(QObject *o, QEvent *ev)
     {
     case QEvent::Resize:
 //         menu->setSizePolicy(QSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored));
-        if (menu->size() != QSize(0,0))
+        if (menu->size() != QSize(1,0))
         {
-            menu->setFixedSize(0,0);
+            menu->setFixedSize(1,0);
             menu->updateGeometry();
         }
         break;
