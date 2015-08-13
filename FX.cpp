@@ -36,10 +36,7 @@ namespace BE { namespace FX { static Atom net_wm_cm; } }
 
 using namespace BE;
 
-
-QPixmap &
-FX::scaledIcon(QPixmap &pix, int step, int maxSteps, int pad)
-{
+static float ratioFor(int step, int maxSteps) {
 #if 1
     static QVarLengthArray<float> table;
     const int n = maxSteps + 1;
@@ -59,10 +56,16 @@ FX::scaledIcon(QPixmap &pix, int step, int maxSteps, int pad)
         }
     }
 
-    const float ratio = table.at(step);
+    return table.at(step);
 #else
-    const float ratio = step/float(MAX_STEPS);
+    return step/float(MAX_STEPS);
 #endif
+}
+
+QPixmap &
+FX::scaledIcon(QPixmap &pix, int step, int maxSteps, int pad)
+{
+    const float ratio = ratioFor(step, maxSteps);
     static QPixmap scaledIcon[2], emptyIcon;
     static qint64 lastIconPix[2] = {0, 0};
     int idx = pix.cacheKey() == lastIconPix[0] ? 0 : (pix.cacheKey() == lastIconPix[1] ? 1 : -1);
@@ -86,6 +89,50 @@ FX::scaledIcon(QPixmap &pix, int step, int maxSteps, int pad)
 
     FX::blend(pix, emptyIcon, 1.0, pad, pad);
     FX::blend(scaledIcon[idx], emptyIcon, ratio);
+    return emptyIcon;
+}
+
+QPixmap &
+FX::tintedIcon(QPixmap &pix, int step, int maxSteps, QColor tint)
+{
+    const float ratio = ratioFor(step, maxSteps);
+    static QPixmap tintedIcon[2], emptyIcon;
+    static qint64 lastIconPix[2] = {0, 0};
+    int idx = pix.cacheKey() == lastIconPix[0] ? 0 : (pix.cacheKey() == lastIconPix[1] ? 1 : -1);
+    if (idx < 0) {
+        idx = 1;
+        if (lastIconPix[1]) {
+            tintedIcon[0] = tintedIcon[1];
+            lastIconPix[0] = lastIconPix[1];
+        }
+        QImage img = pix.toImage().convertToFormat(QImage::Format_ARGB32);
+        int size = img.width() * img.height();
+        QRgb *pixel = (QRgb*)img.bits();
+        const int r = tint.red(), g = tint.green(), b = tint.blue();
+        for (int i = 0; i < size; ++i) {
+            if (int a = qAlpha(*pixel)) {
+                const int v = qGray(*pixel);
+                // stretch alpha
+                a = 255 - v*a/255;
+                a = 255 - a*a/255;
+                *pixel = qRgba(r, g, b, a);
+            }
+            ++pixel;
+        }
+        tintedIcon[1] = QPixmap::fromImage(img);
+        if (emptyIcon.size() != tintedIcon[1].size()) {
+            emptyIcon = QPixmap(tintedIcon[1].size());
+        }
+        lastIconPix[1] = pix.cacheKey();
+    }
+
+    if (step == maxSteps)
+        return tintedIcon[idx];
+
+    emptyIcon.fill(Qt::transparent);
+
+    FX::blend(pix, emptyIcon, 1.0-ratio);
+    FX::blend(tintedIcon[idx], emptyIcon, ratio);
     return emptyIcon;
 }
 

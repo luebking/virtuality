@@ -193,7 +193,8 @@ Style::drawToolButtonLabel(const QStyleOption *option, QPainter *painter, const 
         }
 #endif
         else if (step && !(sunken || pm.isNull()))
-            pm = FX::scaledIcon(pm, step, Animator::Hover::maxSteps(), F(2));
+            pm = FX::tintedIcon(pm, step, Animator::Hover::maxSteps(), FCOLOR(Highlight));
+//             pm = FX::scaledIcon(pm, step, Animator::Hover::maxSteps(), F(2));
         pmSize = pm.size();
     }
 
