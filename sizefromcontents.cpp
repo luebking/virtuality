@@ -46,20 +46,19 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
     switch ( ct )
     {
     case CT_CheckBox: // A check box, like QCheckBox
-    case CT_RadioButton: // A radio button, like QRadioButton
-        if HAVE_OPTION(btn, Button)
-        {
-            const int indicator = pixelMetric(PM_IndicatorHeight, btn, widget);
-            int w, h;
-            w = h = qMax( indicator, indicator );
-            h = qMax(qMax(4*FRAME_STROKE_WIDTH, h), contentsSize.height() + 4);
+    case CT_RadioButton: { // A radio button, like QRadioButton
+        int w, h;
+        w = h = pixelMetric(PM_IndicatorHeight, option, widget);
+        h = qMax(qMax(4*FRAME_STROKE_WIDTH, h), contentsSize.height() + 4);
 
-            int margin = 0;
-            // we add 4 pixels for label margins
+        int margin = 0;
+        // we add 4 pixels for label margins
+        if HAVE_OPTION(btn, Button) { // some views send ViewOptions
             if (btn->icon.isNull() || !btn->text.isEmpty())
                 margin = F(4);
-            return QSize(contentsSize.width() + w + margin, h);
         }
+        return QSize(contentsSize.width() + w + margin, h);
+    }
     case CT_ComboBox: // A combo box, like QComboBox
         if HAVE_OPTION(cb, ComboBox)
         {
