@@ -853,6 +853,8 @@ Style::polish( QWidget * widget )
             pal.setColor(QPalette::Disabled, QPalette::Text, pal.color(QPalette::Disabled, QPalette::WindowText));
             widget->setPalette(pal);
         }
+    } else if (widget->inherits("Marble::MarbleWidget")) {
+        widget->setAttribute(Qt::WA_NoMousePropagation, true);
     }
 #if 0
 // #ifdef BE_WS_X11
