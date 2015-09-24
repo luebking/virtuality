@@ -849,7 +849,6 @@ Style::eventFilter( QObject *object, QEvent *ev )
         } else if ( QTabWidget *tw = qobject_cast<QTabWidget*>( object ) ) {
             // those don't paint frames and rely on the tabbar, which we ruled and rule out (looks weird with e.g. cornerwidgets...)
             if (tw->documentMode()) {
-                QPainter p(tw);
                 QStyleOptionTabBarBaseV2 opt;
                 opt.initFrom(tw);
                 opt.documentMode = true;
@@ -863,12 +862,21 @@ Style::eventFilter( QObject *object, QEvent *ev )
 #else
                 bar = tw->tabBar();
 #endif
+                int thickness = 0;
                 if (bar) {
+                    if (bar->isHidden())
+                        return true;
                     opt.rect = bar->geometry();
                     opt.selectedTabRect = bar->tabRect(bar->currentIndex()).translated(opt.rect.topLeft());
+                    thickness = 1;
+                } else {
+                    thickness = pixelMetric(PM_TabBarBaseHeight, &opt, tw);
                 }
 
-                const int thickness = pixelMetric(PM_TabBarBaseHeight, &opt, tw);
+                if (thickness < 1) {
+                    return true;
+                }
+
                 switch (tw->tabPosition()) {
                     default:
                     case QTabWidget::North:
@@ -905,8 +913,11 @@ Style::eventFilter( QObject *object, QEvent *ev )
                         opt.shape = QTabBar::RoundedEast; break;
                 }
 
-                opt.tabBarRect = opt.rect;
+                if (opt.rect.isEmpty())
+                    return true; // pointless
 
+                opt.tabBarRect = opt.rect;
+                QPainter p(tw);
                 drawTabBar(&opt, &p, NULL);
                 p.end();
                 return true; // don't let it paint weird stuff on the cornerwidgets etc.
