@@ -76,15 +76,15 @@ FX::scaledIcon(QPixmap &pix, int step, int maxSteps, int pad)
             lastIconPix[0] = lastIconPix[1];
         }
         scaledIcon[1] = pix.scaledToHeight(pix.height() + 2*pad, Qt::SmoothTransformation);
-        if (emptyIcon.size() != scaledIcon[1].size()) {
-            emptyIcon = QPixmap(scaledIcon[1].size());
-        }
         lastIconPix[1] = pix.cacheKey();
     }
 
     if (step == maxSteps)
         return scaledIcon[idx];
 
+    if (emptyIcon.size() != scaledIcon[idx].size()) {
+        emptyIcon = QPixmap(scaledIcon[idx].size());
+    }
     emptyIcon.fill(Qt::transparent);
 
     FX::blend(pix, emptyIcon, 1.0, pad, pad);
@@ -120,15 +120,15 @@ FX::tintedIcon(QPixmap &pix, int step, int maxSteps, QColor tint)
             ++pixel;
         }
         tintedIcon[1] = QPixmap::fromImage(img);
-        if (emptyIcon.size() != tintedIcon[1].size()) {
-            emptyIcon = QPixmap(tintedIcon[1].size());
-        }
         lastIconPix[1] = pix.cacheKey();
     }
 
     if (step == maxSteps)
         return tintedIcon[idx];
 
+    if (emptyIcon.size() != pix.size()) {
+        emptyIcon = QPixmap(pix.size());
+    }
     emptyIcon.fill(Qt::transparent);
 
     FX::blend(pix, emptyIcon, 1.0-ratio);
