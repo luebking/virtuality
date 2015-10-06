@@ -298,6 +298,29 @@ polishGTK(QWidget * widget)
 
 static QAction *dockLocker = 0;
 
+static void invertContainer(QWidget *widget, const QPalette &invertedPalette)
+{
+    widget->setPalette(invertedPalette);
+    QList<QWidget*> kids = widget->findChildren<QWidget*>();
+    for (int i = kids.count()-1; i > -1; --i) {
+        QWidget *kid = kids.at(i);
+        if (kid->testAttribute(Qt::WA_SetPalette) || kid->testAttribute(Qt::WA_StyleSheet)) {
+            kid->setPalette(invertedPalette); // shitted widgets inherit the app wide palette ...
+        }
+        if (kid->testAttribute(Qt::WA_StyleSheet) && !kid->styleSheet().isEmpty()) {
+            QString shit(kid->styleSheet());
+            // the shit uses the app wide FG color, so we need to force the correct one
+            // NOTICE: the leading ';' is for semi-broken styleshits that omit the trailing ';'
+            int idx = shit.lastIndexOf('}');
+            if (idx > -1)
+                shit = shit.left(idx) + ";color:" + invertedPalette.color(QPalette::Active, QPalette::WindowText).name() + ";}";
+            else
+                shit.append(";color:" + invertedPalette.color(QPalette::Active, QPalette::WindowText).name() + ";");
+            kid->setStyleSheet(shit);
+        }
+    }
+}
+
 void
 Style::polish( QWidget * widget )
 {
@@ -797,7 +820,7 @@ Style::polish( QWidget * widget )
             if (QWidget *window = widget->window())
                 window->setProperty("Virtuality.invertTitlebar", true);
             dock->setProperty("Virtuality.inverted", true);
-            dock->setPalette(invertedPalette);
+            invertContainer(dock, invertedPalette);
             dock->setAutoFillBackground(true);
         }
         if ( Hacks::config.lockDocks ) {
@@ -815,7 +838,7 @@ Style::polish( QWidget * widget )
             if (QWidget *window = widget->window())
                 window->setProperty("Virtuality.invertTitlebar", true);
             mbar->setProperty("Virtuality.inverted", true);
-            mbar->setPalette(invertedPalette);
+            invertContainer(mbar, invertedPalette);
             mbar->setAutoFillBackground(true);
         }
 #ifndef QT_NO_DBUS
@@ -892,25 +915,7 @@ Style::polish( QWidget * widget )
         widget->setProperty("Virtuality.inverted", true);
         window->setProperty("Virtuality.invertTitlebar", true);
         widget->setAutoFillBackground(true);
-        widget->setPalette(invertedPalette);
-        QList<QWidget*> kids = widget->findChildren<QWidget*>();
-        for (int i = kids.count()-1; i > -1; --i) {
-            QWidget *kid = kids.at(i);
-            if (kid->testAttribute(Qt::WA_SetPalette) || kid->testAttribute(Qt::WA_StyleSheet)) {
-                kid->setPalette(invertedPalette); // shitted widgets inherit the app wide palette ...
-            }
-            if (kid->testAttribute(Qt::WA_StyleSheet) && !kid->styleSheet().isEmpty()) {
-                QString shit(kid->styleSheet());
-                // the shit uses the app wide FG color, so we need to force the correct one
-                // NOTICE: the leading ';' is for semi-broken styleshits that omit the trailing ';'
-                int idx = shit.lastIndexOf('}');
-                if (idx > -1)
-                    shit = shit.left(idx) + ";color:" + invertedPalette.color(QPalette::Active, QPalette::WindowText).name() + ";}";
-                else
-                    shit.append(";color:" + invertedPalette.color(QPalette::Active, QPalette::WindowText).name() + ";");
-                kid->setStyleSheet(shit);
-            }
-        }
+        invertContainer(widget, invertedPalette);
     }
 
     // Arora needs a separator between the buttons and the lineedit - looks megadull w/ shaped buttons otherwise :-(
@@ -949,7 +954,7 @@ Style::polish( QWidget * widget )
          widget->inherits("KonqFrameStatusBar") || widget->inherits("KonqStatusBarMessageLabel"))) {
         widget->setAutoFillBackground(true);
         widget->setProperty("Virtuality.inverted", true);
-        widget->setPalette(invertedPalette);
+        invertContainer(widget, invertedPalette);
     }
 
     /// this is for QToolBox kids - they're autofilled by default - what looks crap
