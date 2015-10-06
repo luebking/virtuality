@@ -159,10 +159,13 @@ Style::drawScrollBar(const QStyleOptionComplex *option, QPainter *painter, const
 
     // we paint the slider bg ourselves, as otherwise a frame repaint would be
     // triggered (for no sense)
-    if (!widget) // fallback ===========
-        painter->fillRect(RECT, FCOLOR(Window));
-
-    else if (isWebKit || widget->testAttribute(Qt::WA_OpaquePaintEvent))
+    if (!widget) { // fallback ===========
+#if QT_VERSION >= 0x050000
+        if (!scrollbar->styleObject ||
+            scrollbar->styleObject->isWidgetType()) // not required for graphicsitems and quickstyleitems
+#endif
+            painter->fillRect(RECT, FCOLOR(Window));
+    } else if (isWebKit || widget->testAttribute(Qt::WA_OpaquePaintEvent))
     {   /// fake a transparent bg (real transparency leads to frame22 painting overhead)
         // i.e. we erase the bg with the window background or any autofilled element between
 
