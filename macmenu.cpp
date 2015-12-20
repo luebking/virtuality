@@ -256,10 +256,10 @@ void
 MacMenu::deactivate(QMenuBar *menu)
 {
     menu->removeEventFilter(this);
-    const bool wasShown = menu->isVisible();
+    QWidget *dad = menu->parentWidget();
+    const bool wasShown = dad ? menu->isVisibleTo(dad) : menu->isVisible();
     menu->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
-    if (QWidget *dad = menu->parentWidget())
-    if (dad->layout())
+    if (dad && dad->layout())
         dad->layout()->setMenuBar(menu);
     menu->setVisible(wasShown);
     menu->adjustSize();
