@@ -18,6 +18,7 @@
 
 #include <QAbstractScrollArea>
 #include <QApplication>
+#include <QScrollBar>
 #include <QTimer>
 #include <QtDebug>
 #include "draw.h"
@@ -54,6 +55,15 @@ detectScrollAreaStates(const QWidget* slider)
             QRegion scrollArea(tl.x(), tl.y(), scrollWidget->width(), scrollWidget->height());
             QList<QAbstractScrollArea*> scrollChilds = scrollWidget->findChildren<QAbstractScrollArea*>();
             for (int i = 0; i < scrollChilds.size(); ++i) {
+                if (scrollChilds[i]->testAttribute(Qt::WA_TransparentForMouseEvents))
+                    continue;
+                int d = 0;
+                if (QScrollBar *bar = scrollChilds[i]->verticalScrollBar())
+                    d += bar->maximum() - bar->minimum();
+                if (QScrollBar *bar = scrollChilds[i]->horizontalScrollBar())
+                    d += bar->maximum() - bar->minimum();
+                if (!d)
+                    continue;
                 QPoint tl = scrollChilds[i]->mapToGlobal(QPoint(0,0));
                 scrollArea -= QRegion(tl.x(), tl.y(), scrollChilds[i]->width(), scrollChilds[i]->height());
             }
