@@ -51,25 +51,30 @@ detectScrollAreaStates(const QWidget* slider)
         if (scrollWidget->hasFocus())
             gs_scrollAreaState |= HasFocus;
         if (scrollWidget->underMouse()) {
-            QPoint tl = scrollWidget->mapToGlobal(QPoint(0,0));
-            QRegion scrollArea(tl.x(), tl.y(), scrollWidget->width(), scrollWidget->height());
-            QList<QAbstractScrollArea*> scrollChilds = scrollWidget->findChildren<QAbstractScrollArea*>();
-            for (int i = 0; i < scrollChilds.size(); ++i) {
-                if (scrollChilds[i]->testAttribute(Qt::WA_TransparentForMouseEvents))
-                    continue;
-                int d = 0;
-                if (QScrollBar *bar = scrollChilds[i]->verticalScrollBar())
-                    d += bar->maximum() - bar->minimum();
-                if (QScrollBar *bar = scrollChilds[i]->horizontalScrollBar())
-                    d += bar->maximum() - bar->minimum();
-                if (!d)
-                    continue;
-                QPoint tl = scrollChilds[i]->mapToGlobal(QPoint(0,0));
-                scrollArea -= QRegion(tl.x(), tl.y(), scrollChilds[i]->width(), scrollChilds[i]->height());
+            if (scrollWidget->geometry().y() < -400000) { // khtmlview and some other widget set off a render dummy
+                gs_scrollAreaState |= Hovered;               // by -500000px, leading to a weird global position
+            } else {
+                QPoint tl = scrollWidget->mapToGlobal(QPoint(0,0));
+                QRegion scrollArea(tl.x(), tl.y(), scrollWidget->width(), scrollWidget->height());
+                QList<QAbstractScrollArea*> scrollChilds = scrollWidget->findChildren<QAbstractScrollArea*>();
+                for (int i = 0; i < scrollChilds.size(); ++i) {
+                    if (scrollChilds[i]->testAttribute(Qt::WA_TransparentForMouseEvents))
+                        continue;
+                    if (scrollChilds[i]->geometry().y() < -400000)
+                        continue; // see above ... D'OHHH
+                    int d = 0;
+                    if (QScrollBar *bar = scrollChilds[i]->verticalScrollBar())
+                        d += bar->maximum() - bar->minimum();
+                    if (QScrollBar *bar = scrollChilds[i]->horizontalScrollBar())
+                        d += bar->maximum() - bar->minimum();
+                    if (!d)
+                        continue;
+                    QPoint tl = scrollChilds[i]->mapToGlobal(QPoint(0,0));
+                    scrollArea -= QRegion(tl.x(), tl.y(), scrollChilds[i]->width(), scrollChilds[i]->height());
+                }
+                if (scrollArea.contains(QCursor::pos()))
+                    gs_scrollAreaState |= Hovered;
             }
-
-            if (scrollArea.contains(QCursor::pos()))
-                gs_scrollAreaState |= Hovered;
         }
     } else {
         gs_scrollAreaState |= Hovered;
