@@ -67,6 +67,9 @@ MacMenu::MacMenu() : QObject()
     QDBusConnection::sessionBus().registerObject("/XBarClient", this);
 
     connect (qApp, SIGNAL(aboutToQuit()), this, SLOT(deactivate()));
+#if QT_VERSION >= 0x050000
+    connect (qApp, &QCoreApplication::aboutToQuit, this, [] { delete instance; instance = 0; });
+#endif
 }
 
 
