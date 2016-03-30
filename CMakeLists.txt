@@ -2,6 +2,7 @@ project(virtuality)
 cmake_minimum_required(VERSION 2.8.12)
 
 set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules )
+
 if(WIN32)
     set(CMAKE_DEBUG_POSTFIX "d")
 #     add_definitions("-D_CRT_SECURE_NO_WARNINGS")
@@ -100,6 +101,8 @@ else (WITH_QT5)
 endif (WITH_QT5)
 
 add_library (virtuality SHARED ${virtuality_SOURCES} ${virtuality_MOC_SRCS} ${virtuality_HDRS})
+set_property (TARGET virtuality PROPERTY CXX_STANDARD 11)
+set (CXX_STANDARD_REQUIRED ON)
 
 
 if ( X11_FOUND )
