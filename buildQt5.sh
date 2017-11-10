@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ "$TERM" != "xterm" ]; then
+if [[ "$TERM" != *xterm* ]]; then
     if [ ! -z "`which konsole`" ]; then
         konsole -e "$0" "keep"
     else
