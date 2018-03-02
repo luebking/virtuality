@@ -79,7 +79,7 @@ XProperty::handleProperty(WId window, Atom atom, uchar **data, Type type, unsign
     unsigned long nn, de2;
     int nmax = n ? n : 0xffffffff;
     result = XGetWindowProperty(QX11Info::display(), window, atom, 0L, nmax, False, xtype, &de2, &de, &nn, &de2, data);
-    if (result != Success || *data == X::None || (n > 0 && n != nn))
+    if (result != Success || *data == NULL || (n > 0 && n != nn))
         *data = NULL; // superflous?!?
     return nn;
 }
