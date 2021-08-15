@@ -454,10 +454,16 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
 
     if (tabV3) {
         if (vertical) {
-            if (tabV3->leftButtonSize.isValid())
-                tr.setLeft(tr.left() + tabV3->leftButtonSize.height() + F(4));
-            if (tabV3->rightButtonSize.isValid())
-                tr.setRight(tr.right() - (tabV3->rightButtonSize.height() + F(4)));
+            QSize lbs, rbs;
+            if (east) {
+                 lbs = tabV3->leftButtonSize; rbs = tabV3->rightButtonSize;
+            } else {
+                rbs = tabV3->leftButtonSize; lbs = tabV3->rightButtonSize;
+            }
+            if (lbs.isValid())
+                tr.setLeft(tr.left() + lbs.height() + F(4));
+            if (rbs.isValid())
+                tr.setRight(tr.right() - (rbs.height() + F(4)));
         } else {
             if (tabV3->leftButtonSize.isValid())
                 tr.setLeft(tr.left() + tabV3->leftButtonSize.width() + F(4));
