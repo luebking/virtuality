@@ -20,6 +20,7 @@
 #include <QApplication>
 #include <QComboBox>
 #include <QTabBar>
+#include <QTabWidget>
 #include <QStyleOption>
 #include <QStyleOptionTab>
 #include <limits.h>
@@ -556,7 +557,8 @@ Style::subElementRect(SubElement element, const QStyleOption *option, const QWid
         if HAVE_OPTION(twf, TabWidgetFrame)
         {
             QRect r = RECT;
-            const int margin = F(4);
+            const QTabWidget *tw = qobject_cast<const QTabWidget*>(widget);
+            const int margin =  tw && tw->documentMode() ? 0 : F(4);
             switch (twf->shape) {
             case QTabBar::RoundedNorth:
             case QTabBar::TriangularNorth:
