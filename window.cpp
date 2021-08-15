@@ -23,6 +23,7 @@
 #include <QDockWidget>
 #include <QMainWindow>
 #include <QMetaObject>
+#include <QPainterPath>
 #include <QSplitter>
 #include <QTimer>
 #include <QtDebug>

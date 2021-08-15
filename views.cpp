@@ -19,6 +19,7 @@
 #include <QApplication>
 #include <QAbstractItemView>
 #include <QListView>
+#include <QPainterPath>
 #include <QPushButton>
 #include <QTreeView>
 #include "draw.h"

@@ -22,6 +22,7 @@
 #include <QDir>
 #include <QFile>
 #include <QPainter>
+#include <QPainterPath>
 #include <QProcess>
 #include <QSettings>
 #include <QStyleFactory>

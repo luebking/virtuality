@@ -21,6 +21,7 @@
 #include <QDockWidget>
 #include <QImageReader>
 #include <QPainter>
+#include <QPainterPath>
 #include <QPen>
 
 #include "FX.h"

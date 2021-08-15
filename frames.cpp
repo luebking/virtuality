@@ -19,6 +19,7 @@
 #include <QLayoutItem>
 #include <QListView>
 #include <QFormLayout>
+#include <QPainterPath>
 #include <QTableView>
 #include <QTreeView>
 #include <QTextEdit>

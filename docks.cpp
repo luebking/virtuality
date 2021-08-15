@@ -18,6 +18,7 @@
 
 #include <QApplication>
 #include <QDockWidget>
+#include <QPainterPath>
 #include <QStyleOptionDockWidget>
 #include "draw.h"
 #include "hacks.h"
