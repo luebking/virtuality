@@ -531,14 +531,14 @@ FX::haveContrast(const QColor &a, const QColor &b)
     a.getRgb(&ar,&ag,&ab);
     b.getRgb(&br,&bg,&bb);
 
-    int diff = (299*(ar-br) + 587*(ag-bg) + 114*(ab-bb));
+    /*int diff = (299*(ar-br) + 587*(ag-bg) + 114*(ab-bb));
 
     if (qAbs(diff) < 91001)
-        return false;
+        return false;*/
 
-    diff = (299*qAbs(ar - br) + 587*qAbs(ag - bg) + 114*qAbs(ab - bb)) / 300;
+    int diff = (299*qAbs(ar - br) + 587*qAbs(ag - bg) + 114*qAbs(ab - bb)) / 300;
 
-    return (diff > 300);
+    return (diff > 250);
 }
 
 QColor
