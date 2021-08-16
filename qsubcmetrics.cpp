@@ -610,14 +610,15 @@ Style::subElementRect(SubElement element, const QStyleOption *option, const QWid
             }
         }
     case SE_TabWidgetTabPane: //
-        return RECT;
+        return QCommonStyle::subElementRect(SE_TabWidgetTabPane, option, widget);
+        // return RECT;
 //     case SE_ItemViewItemFocusRect:
 //     case SE_ItemViewItemText:
 //     case SE_TreeViewDisclosureItem: //Area for the actual disclosure item in a tree branch.
     case SE_ToolBoxTabContents: // Area for a toolbox tab's icon and label
         return RECT.adjusted( F(3), F(3), -F(3), -F(3) );
     case SE_TabBarTearIndicator: { // Area for the tear indicator on a tab bar with scroll arrows.
-        return RECT;
+        return QCommonStyle::subElementRect(SE_TabBarTearIndicator, option, widget);
     }
     default:
         return QCommonStyle::subElementRect ( element, option, widget);
