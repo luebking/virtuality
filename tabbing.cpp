@@ -186,7 +186,7 @@ Style::calcAnimStep(const QStyleOption *option, QPainter *painter, const QWidget
     OPT_ENABLED OPT_HOVER OPT_SUNKEN
     sunken = sunken || (option->state & State_Selected);
     animStep = 0;
-    if ( isEnabled && !sunken )
+    if ( isEnabled )
     {
         Animator::IndexInfo *info = 0;
         int index = -1, hoveredIndex = -1;
@@ -199,16 +199,20 @@ Style::calcAnimStep(const QStyleOption *option, QPainter *painter, const QWidget
             // sometimes... MANY times devs just set the tabTextColor to QPalette::WindowText,
             // because it's defined that it has to be this. Qt provides all these color roles just
             // to waste space and time... ...
+            QPalette::ColorRole fgrole = QPalette::WindowText, bgrole = QPalette::Window;
+            if (widget && config.invert.headers) {
+                fgrole = QPalette::Window; bgrole = QPalette::WindowText;
+            }
             const QColor &fgColor = tbar->tabTextColor(index - 1);
-            const QColor &stdFgColor = tbar->palette().color(QPalette::Window);
+            const QColor &stdFgColor = tbar->palette().color(fgrole);
             if (fgColor.isValid() && fgColor != stdFgColor)
             {
-                if (fgColor == tbar->palette().color(QPalette::WindowText))
+                if (fgColor == tbar->palette().color(bgrole))
                     const_cast<QTabBar*>(tbar)->setTabTextColor(index - 1, stdFgColor); // fixed
                 else // nope, this is really a custom color that will likley contrast just enough with QPalette::Window...
                 {
                     customColor = true;
-                    if (FX::haveContrast(tbar->palette().color(QPalette::WindowText), fgColor))
+                    if (FX::haveContrast(tbar->palette().color(bgrole), fgColor))
                         painter->setPen(fgColor);
                 }
             }
@@ -475,15 +479,21 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
     // color adjustment
     bool elide(false);
     QColor cF, cB;
-    if (inverted) {
-        cF = hasFocus && selected &&
-             FX::haveContrast(FCOLOR(Highlight), FCOLOR(WindowText)) ? FCOLOR(Highlight) : FCOLOR(Window);
-        cB = FCOLOR(WindowText);
+    if (hasFocus && selected && FX::haveContrast(FCOLOR(Highlight), FCOLOR(WindowText))) {
+        cF = FCOLOR(Highlight);
+    } else if (customColor) {
+        if (FX::haveContrast(inverted ? FCOLOR(WindowText) : FCOLOR(Window), painter->pen().color())) {
+            cF = painter->pen().color();
+        } else {
+            QFont fnt = painter->font();
+            fnt.setItalic(true);
+            painter->setFont(fnt);
+        }
     } else {
-        cF = hasFocus && selected &&
-             FX::haveContrast(FCOLOR(Highlight), FCOLOR(Window)) ? FCOLOR(Highlight) : FCOLOR(WindowText);
-        cB = FCOLOR(Window);
+        cF = inverted ? FCOLOR(Window) : FCOLOR(WindowText);
     }
+    cB = inverted ? FCOLOR(WindowText) : FCOLOR(Window);
+
     if (selected) {
         if (vertical) {
             setBold(painter, tab->text, tr.width());
@@ -511,12 +521,6 @@ Style::drawTabLabel(const QStyleOption *option, QPainter *painter, const QWidget
                 fnt.setPointSize(13*fnt.pointSize()/10);
             painter->setFont(fnt);
         }
-    } else if (customColor) {
-        if (FX::haveContrast(FCOLOR(WindowText), painter->pen().color()))
-            cF = painter->pen().color();
-        QFont fnt = painter->font();
-        fnt.setUnderline(true);
-        painter->setFont(fnt);
     } else {
         cF = FX::blend(cB, cF, 1, 1);
     }
