@@ -16,6 +16,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <QCache>
 #include <QMainWindow>
 #include <QToolBar>
 #include <QToolButton>
@@ -169,6 +170,15 @@ Style::drawToolButtonLabel(const QStyleOption *option, QPainter *painter, const 
         const int style = config.btn.tool.disabledStyle;
 //         const QIcon::State state = toolbutton->state & State_On ? QIcon::On : QIcon::Off;
         pm = toolbutton->icon.pixmap(RECT.size().boundedTo(pmSize), isEnabled || style ? QIcon::Normal : QIcon::Disabled, QIcon::Off);
+        if (true) {
+            static QCache<qint64, QPixmap> iconCache(64);
+            QPixmap *pix = iconCache[pm.cacheKey()];
+            if (!pix) {
+                pix = new QPixmap(FX::tintedIcon(pm, 1, 1, text));
+                iconCache.insert(pm.cacheKey(), pix);
+            }
+            pm = *pix;
+        }
 #if 0   // this is -in a way- the way it should be done..., but KIconLoader gives a shit on this or anything else
         if (!isEnabled)
             pm = generatedIconPixmap(QIcon::Disabled, pm, toolbutton);

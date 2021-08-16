@@ -109,15 +109,39 @@ FX::tintedIcon(QPixmap &pix, int step, int maxSteps, QColor tint)
         int size = img.width() * img.height();
         QRgb *pixel = (QRgb*)img.bits();
         const int r = tint.red(), g = tint.green(), b = tint.blue();
+        int minV = 255, maxV = 0;
+        bool mono = true;
         for (int i = 0; i < size; ++i) {
-            if (int a = qAlpha(*pixel)) {
+            if (qAlpha(*pixel) > 24) {
                 const int v = qGray(*pixel);
-                // stretch alpha
-                a = 255 - v*a/255;
-                a = 255 - a*a/255;
-                *pixel = qRgba(r, g, b, a);
+                maxV = qMax(v, maxV);
+                minV = qMin(v, minV);
+                if (maxV - minV > 10) {
+                    mono = false;
+                    break;
+                }
             }
             ++pixel;
+        }
+        pixel = (QRgb*)img.bits();
+        if (mono) {
+            for (int i = 0; i < size; ++i) {
+                if (int a = qAlpha(*pixel)) {
+                    *pixel = qRgba(r, g, b, a);
+                }
+                ++pixel;
+            }
+        } else {
+            for (int i = 0; i < size; ++i) {
+                if (int a = qAlpha(*pixel)) {
+                    const int v = qGray(*pixel);
+                    // stretch alpha
+                    a = 255 - v*a/255;
+                    a = 255 - a*a/255;
+                    *pixel = qRgba(r, g, b, a);
+                }
+                ++pixel;
+            }
         }
         tintedIcon[1] = QPixmap::fromImage(img);
         lastIconPix[1] = pix.cacheKey();

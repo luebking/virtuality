@@ -261,9 +261,7 @@ Style::drawPushButtonLabel(const QStyleOption *option, QPainter *painter, const 
         }
         drawItemText(painter, ir, Qt::AlignCenter | BESPIN_MNEMONIC, PAL, isEnabled, btn->text, QPalette::NoRole, &ir);
         RESTORE_PAINTER
-    }
-
-    if (!btn->icon.isNull()) {   // The ICON ================================================
+    } else if (!btn->icon.isNull()) {   // The ICON ================================================
         QIcon::Mode mode = isEnabled ? QIcon::Normal : QIcon::Disabled;
         if (mode == QIcon::Normal && hasFocus)
             mode = QIcon::Active;
