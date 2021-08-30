@@ -175,6 +175,8 @@ Style::readSettings(QString appName)
     // Background ===========================
     config.invert.docks = readBool(INVERT_DOCKS);
     config.invert.headers = readBool(INVERT_HEADERS);
+    if (appName == "sqriptor")
+        config.invert.headers = false;
     config.invert.menubars = readBool(INVERT_MENUBARS);
     config.invert.menus = readBool(INVERT_MENUS);
     config.invert.modals = (appType != KDM) && readBool(INVERT_MODALS);
