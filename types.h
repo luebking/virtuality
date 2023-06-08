@@ -40,7 +40,7 @@ enum Orientation3D {Raised = 0, Relief, Sunken, Inlay};
 enum AppType
 {
     Unknown, GTK, QtDesigner, Plasma, KDM, KRunner, Dolphin, Opera, BEshell, Arora, KWin,
-    KDevelop, Konversation, Amarok, OpenOffice, VLC, KMail, Konqueror, Gwenview, QBittorrent
+    KDevelop, Konversation, Amarok, OpenOffice, VLC, KMail, Konqueror, Gwenview, QBittorrent, Falkon
 };
 
 namespace Groove {
