@@ -20,8 +20,15 @@
 #include <QImage>
 #include <QPainter>
 #include <QPixmap>
-#include <QX11Info>
 
+#ifdef BE_WS_X11
+#if QT_VERSION >= 0x060200
+#include <QGuiApplication>
+#else
+#include <QX11Info>
+#endif
+#endif
+#include "fixx11h.h"
 #include <QtDebug>
 
 #include "FX.h"
@@ -31,6 +38,7 @@ using namespace BE;
 
 #ifdef BE_WS_X11
 #include "xproperty.h"
+#include "fixx11h.h"
 class ShadowManager : public QObject {
 public:
     ShadowManager() : QObject() {}
@@ -97,10 +105,10 @@ static Pixmap nativePixmap(const QImage qtImg)
         qDebug() << "error on init ximage";
     }
 
-    Pixmap xPix = XCreatePixmap(QX11Info::display(), QX11Info::appRootWindow(), qtImg.width(), qtImg.height(), 32);
-    GC context = XCreateGC(QX11Info::display(), xPix, 0, NULL);
-    XPutImage(QX11Info::display(), xPix, context, &ximage, 0, 0, 0, 0, qtImg.width(), qtImg.height());
-    XFreeGC(QX11Info::display(), context);
+    Pixmap xPix = XCreatePixmap(BE_X11_DISPLAY, DefaultRootWindow(BE_X11_DISPLAY), qtImg.width(), qtImg.height(), 32);
+    GC context = XCreateGC(BE_X11_DISPLAY, xPix, 0, NULL);
+    XPutImage(BE_X11_DISPLAY, xPix, context, &ximage, 0, 0, 0, 0, qtImg.width(), qtImg.height());
+    XFreeGC(BE_X11_DISPLAY, context);
     return xPix;
 #else
     return 0; // just for GCC - makes no sense at all anyway
@@ -128,7 +136,7 @@ shadowData(Shadows::Type t, bool storeToRoot)
 #ifdef BE_WS_X11
     XProperty::init();
     unsigned long _12 = 12;
-    unsigned long *data = XProperty::get<unsigned long>(QX11Info::appRootWindow(), XProperty::bespinShadow[t-1], XProperty::LONG, &_12);
+    unsigned long *data = XProperty::get<unsigned long>(DefaultRootWindow(BE_X11_DISPLAY), XProperty::bespinShadow[t-1], XProperty::LONG, &_12);
     if (!data)
     {
         const int sz = size[t == Shadows::Large];
@@ -222,7 +230,7 @@ shadowData(Shadows::Type t, bool storeToRoot)
 
         data = &globalShadowData[t-1][0];
         if (storeToRoot)
-            XProperty::set(QX11Info::appRootWindow(), XProperty::bespinShadow[t-1], data, XProperty::LONG, 12);
+            XProperty::set(DefaultRootWindow(BE_X11_DISPLAY), XProperty::bespinShadow[t-1], data, XProperty::LONG, 12);
     }
     return data;
 #else
@@ -253,7 +261,7 @@ Shadows::cleanUp()
         if (pixmaps[i])
         {
             for (int j = 0; j < 8; ++j)
-                XFreePixmap(QX11Info::display(), (*pixmaps[i])[j]);
+                XFreePixmap(BE_X11_DISPLAY, (*pixmaps[i])[j]);
             delete [] pixmaps[i];
             pixmaps[i] = 0L;
         }
@@ -280,7 +288,7 @@ Shadows::set(WId id, Shadows::Type t, bool storeToRoot)
 #ifdef BE_WS_X11
     if (!BE::isPlatformX11())
         return; // TODO: port XProperty for wayland
-    if (id == QX11Info::appRootWindow()) {
+    if (id == DefaultRootWindow(BE_X11_DISPLAY)) {
         qWarning("BESPIN WARNING! Setting shadow to ROOT window is NOT supported");
         return;
     }

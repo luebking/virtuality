@@ -26,11 +26,15 @@
 #include "FX.h"
 
 #ifdef BE_WS_X11
+#if QT_VERSION >= 0x060200
+#include <QGuiApplication>
+#else
 #include <QX11Info>
+#endif
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-#include "fixx11h.h"
 #include "xproperty.h"
+#include "fixx11h.h"
 namespace BE { namespace FX { static Atom net_wm_cm; } }
 #endif
 
@@ -259,7 +263,7 @@ bool FX::compositingActive()
 #ifdef BE_WS_X11
     if (!BE::isPlatformX11())
         return true; // we assume wayland - or any other compositing capable display server
-    return XGetSelectionOwner( QX11Info::display(), BE::FX::net_wm_cm ) != None;
+    return XGetSelectionOwner( BE_X11_DISPLAY, BE::FX::net_wm_cm ) != None;
 #else
     return true;
 #endif
@@ -273,7 +277,7 @@ FX::init()
 #ifdef BE_WS_X11
     if (!BE::isPlatformX11())
         return;
-    Display *dpy = QX11Info::display();
+    Display *dpy = BE_X11_DISPLAY;
     char string[ 100 ];
     sprintf(string, "_NET_WM_CM_S%d", DefaultScreen( dpy ));
     BE::FX::net_wm_cm = XInternAtom(dpy, string, False);

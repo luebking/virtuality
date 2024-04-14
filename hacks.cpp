@@ -20,7 +20,6 @@
 #include <QAbstractScrollArea>
 #include <QApplication>
 #include <QCoreApplication>
-#include <QDesktopWidget>
 #include <QDialog>
 #include <QDockWidget>
 #include <QElapsedTimer>
@@ -43,7 +42,7 @@
 #include <QToolBar>
 #include <QToolButton>
 #include <QPointer>
-
+//#include <QtDebug>
 #ifdef BE_WS_X11
 
 #include <QtDBus/QDBusConnection>
@@ -55,11 +54,9 @@
 #if QT_VERSION >= 0x050000
 #include <xcb/xcb.h>
 #endif
-#include <QX11Info>
 #include "xproperty.h"
 #endif
 
-#include <QtDebug>
 #include "FX.h"
 #include "hacks.h"
 
@@ -84,7 +81,8 @@ protected:
             if (notRelevant(e))
                 return false;
             if (m_panning) {
-                const QPoint pos = static_cast<QMouseEvent*>(e)->pos();
+                QMouseEvent *mev = static_cast<QMouseEvent*>(e);
+                const QPoint pos = mev->pos();
                 bool noClick = !m_click;
                 if (noClick) {
                     const int dx = pos.x() - m_lastPos.x();
@@ -120,6 +118,9 @@ protected:
                                 }
                             }
                         }
+                        QWheelEvent wev(pos, mev->globalPos(), QPoint(dx*factor[0],dy*factor[1]), QPoint(dx*factor[0],dy*factor[1]), Qt::NoButton, Qt::NoModifier, Qt::NoScrollPhase, false);
+                        QApplication::sendEvent(o, &wev);
+#if 0
                         if (dy) {
                             QWheelEvent wev(pos, dy*factor[1], Qt::NoButton, Qt::NoModifier, Qt::Vertical);
                             QApplication::sendEvent(o, &wev);
@@ -128,6 +129,7 @@ protected:
                             QWheelEvent weh(pos, dx*factor[0], Qt::NoButton, Qt::NoModifier, Qt::Horizontal);
                             QApplication::sendEvent(o, &weh); // "oi wehh"
                         }
+#endif
                     }
                 }
                 m_lastPos = pos;
@@ -203,25 +205,8 @@ triggerWMMove(const QWidget *w, const QPoint &p)
 #ifdef BE_WS_X11
     if (!BE::isPlatformX11())
         return;
-#if QT_VERSION < 0x050000
-    static Atom netMoveResize = XInternAtom(QX11Info::display(), "_NET_WM_MOVERESIZE", False);
-    XEvent xev;
-    xev.xclient.type = ClientMessage;
-    xev.xclient.message_type = netMoveResize;
-    xev.xclient.display = QX11Info::display();
-    xev.xclient.window = w->window()->winId();
-    xev.xclient.format = 32;
-    xev.xclient.data.l[0] = p.x();
-    xev.xclient.data.l[1] = p.y();
-    xev.xclient.data.l[2] = 8; // NET::Move
-    xev.xclient.data.l[3] = Button1;
-    xev.xclient.data.l[4] = 0;
-    XUngrabPointer(QX11Info::display(), QX11Info::appTime());
-    XSendEvent(QX11Info::display(), QX11Info::appRootWindow(QX11Info::appScreen()), False,
-                SubstructureRedirectMask | SubstructureNotifyMask, &xev);
-#else
     const WId wid = w->window()->winId();
-    xcb_connection_t *c = QX11Info::connection();
+    xcb_connection_t *c = BE_XCB_CONN;
 
     static xcb_atom_t netMoveResize = 0;
     if (!netMoveResize) {
@@ -240,7 +225,7 @@ triggerWMMove(const QWidget *w, const QPoint &p)
 //     rev.sequence = ??;
     rev.event = wid;
     rev.child = XCB_WINDOW_NONE;
-    rev.root = QX11Info::appRootWindow();
+    rev.root = BE_X11_ROOT;
     const QPoint lp = w->mapFromGlobal(p);
     rev.event_x = lp.x();
     rev.event_y = lp.x();
@@ -267,10 +252,9 @@ triggerWMMove(const QWidget *w, const QPoint &p)
     ev.data.data32[2] = 8; // NET::Move
     ev.data.data32[3] = XCB_BUTTON_INDEX_1;
     ev.data.data32[4] = 0;
-    xcb_send_event(c, false, QX11Info::appRootWindow(),
+    xcb_send_event(c, false, BE_X11_ROOT,
                    XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY,
                    reinterpret_cast<const char*>(&ev));
-#endif
 #endif // BE_WS_X11
 }
 
@@ -331,7 +315,7 @@ hackMoveWindow(QWidget* w, QEvent *e)
         QStyleOptionGroupBox opt;
         opt.initFrom(gb);
         if (gb->isFlat())
-            opt.features |= QStyleOptionFrameV2::Flat;
+            opt.features |= QStyleOptionFrame::Flat;
         opt.lineWidth = 1; opt.midLineWidth = 0;
 
         opt.text = gb->title();
@@ -401,7 +385,7 @@ Hacks::eventFilter(QObject *o, QEvent *e)
             QString string = label->text();
             if (string.contains('<'))
                 { html2text.setHtml(string); string = html2text.toPlainText(); }
-            QStringList strings = string.split('\n', QString::SkipEmptyParts);
+            QStringList strings = string.split('\n', Qt::SkipEmptyParts);
             if (strings.isEmpty())
                 return false;
 
@@ -465,12 +449,14 @@ Hacks::eventFilter(QObject *o, QEvent *e)
             QRect r(w->rect());
             r.setSize(r.size()/3);
             if (r.contains(mev->pos())) {
-                QWheelEvent wev(mev->pos(), 120, Qt::NoButton, Qt::NoModifier, Qt::Vertical);
+                QWheelEvent wev(mev->pos(), mev->globalPos(), QPoint(0,120), QPoint(0,120), Qt::NoButton, Qt::NoModifier, Qt::NoScrollPhase, false);
+//                QWheelEvent wev(mev->pos(), 120, Qt::NoButton, Qt::NoModifier, Qt::Vertical);
                 QApplication::sendEvent(w, &wev);
             } else {
                 r.moveBottomRight(w->rect().bottomRight());
                 if (r.contains(mev->pos())) {
-                    QWheelEvent wev(mev->pos(), -120, Qt::NoButton, Qt::NoModifier, Qt::Vertical);
+                    QWheelEvent wev(mev->pos(), mev->globalPos(), QPoint(0,-120), QPoint(0,-120), Qt::NoButton, Qt::NoModifier, Qt::NoScrollPhase, false);
+//                    QWheelEvent wev(mev->pos(), -120, Qt::NoButton, Qt::NoModifier, Qt::Vertical);
                     QApplication::sendEvent(w, &wev);
                 }
             }

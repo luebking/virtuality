@@ -110,7 +110,7 @@ dumpBackground(QWidget *target, const QRect &r, const QStyle *style, bool _32bit
         w = widgets.at(--i);
 #if true
         // QWidget::render does not include eventfilters, but QPainter::setRedirected is deprecated
-        w->render(&pix, -target->mapTo(w, zero), w->rect(), 0);
+        w->render(&pix, -target->mapTo(w, zero), w->rect(), QWidget::RenderFlags());
 #else
         QPainter::setRedirected( w, &pix, target->mapTo(w, r.topLeft()) );
         e = QPaintEvent(QRect(zero, r.size()));
@@ -152,7 +152,7 @@ grabWidget(QWidget * root, QPixmap &pix)
     // painting ------------
 #if true
     // QWidget::render does not include eventfilters, but QPainter::setRedirected is deprecated
-    root->render(&pix, zero, root->rect(), 0);
+    root->render(&pix, zero, root->rect(), QWidget::RenderFlags());
 #else
     QPainter::setRedirected( root, &pix );
     QPaintEvent e(QRect(zero, root->size()));
@@ -228,7 +228,7 @@ grabWidget(QWidget * root, QPixmap &pix)
                     }
                     else
 #endif
-                        w->render(saPix, w->mapTo(scrollarea, pt), w->rect(), 0);
+                        w->render(saPix, w->mapTo(scrollarea, pt), w->rect(), QWidget::RenderFlags());
                     p.begin(&pix);
                     p.drawPixmap(rect.topLeft(), *saPix);
                     p.end();
@@ -237,7 +237,7 @@ grabWidget(QWidget * root, QPixmap &pix)
             else
 #endif //WORKAROUND_SCROLLAREAS
             {   // default painting redirection
-                w->render(&pix, w->mapTo(root, zero), w->rect(), 0);
+                w->render(&pix, w->mapTo(root, zero), w->rect(), QWidget::RenderFlags());
             }
         }
     }
@@ -266,7 +266,7 @@ protected:
 
     void paintEvent( QPaintEvent *  )
     {
-        if ( _info->clock.isNull() )
+        if ( !_info->clock.isValid() )
             return; // should not happen
         QPainter p( this );
         p.drawPixmap( 0, 0, _info->tabPix[2] );
@@ -317,7 +317,7 @@ tabPosition(QTabWidget::North), isBackSwitch(false) {}
 bool
 TabInfo::proceed()
 {
-   if (clock.isNull()) // this tab is currently not animated
+   if (!clock.isValid()) // this tab is currently not animated
       return false;
 
    // check if our desired duration has exceeded and stop this in case
@@ -337,7 +337,7 @@ TabInfo::proceed()
 void
 TabInfo::rewind()
 {
-    clock = QTime(); // reset clock, this is IMPORTANT!
+    clock.invalidate(); // reset clock, this is IMPORTANT!
     QWidget *cWidget = currentWidget.data();
     if (cWidget)
         cWidget->setUpdatesEnabled(false);
@@ -378,7 +378,7 @@ TabInfo::switchTab(QStackedWidget *sw, int newIdx)
     QRect contentsRect(ow->mapTo(sw, QPoint(0,0)), ow->size());
     tabPix[1] = dumpBackground(sw, contentsRect, qApp->style(), _transition == CrossFade );
 
-    if (clock.isNull())
+    if (!clock.isValid())
     {
         clock.start();
         tabPix[0] = tabPix[1];
@@ -398,7 +398,7 @@ TabInfo::switchTab(QStackedWidget *sw, int newIdx)
     AVOID(TOO_SLOW);
 
     duration = _duration - clock.elapsed() + _timeStep;
-    clock.restart(); clock.addMSecs(_timeStep);
+    clock.restart(); // clock.addMSecs(_timeStep);
     updatePixmaps(_transition, _timeStep);
 
     // make curtain and first update ----------------

@@ -166,13 +166,13 @@ KdeIni::close()
    Entries::const_iterator entry;
    QTextStream stream(&file);
    while (group != local.constEnd()) {
-      stream << '[' << group.key() << ']' << endl;
+      stream << '[' << group.key() << ']' << Qt::endl;
       entry = group.value().constBegin();
       while (entry != group.value().constEnd()) {
-         stream << entry.key() << '=' << entry.value() << endl;
+         stream << entry.key() << '=' << entry.value() << Qt::endl;
          ++entry;
       }
-      stream << endl;
+      stream << Qt::endl;
       ++group;
    }
    stream.flush();

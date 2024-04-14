@@ -123,7 +123,7 @@ Style::subControlRect(ComplexControl control, const QStyleOptionComplex *option,
                 top = pixelMetric(PM_IndicatorHeight, groupBox, widget);
             if (!groupBox->text.isEmpty())
                 top = qMax(top, groupBox->fontMetrics.height());
-            top += (groupBox->features & QStyleOptionFrameV2::Flat) ? F(3) : F(6);
+            top += (groupBox->features & QStyleOptionFrame::Flat) ? F(3) : F(6);
             ret = groupBox->rect.adjusted(F(3), top, -F(3), -F(5));
             break;
         }
@@ -407,7 +407,7 @@ Style::subElementRect(SubElement element, const QStyleOption *option, const QWid
     case SE_LineEditContents:
         return RECT.adjusted(F(2),0,-F(2),-F(1));
     case SE_CheckBoxContents: // Area for the state label
-    case SE_ViewItemCheckIndicator: // Area for a view item's check mark
+    case SE_ItemViewItemCheckIndicator: // Area for a view item's check mark
     case SE_CheckBoxIndicator: // Area for the state indicator (e.g., check mark)
     case SE_RadioButtonIndicator: // Area for the state indicator
     case SE_RadioButtonContents: // Area for the label
@@ -437,8 +437,8 @@ Style::subElementRect(SubElement element, const QStyleOption *option, const QWid
     {
         QRect r = RECT;
         bool verticalTitleBar = false;
-        if HAVE_OPTION(dock2, DockWidgetV2)
-            verticalTitleBar = dock2->verticalTitleBar;
+        if HAVE_OPTION(dock, DockWidget)
+            verticalTitleBar = dock->verticalTitleBar;
         if (verticalTitleBar) {
             r.setHeight(16); r.moveTop(RECT.top()+F(4));
         } else {
@@ -452,8 +452,8 @@ Style::subElementRect(SubElement element, const QStyleOption *option, const QWid
     {
         QRect r = RECT;
         bool verticalTitleBar = false;
-        if HAVE_OPTION(dock2, DockWidgetV2)
-            verticalTitleBar = dock2->verticalTitleBar;
+        if HAVE_OPTION(dock, DockWidget)
+            verticalTitleBar = dock->verticalTitleBar;
         if (verticalTitleBar) {
             r.setHeight(16); r.moveBottom(RECT.bottom()-F(4));
         } else {
@@ -580,7 +580,7 @@ Style::subElementRect(SubElement element, const QStyleOption *option, const QWid
         }
     case QStyle::SE_TabBarTabLeftButton:
     case QStyle::SE_TabBarTabRightButton:
-        if HAVE_OPTION(tab, TabV3) {
+        if HAVE_OPTION(tab, Tab) {
             QSize sz = (element == SE_TabBarTabLeftButton) ? tab->leftButtonSize : tab->rightButtonSize;
             QRect r;
             if (verticalTabs(tab->shape)) {
@@ -600,7 +600,7 @@ Style::subElementRect(SubElement element, const QStyleOption *option, const QWid
             }
         }
     case QStyle::SE_TabBarTabText:
-        if HAVE_OPTION(tab, TabV3) {
+        if HAVE_OPTION(tab, Tab) {
             const int dl = tab->leftButtonSize.isValid() ? tab->leftButtonSize.height() + F(4) : F(1);
             const int dr = tab->rightButtonSize.isValid() ? tab->rightButtonSize.height() + F(4) : F(1);
             if (verticalTabs(tab->shape)) {

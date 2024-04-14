@@ -54,7 +54,7 @@ Style::drawCapacityBar(const QStyleOption *option, QPainter *painter, const QWid
     painter->drawRoundedRect(r, radius, radius);
 
     if (cb->textVisible && !cb->text.isEmpty()) {
-        const int tw = painter->fontMetrics().width(cb->text);
+        const int tw = painter->fontMetrics().horizontalAdvance(cb->text);
         int align = Qt::AlignCenter;
         if (tw <= r.width()) {   // paint on free part
             painter->setPen(THERMOMETER_COLOR);
@@ -80,7 +80,7 @@ Style::drawSimpleProgress(const QStyleOptionProgressBar *option, QPainter *paint
     if (isListView) // ktorrent/transmission-qt don't set the state
         isEnabled = true; // ....
 
-    const QStyleOptionProgressBarV2 *pb2 = qstyleoption_cast<const QStyleOptionProgressBarV2*>(option);
+    const QStyleOptionProgressBar *pb = qstyleoption_cast<const QStyleOptionProgressBar*>(option);
     QPalette::ColorRole fg, bg;
     if (isListView) {
         if (option->state & State_Selected)
@@ -93,9 +93,9 @@ Style::drawSimpleProgress(const QStyleOptionProgressBar *option, QPainter *paint
         { fg = QPalette::WindowText; bg = QPalette::Window; }
 
     bool reverse = option->direction == Qt::RightToLeft;
-    if (pb2 && pb2->invertedAppearance)
+    if (pb && pb->invertedAppearance)
         reverse = !reverse;
-    const bool vertical = (pb2 && pb2->orientation == Qt::Vertical);
+    const bool vertical = (pb && !(pb->state & QStyle::State_Horizontal));
     double val = option->progress / double(option->maximum - option->minimum);
 
     SAVE_PAINTER(Pen|Brush|Alias|Font);
@@ -191,12 +191,10 @@ Style::drawProgressBarGC(const QStyleOption *option, QPainter *painter, const QW
         return;
     }
 
-    const QStyleOptionProgressBarV2 *pb2 = qstyleoption_cast<const QStyleOptionProgressBarV2*>(pb);
-
     bool reverse = option->direction == Qt::RightToLeft;
-    if (pb2 && pb2->invertedAppearance)
+    if (pb->invertedAppearance)
         reverse = !reverse;
-    const bool vertical = (pb2 && pb2->orientation == Qt::Vertical);
+    const bool vertical = !(pb->state & QStyle::State_Horizontal);
 
     const bool busy = pb->maximum == 0 && pb->minimum == 0;
     int x,y,l,t;
@@ -309,7 +307,7 @@ Style::drawProgressBarGC(const QStyleOption *option, QPainter *painter, const QW
 void
 Style::drawProgressBarLabel(const QStyleOption *option, QPainter *painter, const QWidget*) const
 {
-    ASSURE_OPTION(progress, ProgressBarV2);
+    ASSURE_OPTION(progress, ProgressBar);
     OPT_HOVER
 
     if (!(hover && progress->textVisible))
@@ -317,15 +315,15 @@ Style::drawProgressBarLabel(const QStyleOption *option, QPainter *painter, const
 
     painter->save();
     QRect rect = RECT;
-    if (progress->orientation == Qt::Vertical)
+    if (!(progress->state & QStyle::State_Horizontal))
     {   // vertical progresses have text rotated by 90° or 270°
-        QMatrix m;
+        QTransform m;
         int h = rect.height(); rect.setHeight(rect.width()); rect.setWidth(h);
         if (progress->bottomToTop)
             { m.translate(0.0, RECT.height()); m.rotate(-90); }
         else
             { m.translate(RECT.width(), 0.0); m.rotate(90); }
-        painter->setMatrix(m);
+        painter->setTransform(m);
     }
     int flags = Qt::AlignCenter | Qt::TextSingleLine;
     QRect tr = painter->boundingRect(rect, flags, progress->text);

@@ -22,12 +22,22 @@
 //#include <QWidget>
 //#include <QtDebug>
 
+#if QT_VERSION >= 0x060200
+#include <QGuiApplication>
+#define BE_X11_DISPLAY qGuiApp->nativeInterface<QNativeInterface::QX11Application>()->display()
+#define BE_X11_ROOT DefaultRootWindow(BE_X11_DISPLAY)
+#define BE_XCB_CONN qGuiApp->nativeInterface<QNativeInterface::QX11Application>()->connection()
+#else
+#include <QX11Info>
+#define BE_X11_DISPLAY QX11Info::display()
+#define BE_X11_ROOT QX11Info::appRootWindow()
+#define BE_XCB_CONN QX11Info::connection()
+#endif
+#include <QWidget>
+//#include <QtDebug>
+
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
-#include "fixx11h.h"
-#include <QX11Info>
-#include <QWidget>
-#include <QtDebug>
 
 namespace BE {
 
@@ -88,6 +98,8 @@ private:
 inline bool isPlatformX11() {
 #if QT_VERSION < 0x050000
     return true;
+#elif QT_VERSION >= 0x060200
+    return bool(qGuiApp->nativeInterface<QNativeInterface::QX11Application>());
 #else
     return QX11Info::isPlatformX11();
 #endif

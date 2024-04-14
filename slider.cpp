@@ -214,7 +214,7 @@ Style::drawDial(const QStyleOptionComplex *option, QPainter *painter, const QWid
     h -= 2 * (h - qMin(h, painter->fontMetrics().xHeight())) / 3;
     fnt.setPixelSize( h );
     painter->setFont(fnt);
-    painter->setPen(FX::blend(PAL.background().color(), PAL.foreground().color(),!hasFocus,2));
+    painter->setPen(FX::blend(PAL.window().color(), PAL.windowText().color(),!hasFocus,2));
     drawItemText(painter, rect,  Qt::AlignCenter, PAL, isEnabled, QString::number(dial->sliderValue));
 
     // the drop ===========================

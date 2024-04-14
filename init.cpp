@@ -282,7 +282,7 @@ extern const QString virtuality_revision();
 void
 Style::init()
 {
-    QTime time; time.start();
+    QElapsedTimer time; time.start();
     // various workarounds... ==========================
     appType = Unknown;
     QString appName;

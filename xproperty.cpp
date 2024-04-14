@@ -16,6 +16,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <QtDebug> // gets us Qt version also ;)
 #include "xproperty.h"
 
 
@@ -43,17 +44,17 @@ XProperty::init()
     static bool initialized = false;
     if (initialized)
         return;
-    winData = XInternAtom(QX11Info::display(), "BESPIN_WIN_DATA", False);
-    bgPics = XInternAtom(QX11Info::display(), "BESPIN_BG_PICS", False);
-    decoDim = XInternAtom(QX11Info::display(), "BESPIN_DECO_DIM", False);
-    pid = XInternAtom(QX11Info::display(), "_NET_WM_PID", False);
-    blurRegion = XInternAtom(QX11Info::display(), "_KDE_NET_WM_BLUR_BEHIND_REGION", False);
-    forceShadows = XInternAtom( QX11Info::display(), "_KDE_SHADOW_FORCE", False );
-    kwinShadow = XInternAtom( QX11Info::display(), "_KDE_NET_WM_SHADOW", False );
-    bespinShadow[0] = XInternAtom( QX11Info::display(), "BESPIN_SHADOW_SMALL", False );
-    bespinShadow[1] = XInternAtom( QX11Info::display(), "BESPIN_SHADOW_LARGE", False );
-    netSupported = XInternAtom( QX11Info::display(), "_NET_SUPPORTED", False );
-    blockCompositing = XInternAtom( QX11Info::display(), "_KDE_NET_WM_BLOCK_COMPOSITING", False );
+    winData = XInternAtom(BE_X11_DISPLAY, "BESPIN_WIN_DATA", False);
+    bgPics = XInternAtom(BE_X11_DISPLAY, "BESPIN_BG_PICS", False);
+    decoDim = XInternAtom(BE_X11_DISPLAY, "BESPIN_DECO_DIM", False);
+    pid = XInternAtom(BE_X11_DISPLAY, "_NET_WM_PID", False);
+    blurRegion = XInternAtom(BE_X11_DISPLAY, "_KDE_NET_WM_BLUR_BEHIND_REGION", False);
+    forceShadows = XInternAtom( BE_X11_DISPLAY, "_KDE_SHADOW_FORCE", False );
+    kwinShadow = XInternAtom( BE_X11_DISPLAY, "_KDE_NET_WM_SHADOW", False );
+    bespinShadow[0] = XInternAtom( BE_X11_DISPLAY, "BESPIN_SHADOW_SMALL", False );
+    bespinShadow[1] = XInternAtom( BE_X11_DISPLAY, "BESPIN_SHADOW_LARGE", False );
+    netSupported = XInternAtom( BE_X11_DISPLAY, "_NET_SUPPORTED", False );
+    blockCompositing = XInternAtom( BE_X11_DISPLAY, "_KDE_NET_WM_BLOCK_COMPOSITING", False );
     initialized = true;
 }
 
@@ -61,7 +62,7 @@ void
 XProperty::setAtom(WId window, Atom atom)
 {
     const char *data = "1";
-    XChangeProperty(QX11Info::display(), window, atom, XA_ATOM, 32, PropModeReplace, (uchar*)data, 1 );
+    XChangeProperty(BE_X11_DISPLAY, window, atom, XA_ATOM, 32, PropModeReplace, (uchar*)data, 1 );
 }
 
 unsigned long
@@ -71,14 +72,14 @@ XProperty::handleProperty(WId window, Atom atom, uchar **data, Type type, unsign
     Atom xtype = (type == ATOM ? XA_ATOM : XA_CARDINAL);
     if (*data) // this is ok, internally used only
     {
-        XChangeProperty(QX11Info::display(), window, atom, xtype, format, PropModeReplace, *data, n );
-        XSync(QX11Info::display(), False);
+        XChangeProperty(BE_X11_DISPLAY, window, atom, xtype, format, PropModeReplace, *data, n );
+        XSync(BE_X11_DISPLAY, False);
         return 0;
     }
     int result, de; //dead end
     unsigned long nn, de2;
     int nmax = n ? n : 0xffffffff;
-    result = XGetWindowProperty(QX11Info::display(), window, atom, 0L, nmax, False, xtype, &de2, &de, &nn, &de2, data);
+    result = XGetWindowProperty(BE_X11_DISPLAY, window, atom, 0L, nmax, False, xtype, &de2, &de, &nn, &de2, data);
     if (result != Success || *data == NULL || (n > 0 && n != nn))
         *data = NULL; // superflous?!?
     return nn;
@@ -87,7 +88,7 @@ XProperty::handleProperty(WId window, Atom atom, uchar **data, Type type, unsign
 void
 XProperty::remove(WId window, Atom atom)
 {
-    XDeleteProperty(QX11Info::display(), window, atom);
+    XDeleteProperty(BE_X11_DISPLAY, window, atom);
 }
 
 #if 0

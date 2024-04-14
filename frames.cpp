@@ -24,7 +24,7 @@
 #include <QTreeView>
 #include <QTextEdit>
 
-#include <QStyleOptionFrameV3>
+#include <QStyleOptionFrame>
 
 #include "draw.h"
 
@@ -121,15 +121,15 @@ Style::drawFrame(const QStyleOption *option, QPainter *painter, const QWidget *w
     painter->setPen(hasFocus ? FOCUS_FRAME_PEN : FRAME_PEN);
     painter->setBrush(Qt::NoBrush);
 
-    if HAVE_OPTION(v3frame, FrameV3) {
-        if (v3frame->frameShape == QFrame::NoFrame) {
+    if HAVE_OPTION(frame, Frame) {
+        if (frame->frameShape == QFrame::NoFrame) {
             RESTORE_PAINTER
             return;
         }
         painter->setRenderHint(QPainter::Antialiasing, false);
-        if (v3frame->frameShape == QFrame::VLine || v3frame->frameShape == QFrame::HLine) {
+        if (frame->frameShape == QFrame::VLine || frame->frameShape == QFrame::HLine) {
             QPoint p1 = RECT.center();
-            if (v3frame->frameShape == QFrame::HLine && widget && widget->parentWidget())
+            if (frame->frameShape == QFrame::HLine && widget && widget->parentWidget())
             if (QFormLayout *fl = qobject_cast<QFormLayout*>(widget->parentWidget()->layout())) {
                 for (int i = 0; i < fl->rowCount(); ++i) {
                     if (QLayoutItem *li = fl->itemAt(i, QFormLayout::FieldRole)) {
@@ -141,7 +141,7 @@ Style::drawFrame(const QStyleOption *option, QPainter *painter, const QWidget *w
                 }
             }
             QPoint p2 = p1;
-            if (v3frame->frameShape == QFrame::VLine) {
+            if (frame->frameShape == QFrame::VLine) {
                 const int d = RECT.height()/8;
                 p1.ry() -= d;
                 p2.ry() += d;

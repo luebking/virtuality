@@ -53,7 +53,7 @@ int Style::pixelMetric( PixelMetric pm, const QStyleOption *option, const QWidge
         return F(1);
     case PM_ComboBoxFrameWidth: // Frame width of a combo box, defaults to PM_DefaultFrameWidth.
         return 1; //  cosmetic, qt hates 0 sized popupframes
-    case PM_MDIFrameWidth: // Frame width of an MDI window
+    case PM_MdiSubWindowFrameWidth: // Frame width of an MDI window
         return 1;
     //    case PM_MDIMinimizedWidth: // Width of a minimized MDI window
     case PM_MaximumDragDistance: // Some feels require the scroll bar or other sliders to jump back to the original position when the mouse pointer is too far away while dragging; a value of -1 disables this behavior
@@ -196,17 +196,13 @@ int Style::pixelMetric( PixelMetric pm, const QStyleOption *option, const QWidge
     case PM_SpinBoxSliderHeight: // The height of the optional spin box slider
         return F(4);
     case PM_LayoutBottomMargin:
-    case PM_DefaultChildMargin:
-//     case PM_LayoutHorizontalSpacing: //NOTICE collides with PM_DefaultLayoutSpacing
+    case PM_LayoutHorizontalSpacing:
         return F(9);
-    case PM_DefaultLayoutSpacing: //NOTICE required since vertical/horizontal variants are underused
-        return F(7);
     case PM_LayoutTopMargin:
-//     case PM_LayoutVerticalSpacing: //NOTICE collides with PM_DefaultLayoutSpacing
+    case PM_LayoutVerticalSpacing:
         return F(6);
     case PM_LayoutLeftMargin:
     case PM_LayoutRightMargin:
-    case PM_DefaultTopLevelMargin: //
         return F(8);
     case PM_ToolBarIconSize: // Default tool bar icon size, defaults to PM_SmallIconSize
         return F(22);

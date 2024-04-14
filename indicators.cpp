@@ -26,11 +26,10 @@ Style::drawCheck(const QStyleOption *option, QPainter *painter, const QWidget *,
 {
     Qt::CheckState state = (option->state & State_On) ? Qt::Checked : Qt::Unchecked;
     if (itemview) {
-        if (const QStyleOptionViewItemV2 *item = qstyleoption_cast<const QStyleOptionViewItemV2*>(option)) {
-            if (!(item->features & QStyleOptionViewItemV2::HasCheckIndicator))
+        if (const QStyleOptionViewItem *item = qstyleoption_cast<const QStyleOptionViewItem*>(option)) {
+            if (!(item->features & QStyleOptionViewItem::HasCheckIndicator))
                 return;
-            if (const QStyleOptionViewItemV4 *item4 = qstyleoption_cast<const QStyleOptionViewItemV4*>(item))
-                state = item4->checkState;
+            state = item->checkState;
         }
     }
 

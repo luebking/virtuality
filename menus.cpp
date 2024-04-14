@@ -24,6 +24,12 @@
 
 #include <QtDebug>
 
+#if QT_VERSION > 0x060000
+#define TAB_WIDTH reservedShortcutWidth
+#else
+#define TAB_WIDTH tabWidth
+#endif
+
 void
 Style::drawMenuBarItem(const QStyleOption *option, QPainter *painter, const QWidget *widget) const
 {
@@ -166,7 +172,7 @@ Style::drawMenuItem(const QStyleOption *option, QPainter *painter, const QWidget
         xpos += hMargin;
     }
 
-    QRect textRect(xpos, r.y() + vMargin, r.right() + 1 - (xpos + hMargin + menuitem->tabWidth), r.height() - 2*vMargin);
+    QRect textRect(xpos, r.y() + vMargin, r.right() + 1 - (xpos + hMargin + menuitem->TAB_WIDTH), r.height() - 2*vMargin);
 
     QColor c;
     if (sunken)
@@ -202,7 +208,7 @@ Style::drawMenuItem(const QStyleOption *option, QPainter *painter, const QWidget
         const int text_flags = Qt::AlignVCenter | BESPIN_MNEMONIC | Qt::TextDontClip | Qt::TextSingleLine;
         if (t >= 0) {
             QRect vShortcutRect = visualRect(option->direction, r, QRect(textRect.topRight(),
-                                             QPoint(textRect.right() + menuitem->tabWidth, textRect.bottom())));
+                                             QPoint(textRect.right() + menuitem->TAB_WIDTH, textRect.bottom())));
             const QColor fg = painter->pen().color();
             painter->setPen(FX::blend(FCOLOR(Window), fg));
             drawItemText(painter, vShortcutRect, text_flags | Qt::AlignRight, PAL, isEnabled, s.mid(t + 1));

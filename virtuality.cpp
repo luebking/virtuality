@@ -22,6 +22,7 @@
 #include <QApplication>
 #include <QComboBox>
 #include <QDockWidget>
+#include <QElapsedTimer>
 #include <QEvent>
 #include <QFrame>
 #include <QLabel>
@@ -37,7 +38,6 @@
 #include <QStylePlugin>
 #include <QScrollBar>
 #include <QTextBrowser>
-#include <QTime>
 #include <QTimer>
 #include <QToolBar>
 #include <QToolButton>
@@ -49,8 +49,8 @@
 // #include "debug.h"
 
 #ifdef BE_WS_X11
-#include <QX11Info>
 #include "xproperty.h"
+#include "fixx11h.h"
 #endif
 #include "FX.h"
 #include "animator/hover.h"
@@ -69,12 +69,13 @@
 /**============= extern C stuff ==========================*/
 
 QStringList VirtualityStylePlugin::keys() const {
-    return QStringList() << "Virtuality" << "Sienar" << "Flynn" << "VirtualBreeze";
+    return QStringList() << "Virtuality" << "Sienar" << "Flynn" << "VirtualBreeze" << "VirtualArch";
 }
 
 QStyle *VirtualityStylePlugin::create(const QString &key) {
     QString ikey = key.toLower();
-    if (ikey == "virtuality" || ikey == "sienar" || ikey == "flynn" || ikey == "virtualbreeze")
+    if (ikey == "virtuality" || ikey == "sienar" || ikey == "flynn" || ikey == "virtualbreeze" || 
+        ikey == "virtualarch")
         return new BE::Style(ikey);
     return 0;
 }
@@ -188,7 +189,7 @@ Style::registerRoutines()
     registerCE(skip, CE_ScrollBarAddPage);
     registerCE(drawScrollBarSlider, CE_ScrollBarSlider);
     // indicators.cpp
-    registerPE(drawItemCheck, PE_IndicatorViewItemCheck);
+    registerPE(drawItemCheck, PE_IndicatorItemViewItemCheck);
     registerPE(drawMenuCheck, PE_IndicatorMenuCheckMark);
     registerPE(drawSolidArrowN, PE_IndicatorArrowUp);
     registerPE(drawSolidArrowN, PE_IndicatorSpinUp);
@@ -514,7 +515,7 @@ Style::erase(const QStyleOption *option, QPainter *painter, const QWidget *widge
 }
 
 static bool _serverSupportsShadows = false;
-static QTime _lastCheckTime(-1,-1);
+static QElapsedTimer _lastCheckTime;
 bool
 Style::serverSupportsShadows()
 {
@@ -526,7 +527,7 @@ Style::serverSupportsShadows()
     if (!_lastCheckTime.isValid() || _lastCheckTime.elapsed() > 1000*60*5)
     {
         unsigned long n = 0;
-        Atom *supported = BE::XProperty::get<Atom>(QX11Info::appRootWindow(), BE::XProperty::netSupported, BE::XProperty::ATOM, &n);
+        Atom *supported = BE::XProperty::get<Atom>(DefaultRootWindow(BE_X11_DISPLAY), BE::XProperty::netSupported, BE::XProperty::ATOM, &n);
         for (uint i = 0; i < n; ++i)
             if (supported[i] == BE::XProperty::kwinShadow)
             {
@@ -709,21 +710,19 @@ Style::updateBlurRegions() const
     for (QList<QWeakPointer<QWidget> >::const_iterator it = pendingBlurUpdates.constBegin(),
                                                   end = pendingBlurUpdates.constEnd(); it != end; ++it)
     {
-        QWidget *widget = it->data();
-        if (!widget)
+        if (!*it)
             continue;
+        QSharedPointer<QWidget> widget = it->toStrongRef();
         if (widget && !(widget->testAttribute(Qt::WA_WState_Created) || widget->internalWinId()))
             continue; // protect against pseudo widgets, see setupDecoFor()
 
         QRegion blur = widget->mask().isEmpty() ? widget->rect() : widget->mask();
-        detectBlurRegion(widget, widget, blur);
+        detectBlurRegion(widget.data(), widget.data(), blur);
         if (blur.isEmpty())
             continue;
 
-        QVector<QRect> rects = blur.rects();
-        QVector<unsigned long> data(rects.count() * 4);
-        QVector<QRect>::const_iterator i;
-        for ( i = rects.begin(); i != rects.end(); ++i )
+        QVector<unsigned long> data(blur.rectCount() * 4);
+        for ( auto i = blur.begin(); i != blur.end(); ++i )
         {
             if (i->width() > 0 && i->height() > 0)
                 data << i->x() << i->y() << i->width() << i->height();
@@ -832,7 +831,7 @@ Style::eventFilter( QObject *object, QEvent *ev )
             }
 
             QPainter p(tabBar);
-            QStyleOptionTabBarBaseV2 opt;
+            QStyleOptionTabBarBase opt;
             opt.initFrom(tabBar);
             opt.shape = tabBar->shape();
             opt.selectedTabRect = tabBar->tabRect(tabBar->currentIndex());
@@ -849,7 +848,7 @@ Style::eventFilter( QObject *object, QEvent *ev )
         } else if ( QTabWidget *tw = qobject_cast<QTabWidget*>( object ) ) {
             // those don't paint frames and rely on the tabbar, which we ruled and rule out (looks weird with e.g. cornerwidgets...)
             if (tw->documentMode()) {
-                QStyleOptionTabBarBaseV2 opt;
+                QStyleOptionTabBarBase opt;
                 opt.initFrom(tw);
                 opt.documentMode = true;
 
@@ -987,8 +986,8 @@ Style::eventFilter( QObject *object, QEvent *ev )
         if (QAbstractSlider* slider = qobject_cast<QAbstractSlider*>(object))
         {
             QWheelEvent *we = static_cast<QWheelEvent*>(ev);
-            if ((slider->value() == slider->minimum() && we->delta() > 0) ||
-                (slider->value() == slider->maximum() && we->delta() < 0))
+            if ((slider->value() == slider->minimum() && (we->angleDelta().y() || we->angleDelta().x()) > 0) ||
+                (slider->value() == slider->maximum() && (we->angleDelta().y() || we->angleDelta().x()) < 0))
                 Animator::Hover::Play(slider);
             return false;
         }
@@ -1200,6 +1199,12 @@ Style::standardPalette() const
         hg.setRgb(61, 174, 233); // plasma blue
         hgt.setRgb(252, 252, 252); // paper white
         mid.setRgb(127, 127, 128);
+    } else if (objectName().toLower() == "virtualarch") {
+        bg.setRgb(250, 250, 250);
+        fg.setRgb(51, 51, 51); // charcoal grey
+        hg.setRgb(23, 147, 208); // plasma blue
+        hgt.setRgb(252, 252, 252); // paper white
+        mid.setRgb(127, 127, 128);
     }
     QPalette pal(fg, bg, // windowText, button
                         bg, fg, mid, //light, dark, mid
@@ -1254,3 +1259,4 @@ Style::restorePainter(QPainter *p, int flags)
 
 #undef PAL
 #undef BESPIN_MOUSE_DEBUG
+

@@ -127,7 +127,7 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
                 QFont fontBold = menuItem->font;
                 fontBold.setBold(true);
                 QFontMetrics fmBold(fontBold);
-                w += fmBold.width(menuItem->text) - fm.width(menuItem->text);
+                w += fmBold.horizontalAdvance(menuItem->text) - fm.horizontalAdvance(menuItem->text);
             }
             if (menuItem->menuItemType == QStyleOptionMenuItem::Separator)
                 w += 32; // add some space for the separator lines
@@ -186,10 +186,8 @@ Style::sizeFromContents(ContentsType ct, const QStyleOption *option, const QSize
                         fnt.setBold(true);
                     QSize sz(QFontMetrics(fnt).boundingRect(tab->text).size());
                     int diff = qMax(0, sz.width() - osz.width()) + 1;
-                    if HAVE_OPTION(tab3, TabV3) {
-                        if (!tab3->documentMode)
-                            diff /= 2;
-                    }
+                    if (!tab->documentMode)
+                        diff /= 2;
                     sz.setWidth(diff + contentsSize.width());
                     sz.setHeight(qMax(sz.height(), contentsSize.height()));
                     return sz;

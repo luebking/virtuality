@@ -233,8 +233,9 @@ main(int argc, char *argv[])
         QSettings config("BE", "Style");
         config.beginGroup(deco ? "Deco" : "Current");
         const QString key = QString::fromLocal8Bit(argv[3]);
-        if (mode == ReadSetting)
-            printf("%s\n", CHAR(config.value(key, argc > 4 ? argv[4] : QVariant()).toString()));
+        if (mode == ReadSetting) {
+            printf("%s\n", CHAR(config.value(key, argc > 4 ? argv[4] : QString()).toString()));
+        }
         else if (mode == DeleteSetting) {
             if (config.contains(key))
                 config.remove(key);

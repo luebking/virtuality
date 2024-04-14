@@ -223,7 +223,7 @@ Style::drawComboBox(const QStyleOptionComplex *option, QPainter *painter, const 
         const int icon = cmb->currentIcon.isNull() ? 0 : cmb->iconSize.width() + F(4);
         QFont fnt(painter->font());
         fnt.setBold(true);
-        int text = QFontMetrics(fnt).width(cmb->currentText);
+        int text = QFontMetrics(fnt).horizontalAdvance(cmb->currentText);
         if (text)
             text += F(4);
 

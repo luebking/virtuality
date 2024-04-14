@@ -66,6 +66,7 @@
 #endif
 #ifdef BE_WS_X11
 #include "xproperty.h"
+#include "fixx11h.h"
 #endif
 
 #include "hacks.h"
@@ -638,7 +639,7 @@ Style::polish( QWidget * widget )
             widget->setForegroundRole(QPalette::WindowText);
             if (widget->layout())
             {   // get rid of nasty indention
-                widget->layout()->setMargin ( 0 );
+                widget->layout()->setContentsMargins(0,0,0,0);
                 widget->layout()->setSpacing ( 0 );
             }
         }
@@ -943,8 +944,8 @@ Style::polish( QWidget * widget )
 
     const bool isDolphinStatusBar = widget->inherits("DolphinStatusBar");
     if (isDolphinStatusBar) {
-        int m[4];
-        widget->getContentsMargins(&m[0], &m[1], &m[2], &m[3]);
+        QMargins marg = widget->contentsMargins();
+        int m[4] = {marg.left(), marg.top(), marg.right(), marg.bottom()};
         for (int i = 0; i < 4; ++i)
             m[i] = qMax(m[i], F(2));
         widget->setContentsMargins(m[0], m[1], m[2], m[3]);

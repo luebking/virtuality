@@ -104,6 +104,7 @@ Config::Config(QWidget *parent) : BConfig(parent), loadedPal(0), infoIsManage(fa
 {
     /** Setup the UI and geometry */
     ui.setupUi(this);
+    connect (ui.tabAnimDuration, SIGNAL(valueChanged(int)), ui.tabAnimDurationLabel, SLOT(setNum(int)));
 
     /** Some special stuff */
     QEvent event(QEvent::PaletteChange);

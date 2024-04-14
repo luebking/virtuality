@@ -255,9 +255,9 @@ Style::drawBranch(const QStyleOption *option, QPainter *painter, const QWidget *
         { bg = widget->backgroundRole(); fg = widget->foregroundRole(); }
 
     bool firstCol = ( RECT.x() < 1 );
-    if HAVE_OPTION(item, ViewItemV4)
-        firstCol = item->viewItemPosition == QStyleOptionViewItemV4::Beginning ||
-                   item->viewItemPosition == QStyleOptionViewItemV4::OnlyOne;
+    if HAVE_OPTION(item, ViewItem)
+        firstCol = item->viewItemPosition == QStyleOptionViewItem::Beginning ||
+                   item->viewItemPosition == QStyleOptionViewItem::OnlyOne;
 
     if (option->state & State_Children) {
         int delta = gs_decoration_size / 2 + 2;
@@ -370,7 +370,7 @@ Style::drawItem(const QStyleOption *option, QPainter *painter, const QWidget *wi
          widget->parentWidget()->inherits("KWin::TabBox::TabBoxView") )
         return;
 
-    ASSURE_OPTION(item, ViewItemV4);
+    ASSURE_OPTION(item, ViewItem);
 
     updateLastWidget( widget, painter );
 
@@ -390,7 +390,11 @@ Style::drawItem(const QStyleOption *option, QPainter *painter, const QWidget *wi
         if (painter->device()->devType() == QInternal::Widget)
             widget = static_cast<QWidget*>(painter->device());
         else {
-            QPaintDevice *dev = QPainter::redirected(painter->device());
+            QPaintDevice *dev = 
+            /**** @todo this got canned, is the plain device actually correct?
+                                QPainter::redirected(painter->device());
+            ****/
+                                painter->device();
             if (dev && dev->devType() == QInternal::Widget)
                 widget = static_cast<QWidget*>(dev);
         }
@@ -428,7 +432,7 @@ Style::drawItem(const QStyleOption *option, QPainter *painter, const QWidget *wi
         }
 
 //         const QTreeView *tree = ;
-        bool round = item->viewItemPosition == QStyleOptionViewItemV4::OnlyOne;
+        bool round = item->viewItemPosition == QStyleOptionViewItem::OnlyOne;
         if (!round && view && view->selectionMode() == QAbstractItemView::SingleSelection) {
             round = qobject_cast<const QListView*>(view);
         }
@@ -462,7 +466,7 @@ Style::drawItem(const QStyleOption *option, QPainter *painter, const QWidget *wi
                 painter->drawRoundedRect(r, rnd, rnd);
         } else {
             painter->setPen(Qt::NoPen);
-            if (selected && item->viewItemPosition == QStyleOptionViewItemV4::Invalid && widget &&
+            if (selected && item->viewItemPosition == QStyleOptionViewItem::Invalid && widget &&
                 widget->inherits("QCalendarView")) {
                 if (!high.alpha()) { // this is the color we cheated to transparent in polish.cpp
                     SAVE_PAINTER(Alias);
@@ -491,7 +495,7 @@ Style::drawItem(const QStyleOption *option, QPainter *painter, const QWidget *wi
             painter->setBrushOrigin(RECT.topLeft());
             painter->fillRect(RECT, item->backgroundBrush);
             painter->setBrushOrigin(oldBO);
-        } else if (item->features & QStyleOptionViewItemV2::Alternate) {
+        } else if (item->features & QStyleOptionViewItem::Alternate) {
             painter->fillRect(RECT, PAL.brush(QPalette::AlternateBase));
         }
         // reset the painter for normal items. our above workaround otherwise might kill things...

@@ -19,7 +19,6 @@
 //    case PE_PanelTipLabel: // The panel for a tip label.
 
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QDockWidget>
 #include <QMainWindow>
 #include <QMetaObject>

@@ -19,7 +19,7 @@
 #include <QHash>
 #include <QPixmap>
 #include <QStackedWidget>
-#include <QTime>
+#include <QElapsedTimer>
 #include "basic.h"
 
 namespace Animator {
@@ -47,7 +47,7 @@ protected:
     friend class Tab;
     int index;
     uint duration;
-    QTime clock;
+    QElapsedTimer clock;
     char tabPosition;
     bool isBackSwitch;
 protected:

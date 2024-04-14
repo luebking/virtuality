@@ -46,8 +46,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>401</width>
-            <height>225</height>
+            <width>203</width>
+            <height>95</height>
            </rect>
           </property>
           <attribute name="label">
@@ -124,8 +124,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>212</width>
-            <height>123</height>
+            <width>236</width>
+            <height>145</height>
            </rect>
           </property>
           <attribute name="label">
@@ -201,8 +201,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>202</width>
-            <height>82</height>
+            <width>223</width>
+            <height>97</height>
            </rect>
           </property>
           <attribute name="label">
@@ -309,8 +309,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>222</width>
-            <height>106</height>
+            <width>243</width>
+            <height>123</height>
            </rect>
           </property>
           <attribute name="label">
@@ -433,8 +433,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>401</width>
-            <height>225</height>
+            <width>441</width>
+            <height>193</height>
            </rect>
           </property>
           <attribute name="label">
@@ -660,7 +660,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_5">
+                 <widget class="QLabel" name="tabAnimDurationLabel">
                   <property name="text">
                    <string>350</string>
                   </property>
@@ -974,22 +974,5 @@
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>tabAnimDuration</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>label_5</receiver>
-   <slot>setNum(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>365</x>
-     <y>431</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>390</x>
-     <y>435</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
