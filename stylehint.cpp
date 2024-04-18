@@ -225,7 +225,11 @@ int Style::styleHint(StyleHint hint, const QStyleOption *option, const QWidget *
     case SH_ItemView_ActivateItemOnSingleClick: {
         if (config.macStyle) {
             QWidget *w = qApp->focusWidget();
+#if QT_VERSION >= 0x060000
+            return !(w && w->inherits("QtPrivate::QCalendarView"));
+#else
             return !(w && w->inherits("QCalendarView"));
+#endif
         }
         return false;
     }

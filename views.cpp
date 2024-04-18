@@ -466,15 +466,20 @@ Style::drawItem(const QStyleOption *option, QPainter *painter, const QWidget *wi
                 painter->drawRoundedRect(r, rnd, rnd);
         } else {
             painter->setPen(Qt::NoPen);
-            if (selected && item->viewItemPosition == QStyleOptionViewItem::Invalid && widget &&
+            if ((selected || hover) && item->viewItemPosition == QStyleOptionViewItem::Invalid && widget &&
+#if QT_VERSION >= 0x060000
+                widget->inherits("QtPrivate::QCalendarView")) {
+#else
                 widget->inherits("QCalendarView")) {
-                if (!high.alpha()) { // this is the color we cheated to transparent in polish.cpp
+#endif
+                if (!high.alpha() || !selected) { // this is the color we cheated to transparent in polish.cpp
                     SAVE_PAINTER(Alias);
                     const int s = qMin(RECT.width(), RECT.height());
                     QRect r(0,0,s,s);
                     r.moveCenter(RECT.center());
                     painter->setRenderHint(QPainter::Antialiasing);
-                    high.setAlpha(255);
+                    if (selected)
+                        high.setAlpha(255);
                     painter->setBrush(high);
                     painter->drawEllipse(r);
                     RESTORE_PAINTER

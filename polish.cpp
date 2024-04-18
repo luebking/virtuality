@@ -552,7 +552,11 @@ Style::polish( QWidget * widget )
                     Shadows::manage(widget);
                 else if (widget->inherits("QTableView")) {
                     frame->setFrameShape(QFrame::NoFrame); // ugly and superfluous - has grid and/or headers
+#if QT_VERSION >= 0x060000
+                    if (widget->inherits("QtPrivate::QCalendarView")) {
+#else
                     if (widget->inherits("QCalendarView")) {
+#endif
                         // MEGAUGLY HACK
                         // QCalendarView looks shit. I want. *want* the selected date round.
                         // unfortunately the view uses a private delegate on top of QItemDelegate
