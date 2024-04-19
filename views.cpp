@@ -472,17 +472,21 @@ Style::drawItem(const QStyleOption *option, QPainter *painter, const QWidget *wi
 #else
                 widget->inherits("QCalendarView")) {
 #endif
-                if (!high.alpha() || !selected) { // this is the color we cheated to transparent in polish.cpp
-                    SAVE_PAINTER(Alias);
-                    const int s = qMin(RECT.width(), RECT.height());
-                    QRect r(0,0,s,s);
-                    r.moveCenter(RECT.center());
-                    painter->setRenderHint(QPainter::Antialiasing);
-                    if (selected)
-                        high.setAlpha(255);
-                    painter->setBrush(high);
-                    painter->drawEllipse(r);
-                    RESTORE_PAINTER
+                if (item->index.isValid() && item->index.row() && item->index.column()) {
+                    if (!high.alpha() || !selected) { // this is the color we cheated to transparent in polish.cpp
+                        SAVE_PAINTER(Alias);
+                        const int s = qMin(RECT.width(), RECT.height());
+                        QRect r(0,0,s,s);
+                        r.moveCenter(RECT.center());
+                        painter->setRenderHint(QPainter::Antialiasing);
+                        if (selected)
+                            high.setAlpha(255);
+                        painter->setBrush(high);
+                        painter->drawEllipse(r);
+                        RESTORE_PAINTER
+                    }
+                } else {
+                    painter->fillRect(RECT, item->backgroundBrush);
                 }
             } else {
                 painter->setBrush(high);
