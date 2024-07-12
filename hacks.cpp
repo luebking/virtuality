@@ -802,8 +802,8 @@ Hacks::remove(QWidget *w)
 void
 Hacks::releaseApp()
 {
-    bespinHacks->deleteLater(); bespinHacks = 0L;
-    lockToggleMenu->deleteLater(); lockToggleMenu = 0L;
+    if (bespinHacks) bespinHacks->deleteLater(); bespinHacks = 0L;
+    if (lockToggleMenu) lockToggleMenu->deleteLater(); lockToggleMenu = 0L;
 }
 
 void
