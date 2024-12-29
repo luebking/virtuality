@@ -141,6 +141,8 @@ void Style::polish( QPalette &pal, bool onInit )
         SWAP_ALL(invertedPalette, QPalette::Base, QPalette::Text);
         SWAP_ALL(invertedPalette, QPalette::Button, QPalette::ButtonText);
         SWAP_ALL(invertedPalette, QPalette::Highlight, QPalette::HighlightedText);
+        invertedPalette.setColor(QPalette::PlaceholderText, FX::blend(invertedPalette.color(QPalette::Active, QPalette::Base),
+                                                                      invertedPalette.color(QPalette::Active, QPalette::Text), 70,30));
         polish(invertedPalette, false);
     }
 
