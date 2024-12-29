@@ -103,9 +103,11 @@ Style::drawToolButtonLabel(const QStyleOption *option, QPainter *painter, const 
 
     QPalette::ColorRole role = QPalette::WindowText;
     QPalette::ColorRole bgRole = QPalette::Window;
+    bool isTooBar = true;
     if (widget) {
         const QWidget *dad = widget->parentWidget();
-
+        if (dad && !qobject_cast<const QToolBar*>(dad))
+            isTooBar = false;
         const QWidget *w = dad ? dad : widget;
         bgRole = w->backgroundRole();
         role = w->foregroundRole();
@@ -170,7 +172,7 @@ Style::drawToolButtonLabel(const QStyleOption *option, QPainter *painter, const 
         const int style = config.btn.tool.disabledStyle;
 //         const QIcon::State state = toolbutton->state & State_On ? QIcon::On : QIcon::Off;
         pm = toolbutton->icon.pixmap(RECT.size().boundedTo(pmSize), isEnabled || style ? QIcon::Normal : QIcon::Disabled, QIcon::Off);
-        if (true) {
+        if (isTooBar && true) {
             static QCache<qint64, QPixmap> iconCache(64);
             QPixmap *pix = iconCache[pm.cacheKey()];
             if (!pix) {
