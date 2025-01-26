@@ -390,9 +390,10 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
                 case 6: createArtDecoPix(FX::blend(bgColor, grey, 20, 1), Qt::Vertical); break;
             }
             if (!ringResetTimer) {
-                ringResetTimer = new QTimer;
+                ringResetTimer = new QTimer(const_cast<BE::Style*>(this));
                 ringResetTimer->setSingleShot(true);
                 connect(ringResetTimer, SIGNAL(timeout()), SLOT(resetRingPix()));
+                connect(ringResetTimer, &QObject::destroyed, [=]() {ringResetTimer = nullptr;});
                 connect(ringResetTimer, SIGNAL(destroyed()), SLOT(resetRingPix()));
             }
         }
