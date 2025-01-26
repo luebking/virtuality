@@ -390,7 +390,7 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
                 case 6: createArtDecoPix(FX::blend(bgColor, grey, 20, 1), Qt::Vertical); break;
             }
             if (!ringResetTimer) {
-                ringResetTimer = new QTimer(const_cast<BE::Style*>(this));
+                ringResetTimer = new QTimer;
                 ringResetTimer->setSingleShot(true);
                 connect(ringResetTimer, SIGNAL(timeout()), SLOT(resetRingPix()));
                 connect(ringResetTimer, SIGNAL(destroyed()), SLOT(resetRingPix()));
@@ -404,7 +404,8 @@ Style::drawWindowBg(const QStyleOption *option, QPainter *painter, const QWidget
             case 5: y = widget->height() - (gs_overlay->height() + 48); break;
         }
         painter->drawPixmap(x, y, *gs_overlay);
-        ringResetTimer->start(5000);
+        if (ringResetTimer)
+            ringResetTimer->start(5000);
     }
     if (widget->testAttribute(Qt::WA_TranslucentBackground)) {
         const QVariant wdv = widget->property("BespinWindowHints");
