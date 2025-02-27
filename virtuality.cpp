@@ -1059,7 +1059,8 @@ Style::eventFilter( QObject *object, QEvent *ev )
                     pt = menu->parentWidget()->mapToGlobal(pt);
                     menu->move(pt);
                 }
-                menu->move(menu->pos()-QPoint(0,F(2)));
+                /// @todo this abysmally fails at least w/ Qt6 on a multihead display
+//                menu->move(menu->pos()-QPoint(0,F(2)));
                 if (config.frame.roundness > 2)
                     shapeCorners( widget, false );
             }
