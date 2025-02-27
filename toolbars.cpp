@@ -135,16 +135,32 @@ Style::drawToolButtonLabel(const QStyleOption *option, QPainter *painter, const 
     }
 
     if (drawIndicator) {
-        QRect r(RECT.right()-F(6),RECT.y()+F(1),F(5),F(5));
-        if (drawIndicator > 1) {
-            painter->setPen(QPen(COLOR(role), 0.5));
-            painter->setBrush(FCOLOR(Highlight));
+        if (widget && widget->inherits("Fm::PathButton")) {
+            QColor c = drawIndicator > 1 ? FCOLOR(Highlight) : FX::blend(COLOR(bgRole), COLOR(role), 2, 1);
+            painter->setPen(QPen(c, 0.5));
+//            painter->setPen(Qt::NoPen);
+            painter->setBrush(c);
+            QRect r = RECT;
+            Navi::Direction dir = Navi::E;
+            if (option->direction == Qt::RightToLeft) {
+                r.setRight(r.left() + F(8));
+                dir = Navi::W;
+            } else {
+                r.setLeft(r.right() - F(8));
+            }
+            drawSolidArrow(dir, r, painter);
         } else {
-            painter->setPen(QPen(FX::blend(COLOR(bgRole), COLOR(role), 2, 1), F(1)));
-            painter->setBrush(Qt::NoBrush);
+            if (drawIndicator > 1) {
+                painter->setPen(QPen(COLOR(role), 0.5));
+                painter->setBrush(FCOLOR(Highlight));
+            } else {
+                painter->setPen(QPen(FX::blend(COLOR(bgRole), COLOR(role), 2, 1), F(1)));
+                painter->setBrush(Qt::NoBrush);
+            }
+            QRect r(RECT.right()-F(6),RECT.y()+F(1),F(5),F(5));
+            painter->setRenderHint(QPainter::Antialiasing, true);
+            painter->drawEllipse(r);
         }
-        painter->setRenderHint(QPainter::Antialiasing, true);
-        painter->drawEllipse(r);
     }
 
     if (justText) {   // the most simple way
